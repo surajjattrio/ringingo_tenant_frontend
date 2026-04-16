@@ -1,0 +1,176 @@
+import { useEffect, useState } from "react";
+
+// PROJECT IMPORTS
+import { useAppDispatch } from "@/redux/hooks";
+import { Icon, Loader } from "@/components/ui-components";
+import { getSingleLoginLogoutInfo } from "@/redux/slice/tenant-admin/loginLogoutSlice";
+import { format, intervalToDuration } from "date-fns";
+
+// TYPES
+interface LoginLogoutInformationProps {
+  isLoginLogoutInfo: any;
+  setIsLoginLogoutInfo: any;
+}
+
+const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
+  const { isLoginLogoutInfo = null, setIsLoginLogoutInfo } = props;
+
+  const [infoData, setInfoData] = useState<any>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (isLoginLogoutInfo) {
+      onGetSingleLoginLogoutInfo();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoginLogoutInfo]);
+
+  const dispatch = useAppDispatch();
+
+  // GET Login Logout INFORMATION
+  const onGetSingleLoginLogoutInfo = async () => {
+    setIsLoading(true);
+    try {
+      const res: any = await dispatch(
+        getSingleLoginLogoutInfo({
+          date: isLoginLogoutInfo.date,
+          agent_uuid: isLoginLogoutInfo?.agent_uuid,
+        })
+      ).unwrap();
+
+      if (res && res?.statusCode === 200) {
+        setInfoData(res?.data || []);
+        setIsLoading(false);
+      }
+    } catch (error: any) {
+      setIsLoading(false);
+      setInfoData([]);
+      console.log(
+        "get single login logout information err--->",
+        error?.message
+      );
+    }
+  };
+
+  const getEventStatus = (rowData: any) => {
+    if (rowData.login_status === "0" && rowData.breakcode?.length) {
+      return `Break End - ${rowData.breakcode[0].name}`;
+    } else if (rowData.login_status === "0") {
+      return "Login";
+    } else if (rowData.login_status === "1" && rowData.breakcode?.length) {
+      return `Break Start - ${rowData.breakcode[0].name}`;
+    } else if (rowData.login_status === "2") {
+      return "Logout";
+    }
+  };
+
+  const getDuration = (startDate: any, endDate: any) => {
+    let newTime: any = intervalToDuration({
+      start: new Date(startDate),
+      end: new Date(endDate),
+    });
+    return `${
+      (newTime?.hours > 9 ? newTime.hours : "0" + newTime.hours) +
+      ":" +
+      (newTime?.minutes > 9 ? newTime.minutes : "0" + newTime.minutes)
+    }`;
+  };
+
+  const isDurationOver = (duration: string,breakCode: any) => {
+    return duration > breakCode.duration ? 'error' : 'success';
+  };
+
+  const getEventDuration = (rowData: any, index: number) => {
+    if (
+      infoData[index - 1] &&
+      rowData.login_status === "0" &&
+      rowData.breakcode?.length
+    ) {
+      const duration = getDuration(infoData[index - 1]?.date_time, rowData?.date_time);
+      return <span className={`text-${isDurationOver(duration,rowData.breakcode[0])}`} >{duration}</span>;
+    } else if (rowData.login_status === "2") {
+      const duration = getDuration(infoData[0]?.date_time, rowData?.date_time);
+      return <span className="text-heading">{duration}</span>;
+    }
+  };
+
+  /* ============================== Login Logout INFORMATION ============================== */
+
+  return (
+    <>
+      <div
+        className={`w-full scrollbar-hide h-[calc(100vh-178px)] overflow-y-auto drop-shadow-xl bg-white rounded-lg ${
+          !isLoginLogoutInfo && "hidden"
+        }`}
+      >
+        <div className="py-2 bg-secondary 3xl:px-4 px-3 rounded-t-lg sticky top-0 z-[5]">
+          <div className="flex items-center flex-row-reverse justify-between">
+            <Icon
+              name="CloseWhite"
+              height={16}
+              width={16}
+              onClick={() => {
+                setIsLoginLogoutInfo(null);
+                setInfoData(infoData);
+              }}
+            />
+            <span className="3xl:text-sm text-xs text-white font-bold">
+              Detailed Activity
+            </span>
+          </div>
+        </div>
+
+        {isLoading ? (
+          <div className=" h-[calc(100vh-233px)]">
+            <Loader />
+          </div>
+        ) : (
+          <>
+            {infoData && infoData.length ? (
+              <div className="px-4 pb-4">
+                <div className="grid grid-cols-3 gap-x-1">
+                  <div className="p-[5px] text-sm font-bold text-heading">
+                    Time Stamp
+                  </div>
+                  <div className="p-[5px] text-sm font-bold text-heading">
+                    Event
+                  </div>
+                  <div className="p-[5px] text-sm font-bold text-heading">
+                    Duration(HH:MM)
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-x-1">
+                  {infoData.map((data: any, index: number) => {
+                    return (
+                      <>
+                        <div className="p-[10px]">
+                          <span className="3xl:text-xs text-[11px] text-heading">
+                            {data.date_time
+                              ? format(new Date(data.date_time), "HH:mm")
+                              : ""}
+                          </span>
+                        </div>
+                        <div className="p-[10px]">
+                          <span className="3xl:text-xs text-[11px] text-heading">
+                            {getEventStatus(data)}
+                          </span>
+                        </div>
+                        <div className="p-[10px]">
+                          <span className="3xl:text-xs text-[11px]">
+                            {getEventDuration(data, index)}
+                          </span>
+                        </div>
+                      </>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : null}
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default LoginLogoutInformation;

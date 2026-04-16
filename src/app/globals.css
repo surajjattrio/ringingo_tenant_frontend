@@ -1,0 +1,284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS IMPORT */
+@import "react-toastify/dist/ReactToastify.css";
+@import "rc-time-picker/assets/index.css";
+@import "react-datepicker/dist/react-datepicker.css";
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --toastify-font-family: var(--font-noto);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  background: white;
+  height: 100vh;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.toaster-success {
+  background-color: #e6fff4 !important;
+}
+
+.toaster-error {
+  background-color: #ef9fa4 !important;
+}
+
+.rc-time-picker-input {
+  background-color: transparent;
+  outline: none;
+  border: none;
+  font-size: 14px;
+  padding: 0 !important;
+}
+
+/* Hide Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* ========================================
+   CUSTOM THIN SCROLLBAR (NEW)
+   ======================================== */
+
+/* Thin scrollbar for all elements with this class */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Firefox support */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+/* Custom scrollbar variants */
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+}
+
+.scrollbar-thumb-gray-400::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+}
+
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Hover effect on scrollbar */
+.hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+}
+
+/* ========================================
+   SMOOTH TRANSITIONS (NEW)
+   ======================================== */
+
+/* Smooth transition for all interactive elements */
+button,
+a,
+input,
+textarea,
+select {
+  transition: all 0.3s ease-in-out;
+}
+
+/* ========================================
+   GRADIENT UTILITIES (NEW)
+   ======================================== */
+
+/* Primary gradient backgrounds */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #4da6ff 0%, #3d8fe6 100%);
+}
+
+.bg-gradient-primary-dark {
+  background: linear-gradient(135deg, #3d8fe6 0%, #2d7fd6 100%);
+}
+
+/* Glassmorphism effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ========================================
+   ANIMATION UTILITIES (NEW)
+   ======================================== */
+
+/* Shine animation for buttons */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.shine-effect:hover::before {
+  animation: shine 0.7s;
+}
+
+/* Pulse animation for live indicators */
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ========================================
+   EXISTING STYLES
+   ======================================== */
+
+/* Area Chart CSS */
+.area .apexcharts-legend {
+  top: unset !important;
+  bottom: -40% !important;
+}
+
+/* Donut Chart CSS */
+.donut-tooltip {
+  background-color: #313349;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px 7px;
+  align-items: flex-start;
+}
+
+.donut-tooltip-box {
+  margin-top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 20%;
+}
+
+.donut-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.donut-tooltip-head {
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.donut-tooltip-text {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 10px;
+}
+
+.apexcharts-legend {
+  height: 100% !important;
+  overflow: scroll !important;
+}
+
+.apexcharts-legend-series {
+  padding: 4px 2px;
+  display: flex !important;
+  align-items: center !important;
+  justify-items: center !important;
+}
+
+.apexcharts-legend-marker {
+  border-radius: 20% !important;
+}
+
+.rc-time-picker-input {
+  font-size: 12px;
+}
+
+.rc-time-picker-input::placeholder {
+  font-size: 12px;
+  color: #b2b3b5;
+}
+
+/* Date Picker */
+.react-datepicker {
+  display: flex !important;
+}
+
+.react-datepicker__header--time {
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+}
+
+.react-datepicker__time-list {
+  height: 175px !important;
+}

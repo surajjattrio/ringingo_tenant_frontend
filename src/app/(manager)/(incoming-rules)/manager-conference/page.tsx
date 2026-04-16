@@ -1,0 +1,8 @@
+// PROJECT IMPORTS
+import Conference from "@/components/manager-tenant-pages/incoming-rules/conference/Conference";
+
+const Page = () => {
+  return <Conference managerName="conference" />;
+};
+
+export default Page;
