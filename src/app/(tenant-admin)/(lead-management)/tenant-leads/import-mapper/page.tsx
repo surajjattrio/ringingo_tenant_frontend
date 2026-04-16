@@ -133,15 +133,128 @@ const ImportLeadManagement = () => {
             console.error("Get Lead Group Options =-=>", err);
         }
     };
+    const validateFieldMapping = (fieldName: string, selectedLabel: string, expectedLabel: string) => {
+        const label = selectedLabel.toLowerCase().trim();
+        const expected = expectedLabel.toLowerCase().trim();
+        
+        // Specific keyword rules for standard fields
+        const keywordRules: Record<string, string[]> = {
+            first_name: ["first", "fname"],
+            last_name: ["last", "surname", "lname"],
+            phone_number: ["phone", "mobile", "contact", "tel", "number"],
+            address: ["address", "street", "location"],
+            city: ["city", "town"],
+            state: ["state", "region"],
+            province: ["province", "area"],
+            postcal_code: ["postal", "zip", "code"],
+            dob: ["dob", "birth", "date"],
+            alternate_phone_number: ["alternate", "alt", "phone", "mobile", "contact"],
+            email: ["email", "mail"],
+            gender: ["gender"],
+            description: ["description", "remark", "note", "about"]
+        };
+
+        const keywords = keywordRules[fieldName];
+        if (keywords) {
+            // Priority 1: Prevent clear opposites for name and phone fields
+            if (fieldName === 'first_name' && label.includes('last')) return false;
+            if (fieldName === 'last_name' && label.includes('first')) return false;
+            
+            if (fieldName === 'phone_number' && (label.includes('alternate') || label.includes('alt'))) return false;
+            if (fieldName === 'alternate_phone_number' && !label.includes('alternate') && !label.includes('alt')) return false;
+
+            // Priority 2: Direct match with expected label
+            if (label !== "" && (label.includes(expected) || expected.includes(label))) return true;
+
+            // Priority 3: Keyword heuristic
+            return keywords.some(key => label.includes(key));
+        }
+
+        // For custom fields, use a generic fuzzy match
+        if (label !== "" && (label.includes(expected) || expected.includes(label))) return true;
+
+        return false;
+    };
 
     const hadleChange = (e: any) => {
-        setFieldValue(e.target.name, e.target.value);
+        const { name, value } = e.target;
+        const selectedOption = options.find((opt) => opt.value === value);
+        const selectedLabel = selectedOption?.label || "";
+
+        // Standard field labels mapping
+        const fieldLabels: Record<string, string> = {
+            first_name: "First Name",
+            last_name: "Last Name",
+            phone_number: "Phone Number",
+            address: "Address",
+            city: "City",
+            state: "State",
+            province: "Province",
+            postcal_code: "Postal Code",
+            dob: "DOB",
+            alternate_phone_number: "Alternate Phone Number",
+            email: "Email",
+            gender: "Gender",
+            description: "Description",
+        };
+
+        if (value && value !== "") {
+            const isValid = validateFieldMapping(name, selectedLabel, fieldLabels[name] || name);
+            if (!isValid) {
+                Danger(`The selected column "${selectedLabel}" does not seem to match "${fieldLabels[name] || name}". Please select the correct column.`);
+                return;
+            }
+        }
+
+        setFieldValue(name, value);
     };
 
     const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        const selectedOption = options.find((opt) => opt.value === value);
+        const selectedLabel = selectedOption?.label || "";
+        
+        // Find the custom field label from customFieldData
+        const customField = customFieldData.find((item: any) => item.field_name === name);
+        const expectedLabel = customField?.field_label || name;
+
+        if (value && value !== "") {
+            const isValid = validateFieldMapping(name, selectedLabel, expectedLabel);
+            if (!isValid) {
+                Danger(`The selected column "${selectedLabel}" does not seem to match "${expectedLabel}". Please select the correct column.`);
+                return;
+            }
+        }
 
         setFieldValue(`custom_fields.${name}`, value);
+    };
+
+    const getFilteredOptions = (currentFieldName: string, isCustom: boolean = false) => {
+        const standardFields = [
+            "first_name", "last_name", "phone_number", "address", "city", 
+            "state", "province", "postcal_code", "dob", 
+            "alternate_phone_number", "email", "gender", "description"
+        ];
+        
+        const selectedValues = new Set();
+        
+        standardFields.forEach(field => {
+            const key = field as keyof InitialValueType;
+            if (field !== currentFieldName || isCustom) {
+                if (values[key]) selectedValues.add(values[key]);
+            }
+        });
+
+        if (values?.custom_fields) {
+            Object.keys(values.custom_fields).forEach(field => {
+                if (field !== currentFieldName || !isCustom) {
+                    if (values?.custom_fields?.[field]) selectedValues.add(values?.custom_fields[field]);
+                }
+            });
+        }
+
+        const currentValue = isCustom ? values.custom_fields?.[currentFieldName] : values[currentFieldName as keyof InitialValueType];;
+        return options.filter(opt => !selectedValues.has(opt.value) || opt.value === currentValue);
     };
 
     const onImport = async (payload: any) => {
@@ -324,7 +437,7 @@ const ImportLeadManagement = () => {
                                         label="First Name"
                                         placeholder="Select First Name"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("first_name")}
                                         value={values.first_name}
                                         touched={touched}
                                         errors={errors}
@@ -337,7 +450,7 @@ const ImportLeadManagement = () => {
                                         label="Last Name"
                                         placeholder="Select Last Name"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("last_name")}
                                         value={values.last_name}
                                         touched={touched}
                                         errors={errors}
@@ -350,7 +463,7 @@ const ImportLeadManagement = () => {
                                         label="Phone Number"
                                         placeholder="Select Phone Number"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("phone_number")}
                                         value={values.phone_number}
                                         touched={touched}
                                         errors={errors}
@@ -363,7 +476,7 @@ const ImportLeadManagement = () => {
                                         label="Address"
                                         placeholder="Select Address"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("address")}
                                         value={values.address}
                                         touched={touched}
                                         errors={errors}
@@ -376,7 +489,7 @@ const ImportLeadManagement = () => {
                                         label="City"
                                         placeholder="Select City"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("city")}
                                         value={values.city}
                                         touched={touched}
                                         errors={errors}
@@ -389,7 +502,7 @@ const ImportLeadManagement = () => {
                                         label="State"
                                         placeholder="Select State"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("state")}
                                         value={values.state}
                                         touched={touched}
                                         errors={errors}
@@ -402,7 +515,7 @@ const ImportLeadManagement = () => {
                                         label="Province"
                                         placeholder="Select Province"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("province")}
                                         value={values.province}
                                         touched={touched}
                                         errors={errors}
@@ -415,7 +528,7 @@ const ImportLeadManagement = () => {
                                         label="Postal Code"
                                         placeholder="Select Postal Code"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("postcal_code")}
                                         value={values.postcal_code}
                                         touched={touched}
                                         errors={errors}
@@ -428,7 +541,7 @@ const ImportLeadManagement = () => {
                                         label="DOB"
                                         placeholder="Select DOB"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("dob")}
                                         value={values.dob}
                                         touched={touched}
                                         errors={errors}
@@ -441,7 +554,7 @@ const ImportLeadManagement = () => {
                                         label="Alternate Phone Number"
                                         placeholder="Select Alternate Phone Number"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("alternate_phone_number")}
                                         value={values.alternate_phone_number}
                                         touched={touched}
                                         errors={errors}
@@ -454,7 +567,7 @@ const ImportLeadManagement = () => {
                                         label="Email"
                                         placeholder="Select Email"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("email")}
                                         value={values.email}
                                         touched={touched}
                                         errors={errors}
@@ -467,7 +580,7 @@ const ImportLeadManagement = () => {
                                         label="Gender"
                                         placeholder="Select Gender"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("gender")}
                                         value={values.gender}
                                         touched={touched}
                                         errors={errors}
@@ -480,7 +593,7 @@ const ImportLeadManagement = () => {
                                         label="Description"
                                         placeholder="Select Description"
                                         removable
-                                        options={options}
+                                        options={getFilteredOptions("description")}
                                         value={values.description}
                                         touched={touched}
                                         errors={errors}
@@ -508,7 +621,7 @@ const ImportLeadManagement = () => {
                                                             label={item?.field_label}
                                                             placeholder={item?.field_description}
                                                             removable
-                                                            options={options}
+                                                            options={getFilteredOptions(item?.field_name, true)}
                                                             value={values?.custom_fields?.[item?.field_name]}
                                                             touched={touched}
                                                             errors={errors}

@@ -500,11 +500,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
           const user = data["user_uuid"]["val"][index];
           userIds.push(user['value']);
         }
-        const payload = {
-          [data["startdate"]["key"]]: formatDate(
-            data["startdate"]["val"],
-            true
-          ),
+        const payload: Record<string, any> = {
+          [data["startdate"]["key"]]: formatDate(data["startdate"]["val"], true),
           [data["enddate"]["key"]]: formatDate(data["enddate"]["val"], true),
           [data["user_uuid"]["key"]]: userIds?.length ? userIds?.join(',') : "",
           ...(data["direction"]?.["val"] ? { direction: data["direction"]["val"] } : {}),
@@ -512,8 +509,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
           page: filter?.page,
           limit: userPerformance?.count || 0,
         };
-        Object.entries(payload)?.forEach(([key, val]: any) => {
-          if (!val) {
+        Object.entries(payload).forEach(([key, val]) => {
+          if (val === undefined || val === null || val === "") {
             delete payload[key];
           }
         });
@@ -559,11 +556,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
           const user = data["user_uuid"]["val"][index];
           userIds.push(user['value']);
         }
-        const payload = {
-          [data["startdate"]["key"]]: formatDate(
-            data["startdate"]["val"],
-            true
-          ),
+        const payload: Record<string, any> = {
+          [data["startdate"]["key"]]: formatDate(data["startdate"]["val"], true),
           [data["enddate"]["key"]]: formatDate(data["enddate"]["val"], true),
           [data["user_uuid"]["key"]]: userIds?.length
             ? userIds?.join(",")
@@ -571,8 +565,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
           ...(data["direction"]?.["val"] ? { direction: data["direction"]["val"] } : {}),
           ...(data["campaign_uuid"]?.["val"]?.length ? { campaign_uuid: data["campaign_uuid"]["val"] } : {}),
         };
-        Object.entries(payload)?.forEach(([key, val]: any) => {
-          if (!val) {
+        Object.entries(payload).forEach(([key, val]) => {
+          if (val === undefined || val === null || val === "") {
             delete payload[key];
           }
         });
