@@ -246,7 +246,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     tenant_domain: string,
     key: string,
     rememberMe: boolean,
-    entity?: string
+    entity?: string,
+    company_code?: string
   ) => {
     const geoLat = Cookies.get("geo_lat");
     const geoLng = Cookies.get("geo_lng");
@@ -259,7 +260,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       dispatch({
         type: LOGIN_DATA,
         payload: {
-          loginDetails: { username, password, tenant_domain, entity },
+          loginDetails: { username, password, tenant_domain, entity, company_code },
         },
       });
       if (!key) {
@@ -273,6 +274,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             password,
             tenant_domain,
             entity,
+            company_code
           }, { headers: requestHeaders });
           if (user?.data?.access_token) {
             call(updateSideBarData(prepareData(user?.data)));
@@ -338,6 +340,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           tenant_domain,
           key,
           entity,
+          company_code
         }, { headers: requestHeaders });
         if (user?.data?.access_token) {
           call(updateSideBarData(prepareData(user?.data)));

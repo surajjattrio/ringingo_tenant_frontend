@@ -67,9 +67,11 @@ const LoginForm = () => {
                     const res: any = await login(
                         values.username,
                         values.password,
-                        values.tenant_domain,
+                        values.company_code ? `${values.company_code}.ringingo.com`.toLowerCase() : values.tenant_domain,
                         values.key,
-                        values.rememberMe
+                        values.rememberMe,
+                        undefined,
+                        values.company_code?.toLowerCase()
                     );
                     if (res?.statusCode === 200) {
                         Success(res?.data);
@@ -294,7 +296,7 @@ const LoginForm = () => {
                         />
                     </div>
 
-                    {domain === process.env.NEXT_PUBLIC_COMMON_LOGIN_DOMAIN && (
+                    { process.env.NEXT_PUBLIC_SHOW_COMPANY_CODE == "true" && (
                         <div>
                             <Input
                                 name="company_code"
