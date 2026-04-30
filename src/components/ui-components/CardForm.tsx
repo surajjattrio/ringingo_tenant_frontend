@@ -29,7 +29,7 @@ interface CardFormProps {
   handleSubmit?: any;
   onDoneClick?: any;
   onCancelClick?: any;
-  id?: string;
+  id?: string | string[] | null;
   isCancelClick?: boolean;
   isDoneClick?: boolean;
   isCancelIcon?: boolean;
