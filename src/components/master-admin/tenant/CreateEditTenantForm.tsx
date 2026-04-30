@@ -69,7 +69,8 @@ const CreateEditTenantForm = () => {
         concurrent_calls: "0",
         add_anonymous_lead: "1",
         system_disposition: "0",
-        company_code: ""
+        company_code: "",
+        mobile_number: ""
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -87,6 +88,7 @@ const CreateEditTenantForm = () => {
         sip_profile_uuid: Yup.string().required("Please select sip profile"),
         concurrent_calls: Yup.string().required("Please enter dial level"),
         company_code: Yup.string().required("Please enter company code").matches(/^[a-zA-Z0-9]+$/, "Special characters are not allowed"),
+        mobile_number: Yup.string().matches(/^[0-9]+$/, "Please enter valid mobile number").nullable(),
     });
 
     // Create or Update Tenant
@@ -207,6 +209,7 @@ const CreateEditTenantForm = () => {
                     add_anonymous_lead: tenantData?.add_anonymous_lead || "1",
                     system_disposition: tenantData?.system_disposition || "0",
                     company_code: tenantData?.company_code || "",
+                    mobile_number: tenantData?.mobile_number || "",
                 });
             }
         } catch (err) {
@@ -302,6 +305,18 @@ const CreateEditTenantForm = () => {
                     placeholder="Enter Email"
                     icon="Email"
                     value={values.email}
+                    touched={touched}
+                    errors={errors}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInfo
+                />
+                <Input
+                    name="mobile_number"
+                    label="Mobile Number"
+                    placeholder="Enter Mobile Number"
+                    icon="PhoneNumber"
+                    value={values.mobile_number}
                     touched={touched}
                     errors={errors}
                     onChange={handleChange}

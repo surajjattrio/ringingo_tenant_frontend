@@ -95,6 +95,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
         create_sip_device: "1",
         caller_id_name: "",
         caller_id_number: "",
+        mobile_number: "",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -289,7 +290,8 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                     zoho_user_id: userData?.zoho_user_id,
                     campaign_uuid: userData?.campaign_uuid,
                     allowed_campaign: campaignUUIDs,
-                    omni_messaging_channel_uuid: omniChannelMessagingUUID
+                    omni_messaging_channel_uuid: omniChannelMessagingUUID,
+                    mobile_number: userData?.mobile_number
                 });
                 // ✅ FIX: set selectedUserRole on edit
                 const role = userRoleData?.find(
@@ -451,6 +453,22 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                     placeholder="Enter Email"
                     icon="GrayEmail"
                     value={values.email}
+                    touched={touched}
+                    errors={errors}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInfo
+                />
+                <Input
+                    name="mobile_number"
+                    label={
+                        <>
+                            Mobile Number
+                        </>
+                    }
+                    placeholder="Enter Mobile Number"
+                    icon="CallGray"
+                    value={values.mobile_number}
                     touched={touched}
                     errors={errors}
                     onChange={handleChange}
