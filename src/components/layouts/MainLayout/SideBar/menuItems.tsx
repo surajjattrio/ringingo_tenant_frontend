@@ -1182,14 +1182,6 @@ export const managerAdmin: NavItemsTypes[] = [
 
     },
     {
-        id: "manager-reports",
-        name: "manager-reports",
-        icon: "Notes",
-        iconActive: "NotesGreen",
-        title: "Reports",
-        url: "/manager-reports",
-    },
-    {
         id: "settings",
         icon: "Setting",
         iconActive: "SettingGreen",
