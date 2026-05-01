@@ -917,6 +917,13 @@ export const managerAdmin: NavItemsTypes[] = [
         url: "/manager-account-dashboard",
     },
     {
+        id: "manager-realtime-dashboard",
+        title: "Realtime Dashboard",
+        icon: "Dashboard",
+        url: "/manager-realtime-dashboard",
+        iconActive: "HomeGreen",
+    },
+    {
         id: "manager-users",
         name: "users",
         icon: "User",
@@ -1244,6 +1251,7 @@ export const managerAdmin: NavItemsTypes[] = [
 export const managerAdminUrls = [
     "/manager-dashboard",
     "/manager-account-dashboard",
+    "/manager-realtime-dashboard",
 
     // users
     "/manager-user",
@@ -1325,6 +1333,7 @@ export const managerAdminUrls = [
 export const managerAdminTitles = [
     { url: "/manager-dashboard", title: "Dashboard" },
     { url: "/manager-account-dashboard", title: "Account Dashboard" },
+    { url: "/manager-realtime-dashboard", title: "Realtime Dashboard" },
 
     // users
     { url: "/manager-user", title: "User", name: "user" },
