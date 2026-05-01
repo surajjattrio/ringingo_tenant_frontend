@@ -103,6 +103,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
           }
         } else {
+          if (val?.url) {
+            managerAdminUrls.push(val?.url);
+            managerAdminTitleUrls.push({ url: val?.url, title: val?.title });
+          }
           newData.push(val);
         }
       });
