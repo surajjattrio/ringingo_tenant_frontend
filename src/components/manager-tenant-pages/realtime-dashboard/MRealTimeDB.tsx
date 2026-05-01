@@ -775,7 +775,7 @@ const RealTimeDB = () => {
 
   useEffect(() => {
     onGetUserOptions();
-    onGetCampaign();
+    // onGetCampaign();
     onGetSipNameOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -1174,12 +1174,20 @@ export const managerAdmin: NavItemsTypes[] = [
     },
     {
         id: "manager-reports",
-        name: "reports",
+        name: "manager-reports",
         icon: "Notes",
         iconActive: "NotesGreen",
         title: "Reports",
-        url: "/reports",
+        url: "/manager-reports",
 
+    },
+    {
+        id: "manager-reports",
+        name: "manager-reports",
+        icon: "Notes",
+        iconActive: "NotesGreen",
+        title: "Reports",
+        url: "/manager-reports",
     },
     {
         id: "settings",
@@ -1317,7 +1325,7 @@ export const managerAdminUrls = [
     // "/manager-email-smtp",
     // "/manager-telecomcircle",
     "/manager-breakcode",
-
+    "/manager-reports",
 
 
     // API Integrations
@@ -1412,6 +1420,7 @@ export const managerAdminTitles = [
         title: "Voice Broadcast",
         name: "voice-broadcast",
     },
+    { url: "/manager-reports", title: "Reports", name: "manager-reports" },
 
 
     // Reports
