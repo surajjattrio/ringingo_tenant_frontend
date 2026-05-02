@@ -8,23 +8,23 @@ import { setHeaderValue } from "@/redux/slice/commonSlice";
 
 const reports: { title: string; url: string; icon: IconKey }[] = [
   { title: "CDRs", url: "manager-reports/manager-cdrs", icon: "CDRs" },
-  { title: "Live Calls", url: "manager-reports/manager-live-call", icon: "liveCalls" },
+  // { title: "Live Calls", url: "manager-reports/manager-live-call", icon: "liveCalls" },
   { title: "Missed Call", url: "manager-reports/manager-missedcall", icon: "MissedCall" },
-  { title: "Call Queue Report", url: "manager-reports/manager-call-queue", icon: "CallQueue" },
+  // { title: "Call Queue Report", url: "manager-reports/manager-call-queue", icon: "CallQueue" },
   { title: "Dropped Calls Report", url: "manager-reports/manager-dropped-calls", icon: "DroppedCalls" },
-  { title: "Realtime Report", url: "manager-reports/manager-realtime-report", icon: "Realtimereport" },
+  // { title: "Realtime Report", url: "manager-reports/manager-realtime-report", icon: "Realtimereport" },
   { title: "Lead Report", url: "manager-reports/manager-lead-report", icon: "LeadReport" },
   { title: "Campaign Report", url: "manager-reports/manager-campaign-report", icon: "CampaignReport" },
-  { title: "VoiceBroadcast Report", url: "manager-reports/manager-voicebroadcast-report", icon: "Voicebroadcasting" },
+  // { title: "VoiceBroadcast Report", url: "manager-reports/manager-voicebroadcast-report", icon: "Voicebroadcasting" },
   { title: "User Performance", url: "manager-reports/manager-user-performance", icon: "UserPerformance" },
   { title: "Login Logout Report", url: "manager-reports/manager-loginLogout", icon: "loginlogoutreport" },
-  { title: "Voicemail", url: "manager-reports/manager-voicemail", icon: "Voicemail" },
-  { title: "Sticky Agent Report", url: "manager-reports/manager-sticky-agent-report", icon: "StickyAgentReport" },
+  // { title: "Voicemail", url: "manager-reports/manager-voicemail", icon: "Voicemail" },
+  // { title: "Sticky Agent Report", url: "manager-reports/manager-sticky-agent-report", icon: "StickyAgentReport" },
   // { title: "Recordings", url: "reports/manager-recording", icon: "Recording" },
   { title: "Dids", url: "manager-reports/manager-did-report", icon: "DIDCALLERID" },
-  { title: "Omni-Channel Report", url: "manager-reports/manager-omni-channel-report", icon: "MessagingChannel" },
+  // { title: "Omni-Channel Report", url: "manager-reports/manager-omni-channel-report", icon: "MessagingChannel" },
   // { title: "IVR Report", url: "reports/manager-ivr-report", icon: "AllowedTransferIVR" },
-  { title: "CSAT Report", url: "manager-reports/manager-csat-report", icon: "Csat" },
+  // { title: "CSAT Report", url: "manager-reports/manager-csat-report", icon: "Csat" },
 ];
 
 export default function ReportsPage() {
