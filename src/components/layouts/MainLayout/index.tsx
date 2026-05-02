@@ -123,7 +123,9 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
         {/* Main Content */}
         <main
-          className={`transition-all bg-main-background flex-1 overflow-auto pl-5 pr-5 pb-[20px] pt-[95px] tsm:pt-[130px] rounded-[30px] mt-[15px] mr-[20px] ${isDrawerOpen ? "ml-[260px]" : "ml-[80px]"
+          // className={`transition-all bg-main-background flex-1 overflow-auto pl-5 pr-5 pb-[20px] pt-[95px] tsm:pt-[130px] rounded-[30px] mt-[15px] mr-[20px] ${isDrawerOpen ? "ml-[260px]" : "ml-[80px]"
+          //   } tsm:pl-3 relative`}
+          className={`transition-all bg-main-background flex-1 overflow-auto pl-5 pr-5 pb-[20px] pt-[90px] tsm:pt-[130px] rounded-[10px] mt-[15px] mr-[20px] ${isDrawerOpen ? "ml-[260px]" : "ml-[80px]"
             } tsm:pl-3 relative`}
         >
           <div className="flex flex-col h-full overflow-hidden">

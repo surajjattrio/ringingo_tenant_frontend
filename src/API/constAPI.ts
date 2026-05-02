@@ -75,6 +75,7 @@ export const TENANT_DASHBOARD = "/dashboard/tenant";
 export const TENANT_DASHBOARD_CALL_OVERVIEW = "/dashboard/tenant/call-overview";
 export const TENANT_DASHBOARD_FILTER = "/dashboard/tenant/filter";
 export const TENANT_DASHBOARD_ACCOUNT_DETAILS = "/dashboard/tenant/account-details";
+export const TENANT_DASHBOARD_DATA = "/dashboard/tenant/dashboard-data";
 
 // TENANT DISPOSITION
 export const TENANT_DISPOSITION = "/disposition";
