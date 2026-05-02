@@ -238,7 +238,7 @@ console.log("HEADER PROP TITLE =>", title);
   return (
     <>
       <div
-        className={`fixed top-3 mt-5 mx-[20px] right-5 h-[55px] bg-white rounded-full z-20 border-dark-700 transition-all flex ${isDrawerOpen ? "left-[260px]" : "left-[80px]"
+        className={`fixed top-3 mt-5 mx-[20px] right-5 h-[55px] bg-white rounded-[10px] z-20 border-dark-700 transition-all flex ${isDrawerOpen ? "left-[260px]" : "left-[80px]"
           }`}
       >
         {!isDrawerOpen && (

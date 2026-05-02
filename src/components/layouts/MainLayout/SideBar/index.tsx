@@ -483,7 +483,7 @@ const SideBar = ({ isDrawerOpen, toggleDrawer }: SideBarProps) => {
 
   return (
     <div
-      className={`border-r rounded-r-[30px] fixed h-full bg-sidebar-background text-black z-50 transition-all duration-300 drop-shadow-lg font-lexend  bg-[#FFFFFF] border-[#E5E7EB] 
+      className={`border-r rounded-r-[10px] fixed h-full bg-sidebar-background text-black z-50 transition-all duration-300 drop-shadow-lg font-lexend  bg-[#FFFFFF] border-[#E5E7EB] 
         ${
         isOpen ? "w-[240px]" : "w-[70px] tsm:hidden"
       }`}

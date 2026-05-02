@@ -8,6 +8,7 @@ import {
   tenantCallOverviewDashboard,
   tenantDashboard,
   tenantFilterDashboard,
+  tenantDashboardData
 } from "@/redux/services/tenant-admin/tenantDashboardServices";
 
 interface InitialState {
@@ -25,6 +26,13 @@ interface InitialState {
   top10User: any;
   recent10User: any;
   callsData: any;
+  dashboardKpis: any;
+  dashboardInbound: any;
+  dashboardOutbound: any;
+  dashboardTrafficTrends: any;
+  dashboardDispositionTrends: any;
+  dashboardCallDistribution: any;
+  dashboardFilter: string;
 }
 
 const initialState: InitialState = {
@@ -42,6 +50,13 @@ const initialState: InitialState = {
   top10User: [],
   recent10User: [],
   callsData: [],
+  dashboardKpis: null,
+  dashboardInbound: null,
+  dashboardOutbound: null,
+  dashboardTrafficTrends: null,
+  dashboardDispositionTrends: [],
+  dashboardCallDistribution: [],
+  dashboardFilter: "daily",
 };
 
 export const tenantDashboardGet = createAsyncThunk(
@@ -74,7 +89,12 @@ export const tenantDashboardRecent10FilterGet = createAsyncThunk(
     return await tenantFilterDashboard(feature, rest);
   }
 );
-
+export const tenantDashboardDataGet = createAsyncThunk(
+  "tenant-dashboard/data",
+  async (payload: any) => {
+    return await tenantDashboardData(payload);
+  }
+);
 const tenantDashboardSlice = createSlice({
   name: "tenant-dashboard",
   initialState,
@@ -216,6 +236,27 @@ const tenantDashboardSlice = createSlice({
           state.isLoading = false;
         }
       );
+       builder
+      .addCase(tenantDashboardDataGet.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(
+        tenantDashboardDataGet.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          const data = action.payload?.data || action.payload; // depends on your API wrapper
+          state.dashboardKpis = data?.kpis || null;
+          state.dashboardInbound = data?.inbound || null;
+          state.dashboardOutbound = data?.outbound || null;
+          state.dashboardTrafficTrends = data?.traffic_trends || null;
+          state.dashboardDispositionTrends = data?.disposition_trends || [];
+          state.dashboardCallDistribution = data?.call_distribution || [];
+          state.dashboardFilter = data?.filter || state.dashboardFilter;
+          state.isLoading = false;
+        }
+      )
+      .addCase(tenantDashboardDataGet.rejected, (state) => {
+        state.isLoading = false;
+      });
   },
 });
 
@@ -278,3 +319,44 @@ export const useTenantDashboardSelector = () => {
   return useMemo(() => selector, [selector]);
 };
 
+// ---------------
+export const selectTenantDashboardKpis = (state: RootState) =>
+  state.tenantDashboard.dashboardKpis;
+export const useTenantDashboardKpis = () => {
+  const kpis = useAppSelector(selectTenantDashboardKpis);
+  return useMemo(() => kpis, [kpis]);
+};
+
+export const selectTenantDashboardInbound = (state: RootState) =>
+  state.tenantDashboard.dashboardInbound;
+export const useTenantDashboardInbound = () => {
+  const inbound = useAppSelector(selectTenantDashboardInbound);
+  return useMemo(() => inbound, [inbound]);
+};
+export const selectTenantDashboardOutbound = (state: RootState) =>
+  state.tenantDashboard.dashboardOutbound;
+export const useTenantDashboardOutbound = () => {
+  const outbound = useAppSelector(selectTenantDashboardOutbound);
+  return useMemo(() => outbound, [outbound]);
+};
+
+export const selectTenantDashboardTrafficTrends = (state: RootState) =>
+  state.tenantDashboard.dashboardTrafficTrends;
+export const useTenantDashboardTrafficTrends = () => {
+  const trafficTrends = useAppSelector(selectTenantDashboardTrafficTrends);
+  return useMemo(() => trafficTrends, [trafficTrends]);
+};
+
+export const selectTenantDashboardDispositionTrends = (state: RootState) =>
+  state.tenantDashboard.dashboardDispositionTrends;
+export const useTenantDashboardDispositionTrends = () => {
+  const dispositionTrends = useAppSelector(selectTenantDashboardDispositionTrends);
+  return useMemo(() => dispositionTrends, [dispositionTrends]);
+};
+
+export const selectTenantDashboardCallDistribution = (state: RootState) =>
+  state.tenantDashboard.dashboardCallDistribution;
+export const useTenantDashboardCallDistribution = () => {
+  const callDistribution = useAppSelector(selectTenantDashboardCallDistribution);
+  return useMemo(() => callDistribution, [callDistribution]);
+};
