@@ -48,3 +48,7 @@ export const deleteTenant = (id: string) => {
 export const assignDid = (id: string, payload: any) => {
   return apiInstance.patch(ASSIGN_DID + `/${id}`, payload);
 };
+
+export const syncWabaTenant = (id: string) => {
+  return apiInstance.post(TENANT + `/${id}/sync-waba`);
+};

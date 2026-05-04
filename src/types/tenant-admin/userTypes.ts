@@ -20,4 +20,6 @@ export interface InitialValueType {
     caller_id_name: any
     caller_id_number: any
     mobile_number: string;
+    vendor_uid?: string;
+    team_user_uid?: string;
 }

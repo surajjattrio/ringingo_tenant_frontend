@@ -15,7 +15,8 @@ import {
   updateTenant,
   updateTenantStatus,
   createTenantPersonalize,
-  getTenantPersonalize
+  getTenantPersonalize,
+  syncWabaTenant,
 } from "../../services/master-admin/tenantSevice";
 
 interface InitialState {
@@ -119,6 +120,13 @@ export const getTenantPersonalization = createAsyncThunk(
   "tenant/tenantpersonalization",
   async (domain: string) => {
     return await getTenantPersonalize(domain);
+  }
+);
+
+export const tenantSyncWaba = createAsyncThunk(
+  "tenant/sync-waba",
+  async (id: string) => {
+    return await syncWabaTenant(id);
   }
 );
 

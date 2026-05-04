@@ -8,6 +8,7 @@ import {
     tenantCreate,
     tenantHeaderGetAll,
     tenantSingleGet,
+    tenantSyncWaba,
     tenantUpdate,
 } from "@/redux/slice/master-admin/tenantSlice";
 import {
@@ -23,7 +24,9 @@ import {
     useSipProfileOptions,
 } from "@/redux/slice/master-admin/sipProfileSlice";
 import {
+    rolesGet,
     rolesOptionsGet,
+    useRoleData,
     useRolesOptions,
 } from "@/redux/slice/master-admin/roleSlice";
 import { outgoingOptionsGet, useOutgoingOptions } from "@/redux/slice/master-admin/outgoingSlice";
@@ -50,6 +53,7 @@ const CreateEditTenantForm = () => {
     const timezoneOptions = useTimezoneCountryWiseOptions();
     const sipProfileOptions = useSipProfileOptions();
     const outgoingOptions = useOutgoingOptions();
+    const roleData = useRoleData();
 
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -70,7 +74,9 @@ const CreateEditTenantForm = () => {
         add_anonymous_lead: "1",
         system_disposition: "0",
         company_code: "",
-        mobile_number: ""
+        mobile_number: "",
+        vendor_uid: "",
+        vendor_token: "",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -126,6 +132,7 @@ const CreateEditTenantForm = () => {
         onGetCountryOptions();
         onGetSipProfileOptions();
         onGetOutgoingOptions();
+        dispatch(rolesGet({ fill: "all" }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -210,6 +217,8 @@ const CreateEditTenantForm = () => {
                     system_disposition: tenantData?.system_disposition || "0",
                     company_code: tenantData?.company_code || "",
                     mobile_number: tenantData?.mobile_number || "",
+                    vendor_uid: tenantData?.vendor_uid || "",
+                    vendor_token: tenantData?.vendor_token || "",
                 });
             }
         } catch (err) {
@@ -482,6 +491,41 @@ const CreateEditTenantForm = () => {
                     value={values.system_disposition}
                     onClick={(value: string) => setFieldValue("system_disposition", value)}
                 />
+                {(() => {
+                    const selectedRole = roleData?.data?.find((r: any) => r.uuid === values.role_uuid);
+                    const hasWhatsapp = Number(selectedRole?.module_permission?.messaging?.whatsapp) > 0 
+                    
+                    if (id && (!values.vendor_uid || !values.vendor_token) && hasWhatsapp) {
+                        return (
+                            <div className="flex items-end">
+                                <button
+                                    type="button"
+                                    disabled={loading}
+                                    onClick={async () => {
+                                        setLoading(true);
+                                        try {
+                                            const res: any = await dispatch(tenantSyncWaba(id as string)).unwrap();
+                                            if (res?.statusCode === 200) {
+                                                Success(res.message || "Sync initiated successfully");
+                                                onGetSingleTenantData(); // Refresh data to get vendor IDs
+                                            } else {
+                                                Danger(res?.message || res?.data || "Sync failed");
+                                            }
+                                        } catch (err: any) {
+                                            Danger(err.message || "An error occurred");
+                                        } finally {
+                                            setLoading(false);
+                                        }
+                                    }}
+                                    className={`bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors h-[42px] mb-[2px] ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                                >
+                                    {loading ? "Syncing..." : "Sync WABA"}
+                                </button>
+                            </div>
+                        );
+                    }
+                    return null;
+                })()}
             </div>
         </CardForm>
     );
