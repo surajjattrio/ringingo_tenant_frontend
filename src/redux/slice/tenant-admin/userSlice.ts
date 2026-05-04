@@ -15,6 +15,7 @@ import {
     updateUser,
     updateUserStatus,
     user,
+    syncWabaUser,
 } from "@/redux/services/tenant-admin/userServices";
 
 // TYPES IMPORT
@@ -94,6 +95,13 @@ export const userDelete = createAsyncThunk(
     "user/delete",
     async (id: string) => {
         return await deleteUser(id);
+    }
+);
+
+export const userSyncWaba = createAsyncThunk(
+    "user/sync-waba",
+    async (id: string) => {
+        return await syncWabaUser(id);
     }
 );
 
