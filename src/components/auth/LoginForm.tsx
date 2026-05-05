@@ -277,24 +277,7 @@ const LoginForm = () => {
                 </h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                        <Input
-                            name="username"
-                            label={
-                                <>
-                                    User Name <span className="text-red-500">*</span>
-                                </>
-                            }
-                            value={values.username}
-                            placeholder="Enter Your Email/Username"
-                            icon="UserOutline"
-                            touched={touched}
-                            errors={errors}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            noSpace
-                        />
-                    </div>
+                   
 
                     { process.env.NEXT_PUBLIC_SHOW_COMPANY_CODE == "true" && (
                         <div>
@@ -316,6 +299,24 @@ const LoginForm = () => {
                             />
                         </div>
                     )}
+                     <div>
+                        <Input
+                            name="username"
+                            label={
+                                <>
+                                    User Name <span className="text-red-500">*</span>
+                                </>
+                            }
+                            value={values.username}
+                            placeholder="Enter Your Email/Username"
+                            icon="UserOutline"
+                            touched={touched}
+                            errors={errors}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            noSpace
+                        />
+                    </div>
 
                     <div>
                         <Password

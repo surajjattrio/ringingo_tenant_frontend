@@ -347,12 +347,16 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                         label="Idle Timeout"
                         name="idle_timeout"
                         options={[
-                            { label: "1 Minutes", value: "1" },
-                            { label: "2 Minutes", value: "2" },
-                            { label: "15 Minutes", value: "15" },
+                            // { label: "1 Minutes", value: "1" },
+                            // { label: "2 Minutes", value: "2" },
+                            // { label: "15 Minutes", value: "15" },
                             { label: "30 Minutes", value: "30" },
-                            { label: "45 Minutes", value: "45" },
-                            { label: "60 Minutes", value: "60" },
+                            { label: "1 Hour", value: "60" },
+                            { label: "2 Hours", value: "120" },
+                            { label: "3 Hours", value: "180" },
+                            { label: "6 Hours", value: "360" },
+                            { label: "9 Hours", value: "540" },
+
                         ]}
                         value={values.idle_timeout}
                         onChange={handleChange}
