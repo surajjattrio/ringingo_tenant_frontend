@@ -43,3 +43,7 @@ export const resetUser = (id: string, payload: any) => {
 export const deleteUser = (id: string) => {
     return apiInstance.delete(USER + `/${id}`);
 };
+
+export const syncWabaUser = (id: string) => {
+    return apiInstance.post(USER + `/${id}/sync-waba`);
+};
