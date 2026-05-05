@@ -17,5 +17,7 @@ export interface InitialValueType {
     facebook:string,
     sms:string;
     unallocated_leads:string;
-    force_login:string
+    force_login:string;
+    auto_logout:string;
+    idle_timeout:string;
 }

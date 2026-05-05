@@ -17,7 +17,7 @@ import {
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
 import { useAuth } from "@/contexts/hooks/useAuth";
-import { Input, Switch } from "@/components/forms";
+import { Input, Switch, Select } from "@/components/forms";
 import { CardForm } from "@/components/ui-components";
 
 // TYPES IMPORT
@@ -60,7 +60,9 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
         facebook: "1",
         sms: "1",
         unallocated_leads: "1",
-        force_login: "1"
+        force_login: "1",
+        auto_logout: "1",
+        idle_timeout: "30"
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -117,7 +119,9 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
             instagram: userRoleData?.instagram || "1",
             facebook: userRoleData?.facebook || "1",
             sms: userRoleData?.sms || "1",
-            force_login:userRoleData?.force_login||"1"
+            force_login:userRoleData?.force_login||"1",
+            auto_logout: userRoleData?.auto_logout || "1",
+            idle_timeout: userRoleData?.idle_timeout || "30",
 
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -329,7 +333,33 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                     value={values.force_login}
                     onClick={(value: string) => setFieldValue("force_login", value)}
                 />
-
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Automatic Logout"
+                    value={values.auto_logout}
+                    onClick={(value: string) => setFieldValue("auto_logout", value)}
+                />
+                {values.auto_logout === "0" && (
+                    <Select
+                        label="Idle Timeout"
+                        name="idle_timeout"
+                        options={[
+                            { label: "1 Minutes", value: "1" },
+                            { label: "2 Minutes", value: "2" },
+                            { label: "15 Minutes", value: "15" },
+                            { label: "30 Minutes", value: "30" },
+                            { label: "45 Minutes", value: "45" },
+                            { label: "60 Minutes", value: "60" },
+                        ]}
+                        value={values.idle_timeout}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
+                )}
+ 
                 {                
                  userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.whatsapp ?
                         <Switch
