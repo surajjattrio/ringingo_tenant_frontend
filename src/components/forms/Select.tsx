@@ -38,6 +38,7 @@ interface SelectProps {
   createName?: string;
   isAdd?: boolean;
   isDisabled?: boolean;
+  onFocus?: any;
 }
 
 const Select = (props: SelectProps) => {
@@ -69,6 +70,7 @@ const Select = (props: SelectProps) => {
     createName = "",
     isAdd = false,
     isDisabled = false,
+    onFocus,
   } = props;
 
   const router = useRouter();
@@ -254,9 +256,9 @@ const [menuOpen, setMenuOpen] = useState(false);
   };
 const [placement, setPlacement] = useState<"top" | "bottom">("bottom");
 const wrapperRef = useRef<HTMLDivElement | null>(null);
-const handleFocus = () => {
+const handleFocus = (e: any) => {
   setIsFocused(true);
-
+  onFocus?.(e);
   if (wrapperRef.current) {
     const rect = wrapperRef.current.getBoundingClientRect();
     const distanceFromBottom = window.innerHeight - rect.bottom;
@@ -328,7 +330,7 @@ const handleFocus = () => {
           // onFocus={() => setIsFocused(true)}
               onFocus={handleFocus}
 
-          onBlur={(e) => {
+          onBlur={(e: any) => {
             setIsFocused(false);
             onBlur?.(e);
           }}
