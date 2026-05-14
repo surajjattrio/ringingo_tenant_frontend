@@ -88,6 +88,7 @@ import accountDashboardSlice from "./slice/tenant-admin/accountDashboardSlice";
 import omniChannelReportSlice from "./slice/tenant-admin/omniChannelReportSlice"
 import tenantCsatReportSlice from "./slice/tenant-admin/tenantCsatSlice";
 import scheduleReportSlice from "./slice/tenant-admin/scheduleReportSlice";
+import realtimeDashboardSlice from "./slice/tenant-admin/realtimeDashboardSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -169,7 +170,8 @@ const rootReducer = combineReducers({
   accountDashboard: accountDashboardSlice,
   omniChannelReport: omniChannelReportSlice,
   tenantCsatReport: tenantCsatReportSlice,
-  scheduleReport: scheduleReportSlice
+  scheduleReport: scheduleReportSlice,
+  realtimeDashboard: realtimeDashboardSlice,
 
 
 });

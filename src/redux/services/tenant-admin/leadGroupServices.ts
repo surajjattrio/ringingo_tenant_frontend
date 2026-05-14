@@ -20,8 +20,8 @@ export const leadGroupCampaign =  () => {
     return apiInstance.get(LEAD_GROUP_CAMPAIGN_LIST, { headers: authHeader() });
 };
 
-export const allLeadGroup = () => {
-    return apiInstance.get(LEAD_GROUP, { headers: authHeader() });
+export const allLeadGroup = (params?: any) => {
+    return apiInstance.get(LEAD_GROUP, { params, headers: authHeader() });
 };
 
 export const singleLeadGroup = (id: string) => {

@@ -411,3 +411,6 @@ export const REQUEST_SCHEDULER_DELETE = "/request-scheduler/delete";
 
 // ACTIVITY LOG
 export const ACTIVITY_LOG = "/activity-log";
+
+// REALTIME DASHBOARD - LEAD GROUP
+export const REALTIME_DASHBOARD_LEAD_GROUP_STATS = "/realtime-dashboard/lead-group-stats";

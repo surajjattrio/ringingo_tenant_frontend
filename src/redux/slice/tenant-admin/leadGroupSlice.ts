@@ -107,8 +107,8 @@ export const leadGroupDelete = createAsyncThunk(
 
 export const leadGroupOptionsGet = createAsyncThunk(
   "leadGroup-options/getAll",
-  async () => {
-    return await allLeadGroup();
+  async (params?: any) => {
+    return await allLeadGroup(params);
   }
 );
 
