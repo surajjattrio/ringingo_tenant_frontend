@@ -355,6 +355,28 @@ const UserPerformance = (props: ManagerPageTypes) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Update labels for user_uuid when userOptions are available
+  useEffect(() => {
+    if (userOptions && userOptions.length > 0 && data.user_uuid.val.length > 0) {
+      const isAnyLoading = data.user_uuid.val.some((u: any) => u.label === "Loading...");
+      if (isAnyLoading) {
+        const updatedUserUuids = data.user_uuid.val.map((u: any) => {
+          if (u.label === "Loading...") {
+            const found = userOptions.find((opt: any) => opt.value === u.value);
+            return found ?? u;
+          }
+          return u;
+        });
+
+        setData((prev: any) => ({
+          ...prev,
+          user_uuid: { ...prev.user_uuid, val: updatedUserUuids }
+        }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userOptions]);
+
   useLayoutEffect(() => {
     /*if (filter?.isAdvance) {
                 onSearchData();

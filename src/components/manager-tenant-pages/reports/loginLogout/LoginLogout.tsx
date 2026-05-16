@@ -58,14 +58,15 @@ const initialValues: LoginLogoutFilterTypes = {
 // DATA
 const headers: any = [
   { label: "User", key: "agent_name" },
+  { label: "Full Name", key: "fullname" },
   { label: "Date", key: "date" },
-  { label: "Total Login Hours", key: "total_login_hours" },
+  { label: "Total Login Time", key: "total_login_hours" },
+  { label: "Net Login Time", key: "net_login" },
   { label: "First Login Time", key: "first_login_time" },
   { label: "Last Logout Time", key: "last_login_time" },
-  { label: "Total Count Of Logins", key: "login_count" },
-  { label: "Total Break Hours", key: "total_break_hours" },
-  { label: "Total Count Of Breaks", key: "break_count" },
-  { label: "Net Login Hours", key: "net_login" },
+  { label: "Total Count of Logins", key: "login_count" },
+  { label: "Total Break Time", key: "total_break_hours" },
+  { label: "Total Count of Breaks", key: "break_count" },
   // Information data columns
   { label: "Time Stamp", key: "info_time_stamp" },
   { label: "Event", key: "info_event" },
@@ -304,7 +305,13 @@ const LoginLogout = (props: ManagerPageTypes) => {
         [data["agent_uuid"]["key"]]: data["agent_uuid"]["val"],
         tenant_uuid: Cookies.get("tenant_uuid"),
         timezone: Cookies.get("timezone") || "UTC",
+        page: 1,
+        limit: loginLogout?.count || 0,
       };
+
+      if (!filter.isAdvance) {
+        payload["search"] = filter.search;
+      }
       
       Object.entries(payload)?.forEach(([key, val]: any) => {
         if (!val) {
@@ -315,7 +322,15 @@ const LoginLogout = (props: ManagerPageTypes) => {
       const result = await dispatch(exportLoginLogoutWithInfoData(payload)).unwrap();
       
       if (result && result?.data) {
-        setExportData({ headers, data: result.data || [], filename: "Login Logout with Information.csv" });
+        const formattedData = result?.data?.map((val: any) => {
+          return {
+            ...val,
+            agent_name: val?.agent?.username || val?.agent_name || "",
+            fullname: val?.agent?.fullname || val?.fullname || "",
+            date: val?.date ? format(new Date(val?.date), "yyyy-MM-dd") : "",
+          };
+        });
+        setExportData({ headers, data: formattedData || [], filename: "Login Logout with Information.csv" });
         setIsCsvDownload(true);
       }
       setCsvLoading(false);
