@@ -161,9 +161,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       return val;
     });
 
-    const tenantAdminUrls: any = ["/tenant-profile"];
+    const tenantAdminUrls: any = ["/tenant-profile","/tenant-inbound-call-debug"];
     const tenantAdminTitleUrls: any = [
       { url: "/tenant-profile", title: "Profile" },
+      { url: "/tenant-inbound-call-debug", title: "inbound call debug" },
     ];
 
     // Remove Some Modules which Are Disabled and Making SideBar Data
