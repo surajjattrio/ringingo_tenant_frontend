@@ -89,6 +89,7 @@ import omniChannelReportSlice from "./slice/tenant-admin/omniChannelReportSlice"
 import tenantCsatReportSlice from "./slice/tenant-admin/tenantCsatSlice";
 import scheduleReportSlice from "./slice/tenant-admin/scheduleReportSlice";
 import realtimeDashboardSlice from "./slice/tenant-admin/realtimeDashboardSlice";
+import inboundCallDebugSlice from "./slice/tenant-admin/inboundCallDebugSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -172,6 +173,7 @@ const rootReducer = combineReducers({
   tenantCsatReport: tenantCsatReportSlice,
   scheduleReport: scheduleReportSlice,
   realtimeDashboard: realtimeDashboardSlice,
+  inboundCallDebug: inboundCallDebugSlice,
 
 
 });
@@ -179,6 +181,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["inboundCallDebug"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

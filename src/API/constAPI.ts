@@ -188,6 +188,8 @@ export const IP_MAPPING_SEARCH = "/ip-mapping/advanced-search";
 
 // INBOUND - CAMPAIGN
 export const INBOUND_CAMPAIGN = "/inbound-campaign";
+export const INBOUND_CALL_DEBUG_SNAPSHOT = "/inbound-call-debug/snapshot";
+export const INBOUND_CALL_DEBUG_FORM_OPTIONS = "/inbound-call-debug/form-options";
 export const INBOUND_CAMPAIGN_SEARCH = "/inbound-campaign/advanced-search";
 export const INBOUND_CAMPAIGN_PRESET = "";
 export const INBOUND_CAMPAIGN_PRESET_ADD = "/preset/create";
