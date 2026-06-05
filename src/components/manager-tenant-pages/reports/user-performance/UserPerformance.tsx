@@ -190,6 +190,11 @@ const UserPerformance = (props: ManagerPageTypes) => {
       sortable: true,
     },
     {
+      name: "actual_talktime",
+      title: "Actual Talktime(HH:MM:SS)",
+      sortable: true,
+    },
+    {
       name: "break_time",
       title: "Break Time(HH:MM:SS)",
       sortable: true,
