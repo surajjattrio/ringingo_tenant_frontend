@@ -67,7 +67,8 @@ const baseHeaders: any = [
   { label: "Login Hours", key: "login_hours" },
   { label: "Net Login Hours", key: "net_login_hours" },
   { label: "Idle Hours", key: "total_idle_time" },
-  { label: "Talktime", key: "talk_time" },
+  { label: "Answer Time", key: "talk_time" },
+  { label: "Actual Talktime", key: "actual_talktime" },
   { label: "BreakTime", key: "break_time" },
   { label: "ACW", key: "total_acw_time" },
   { label: "Pause Duration", key: "total_pause_time" },
@@ -179,7 +180,12 @@ const [optionSelected, setSelected] = useState<Option[] | null>();
     },
     {
       name: "talk_time",
-      title: "Talk time(HH:MM:SS)",
+      title: "Answer Time(HH:MM:SS)",
+      sortable: true,
+    },
+    {
+      name: "actual_talktime",
+      title: "Actual Talktime(HH:MM:SS)",
       sortable: true,
     },
     {
