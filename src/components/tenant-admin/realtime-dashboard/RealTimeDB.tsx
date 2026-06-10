@@ -337,14 +337,14 @@ const RealTimeDB = () => {
                     alt="User"
                     onClick={() => onCallPause(row, "Monitor")}
                   /> */}
-                  {/* <Icon
-                    tooltip="Watch"
+                  <Icon
+                    tooltip="Barge"
                     name="Eye"
                     width={20}
                     height={20}
                     alt="Eye"
                     onClick={() => onCallPause(row, "Barge")}
-                  /> */}
+                  />
                   {/* <Icon
                     tooltip="Whisper"
                     name="Ear"
