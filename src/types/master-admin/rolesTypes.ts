@@ -143,6 +143,11 @@ export interface InitialValueType {
 
     mail_schedule: string;
     is_mail_schedule: boolean;
+    
+    email_configs: string;
+    is_email_configs: boolean;
+    email_templates: string;
+    is_email_templates: boolean;
 }
 
 export interface BasicRoleTypes {

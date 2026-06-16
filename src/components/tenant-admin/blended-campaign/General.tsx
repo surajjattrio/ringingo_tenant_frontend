@@ -40,6 +40,7 @@ import {
   useMessageConfigs,
 } from "@/redux/slice/tenant-admin/messageConfigurationSlice";
 
+
 import { useParams, usePathname } from "next/navigation";
 import { blendedSingleGet } from "@/redux/slice/tenant-admin/blendedSlice";
 import { useAppDispatch } from "@/redux/hooks";
@@ -110,6 +111,12 @@ const General = () => {
    const emailConfigs = useEmailConfigs();
   const apiConfigs = useApiConfigs();
   const messageConfigs = useMessageConfigs();
+
+  const emailTypeOptions = [
+    { label: "Select Type", value: "none" },
+    { label: "Email Config", value: "email" },
+    { label: "API Config", value: "api" },
+  ];
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOptionalInfo, setIsOptionalInfo] = useState<boolean>(true);

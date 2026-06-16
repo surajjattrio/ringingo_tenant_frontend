@@ -27,7 +27,6 @@ import {
   callerIdGroupOptionsGet,
   useCallerIdGroupOptions,
 } from "@/redux/slice/tenant-admin/callerIdGroupSlice";
-
 import { useParams, usePathname } from "next/navigation";
 import { outboundSingleGet } from "@/redux/slice/tenant-admin/outboundSlice";
 import { useAppDispatch } from "@/redux/hooks";
@@ -117,6 +116,12 @@ const General = () => {
   const apiConfigs = useApiConfigs();
   const messageConfigs = useMessageConfigs();
 
+
+   const emailTypeOptions = [
+    { label: "Select Type", value: "none" },
+    { label: "Email Config", value: "email" },
+    { label: "API Config", value: "api" },
+  ];
   // inside your component
   const modalRef: any = useRef(null);
 

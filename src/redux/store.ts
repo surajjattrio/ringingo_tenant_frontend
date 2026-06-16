@@ -94,6 +94,7 @@ import mailScheduleSlice from "./slice/tenant-admin/mailScheduleSlice";
 import emailSlice from "./slice/tenant-admin/emailSlice";
 import apiConfigurationSlice from "./slice/tenant-admin/apiConfigurationSlice";
 import messageConfigurationSlice from "./slice/tenant-admin/messageConfigurationSlice";
+
 // REDUCERS
 const rootReducer = combineReducers({
   common: commonSlice,
@@ -180,7 +181,7 @@ const rootReducer = combineReducers({
   email: emailSlice,
   apiConfiguration: apiConfigurationSlice,
   messageConfiguration: messageConfigurationSlice,
-  mailSchedule: mailScheduleSlice
+  mailSchedule: mailScheduleSlice,
 
 
 });

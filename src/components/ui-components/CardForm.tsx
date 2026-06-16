@@ -34,6 +34,7 @@ interface CardFormProps {
   isDoneClick?: boolean;
   isCancelIcon?: boolean;
   managerName?: string;
+  extraButtons?: React.ReactNode;
 }
 
 /* ============================== CARD FORM ============================== */
@@ -59,6 +60,7 @@ const CardForm = (props: CardFormProps) => {
     isCancelClick = true,
     isCancelIcon = true,
     managerName = "",
+    extraButtons,
   } = props;
 
   const router = useRouter();
@@ -172,7 +174,8 @@ const CardForm = (props: CardFormProps) => {
 
       {/* Sticky Save/Cancel Button Bar */}
       <div className="sticky bottom-0 bg-white border-t border-gray-200 px-10 tsm:px-4 py-5 z-30">
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end items-center gap-4">
+          {extraButtons}
           {isCancelClick && (
             <div className="flex items-center relative">
               <Button

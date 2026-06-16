@@ -94,6 +94,12 @@ const General = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOptionalInfo, setIsOptionalInfo] = useState<boolean>(true);
 
+  const emailTypeOptions = [
+    { label: "Select Type", value: "none" },
+    { label: "Email Config", value: "email" },
+    { label: "API Config", value: "api" },
+  ];
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target))
