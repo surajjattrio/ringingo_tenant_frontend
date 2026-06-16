@@ -140,6 +140,9 @@ export interface InitialValueType {
 
     activity_log: string;
     is_activity_log: boolean;
+
+    mail_schedule: string;
+    is_mail_schedule: boolean;
 }
 
 export interface BasicRoleTypes {

@@ -201,6 +201,9 @@ const CreateEditRolesForm = () => {
         cdrs_report: "0",
         is_cdrs_report: false,
 
+        mail_schedule: "0",
+        is_mail_schedule: false,
+
     };
 
     const validationSchema = Yup.object<any>({
@@ -367,7 +370,7 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addSchedulingReportArray = ["cdrs_report"];
+        const addSchedulingReportArray = ["cdrs_report", "mail_schedule"];
         if (openSchedulingReport) {
             payload["advanced_roles"]["report_scheduling"] = {};
             addSchedulingReportArray.forEach((val: any) => {
@@ -543,6 +546,9 @@ const CreateEditRolesForm = () => {
 
             cdrs_report: getSingleRole?.module_permission?.report_scheduling?.cdrs_report || "0",
             is_cdrs_report: !!getSingleRole?.module_permission?.report_scheduling?.cdrs_report,
+
+            mail_schedule: getSingleRole?.module_permission?.report_scheduling?.mail_schedule || "0",
+            is_mail_schedule: !!getSingleRole?.module_permission?.report_scheduling?.mail_schedule,
 
         });
         setOpenUser(!!getSingleRole?.module_permission?.users)

@@ -586,6 +586,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 icon: "Report",
                 url: "/tenant-report-scheduling",
             },
+            {
+                id: "tenant-mail-schedule",
+                name: "mail_schedule",
+                title: "Mail Schedule",
+                icon: "Report",
+                url: "/tenant-mail-schedule",
+            },
         ],
     },
     {

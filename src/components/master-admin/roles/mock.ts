@@ -352,4 +352,9 @@ export const schedulingReportData: AdvanceRoleTypes[] = [
         title: "CDR",
         switchName: "is_cdrs_report",
     },
+    {
+        name: "mail_schedule",
+        title: "Mail Schedule",
+        switchName: "is_mail_schedule",
+    },
 ];

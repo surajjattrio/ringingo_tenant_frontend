@@ -90,6 +90,7 @@ import tenantCsatReportSlice from "./slice/tenant-admin/tenantCsatSlice";
 import scheduleReportSlice from "./slice/tenant-admin/scheduleReportSlice";
 import realtimeDashboardSlice from "./slice/tenant-admin/realtimeDashboardSlice";
 import inboundCallDebugSlice from "./slice/tenant-admin/inboundCallDebugSlice";
+import mailScheduleSlice from "./slice/tenant-admin/mailScheduleSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -174,6 +175,7 @@ const rootReducer = combineReducers({
   scheduleReport: scheduleReportSlice,
   realtimeDashboard: realtimeDashboardSlice,
   inboundCallDebug: inboundCallDebugSlice,
+  mailSchedule: mailScheduleSlice
 
 
 });
