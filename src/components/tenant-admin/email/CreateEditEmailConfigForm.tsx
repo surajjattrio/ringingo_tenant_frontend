@@ -98,7 +98,7 @@ const CreateEditEmailConfigForm = () => {
         // Only validate the fields needed for SMTP test
         const fieldsToValidate = ['host', 'port', 'username', 'password'];
         let hasError = false;
-
+        
         for (const field of fieldsToValidate) {
             await formik.setFieldTouched(field, true);
             const error = await formik.validateField(field);
@@ -138,7 +138,7 @@ const CreateEditEmailConfigForm = () => {
                     label: t.name
                 }));
             } else if (getSingleConfig.template_ids && getSingleConfig.template_ids.length > 0) {
-                selectedTemplates = templateOptions.filter((opt: any) =>
+                selectedTemplates = templateOptions.filter((opt: any) => 
                     getSingleConfig.template_ids.includes(opt.value)
                 );
             }
