@@ -273,7 +273,7 @@ const General = () => {
   // Fetching lead-group-Options Options
   const onGetLeadGroupOptions = async () => {
     try {
-      await dispatch(leadGroupOptionsGet());
+      await dispatch(leadGroupOptionsGet(undefined));
     } catch (err) {
       console.error("Get DID Options Err =-=>", err);
     }

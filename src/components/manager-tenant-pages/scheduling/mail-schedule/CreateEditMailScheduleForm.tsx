@@ -37,10 +37,12 @@ const CreateEditMailScheduleForm = (props: ManagerNameTypes) => {
         dispatch(emailConfigsGet({ limit: 1000 }));
     }, [dispatch]);
 
-    const smtpOptions = emailConfigs?.data?.map((val: any) => ({
-        label: val?.name,
-        value: val?.uuid,
-    })) || [];
+    const smtpOptions = Array.isArray(emailConfigs?.data)
+        ? emailConfigs.data.map((val: any) => ({
+            label: val?.name,
+            value: val?.uuid,
+        }))
+        : [];
 
     const initialValues = {
         name: "",
