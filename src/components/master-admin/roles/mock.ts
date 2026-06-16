@@ -342,7 +342,19 @@ export const pluginsData: AdvanceRoleTypes[] = [
         switchName: "is_google_sheet",
     },
 ];
-
+/* ============================== EMAIL DATA ============================== */
+export const emailData: AdvanceRoleTypes[] = [
+    {
+        name: "email_configs",
+        title: "Notification Configs",
+        switchName: "is_email_configs",
+    },
+    {
+        name: "email_templates",
+        title: "Email Templates",
+        switchName: "is_email_templates",
+    },
+];
 
 /* ============================== SCHEDULING REPORT DATA ============================== */
 

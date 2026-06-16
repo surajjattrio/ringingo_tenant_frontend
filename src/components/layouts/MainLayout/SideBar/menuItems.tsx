@@ -548,6 +548,30 @@ export const tenantAdmin: NavItemsTypes[] = [
         ],
     },
     {
+        id: "tenant-email",
+        icon: "Emailsetting",
+        iconActive: "SettingGreen",
+        title: "Notification",
+        url: "",
+        name: "email",
+        subItems: [
+            {
+                id: "tenant-email-configs",
+                name: "email_configs",
+                title: "Notification Configs",
+                icon: "EmailGray",
+                url: "/tenant-email-configs",
+            },
+            {
+                id: "tenant-email-templates",
+                name: "email_templates",
+                title: "Email Templates",
+                icon: "DocumentText",
+                url: "/tenant-email-templates",
+            },
+        ],
+    },
+    {
         id: "tenant-activity-log",
         name: "activity_log",
         title: "Activity Log",
@@ -865,6 +889,9 @@ export const tenantAdminTitles = [
     // Messaging
     // { url: "/tenant-messaging-channel", title: "Messaging Channel", name: "messaging_channel" },
     // { url: "/tenant-messaging-queue", title: "Messaging Queue", name: "messaging_queue" },
+
+    { url: "/tenant-email-configs", title: "Notification Configs", name: "email_configs" },
+    { url: "/tenant-email-templates", title: "Email Templates", name: "email_templates" },
 
     // Reports
     { url: "/tenant-cdrs", title: "CDRs" },

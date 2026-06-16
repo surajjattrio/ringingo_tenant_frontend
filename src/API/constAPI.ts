@@ -4,7 +4,13 @@ export const LOGIN = "/login";
 // PROFILE
 export const SMTP_CONFIGURATION = "/mail-configuration";
 export const WEBHOOK = "/profile/web-hook";
-
+export const SMTP_TEST_CONFIGURATION = "/mail-configuration/test-smtp";
+export const EMAIL_TEMPLATE = "/email-template";
+export const EMAIL_TEMPLATE_SEARCH = "/email-template/advanced-search";
+export const EMAIL_CHANNEL = "/email-channel";
+export const EMAIL_CHANNEL_SEARCH = "/email-channel/advanced-search";
+export const API_CONFIGURATION = "/api-configuration";
+export const MESSAGE_CONFIGURATION = "/message-configuration";
 // ===================== MASTER ADMIN =====================
 
 // DASHBOARD

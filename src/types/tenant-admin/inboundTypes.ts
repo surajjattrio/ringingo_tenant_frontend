@@ -20,4 +20,9 @@ export interface InitialValueType {
     auto_answer: string;
     agent_script: string;
     agent_script_text: string;
+    
+    email_config_uuid: string;
+    api_config_uuid: string;
+    email_type: string;
+    message_config_uuid?: string;
 }

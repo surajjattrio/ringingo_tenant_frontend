@@ -91,7 +91,9 @@ import scheduleReportSlice from "./slice/tenant-admin/scheduleReportSlice";
 import realtimeDashboardSlice from "./slice/tenant-admin/realtimeDashboardSlice";
 import inboundCallDebugSlice from "./slice/tenant-admin/inboundCallDebugSlice";
 import mailScheduleSlice from "./slice/tenant-admin/mailScheduleSlice";
-
+import emailSlice from "./slice/tenant-admin/emailSlice";
+import apiConfigurationSlice from "./slice/tenant-admin/apiConfigurationSlice";
+import messageConfigurationSlice from "./slice/tenant-admin/messageConfigurationSlice";
 // REDUCERS
 const rootReducer = combineReducers({
   common: commonSlice,
@@ -175,6 +177,9 @@ const rootReducer = combineReducers({
   scheduleReport: scheduleReportSlice,
   realtimeDashboard: realtimeDashboardSlice,
   inboundCallDebug: inboundCallDebugSlice,
+  email: emailSlice,
+  apiConfiguration: apiConfigurationSlice,
+  messageConfiguration: messageConfigurationSlice,
   mailSchedule: mailScheduleSlice
 
 

@@ -78,6 +78,10 @@ const initialValues: InitialValueType = {
     auto_answer: "0",
     agent_script: "1",
     agent_script_text: "",
+    email_config_uuid: "",
+    api_config_uuid: "",
+    email_type: "none",
+    message_config_uuid: "",
 };
 
 const OutboundContext = createContext<OutboundContextTypes | null>(null);
