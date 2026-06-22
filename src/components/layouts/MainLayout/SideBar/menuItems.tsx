@@ -438,6 +438,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 icon: "custom1",
                 url: "/tenant-custom-fields",
             },
+            {
+                id: "tenant-lead-churning",
+                name: "lead_churning",
+                title: "Lead Churning",
+                icon: "RefreshCircle",
+                url: "/tenant-lead-churning",
+            },
         ],
     },
     {
@@ -756,6 +763,7 @@ export const tenantAdminUrls = [
     "/tenant-lead-group",
     "/tenant-follow-up",
     "/tenant-custom-fields",
+    "/tenant-lead-churning",
 
     // Call Center
     "/tenant-inbound-campaign",
@@ -872,6 +880,7 @@ export const tenantAdminTitles = [
     { url: "/tenant-lead-group", title: "Lead Group", name: "lead_group" },
     { url: "/tenant-follow-up", title: "Follow Up", name: "follow_up" },
     { url: "/tenant-custom-fields", title: "Custom Fields", name: "custom_fields" },
+    { url: "/tenant-lead-churning", title: "Lead Churning", name: "lead_churning" },
 
     // Contact Center
     { url: "/tenant-inbound-campaign", title: "Inbound Campaign", name: "ic" },
@@ -1121,6 +1130,13 @@ export const managerAdmin: NavItemsTypes[] = [
                 title: "Custom Fields",
                 url: "/manager-custom-fields",
             },
+            {
+                id: "manager-lead-churning",
+                name: "lead-churning",
+                title: "Lead Churning",
+                icon: "RefreshCircle",
+                url: "/manager-lead-churning",
+            },
         ],
     },
     {
@@ -1315,6 +1331,7 @@ export const managerAdminUrls = [
     "/manager-lead-group",
     "/manager-follow-up",
     "/manager-custom-fields",
+    "/manager-lead-churning",
 
     // Call Center
     "/manager-inbound-campaign",
@@ -1417,6 +1434,7 @@ export const managerAdminTitles = [
     { url: "/manager-lead-group", title: "Lead Group", name: "lead-group" },
     { url: "/manager-follow-up", title: "Follow Up", name: "follow-up" },
     { url: "/manager-custom-fields", title: "Custom Fields", name: "custom-fields" },
+    { url: "/manager-lead-churning", title: "Lead Churning", name: "lead-churning" },
 
     // Contact Center
     {
