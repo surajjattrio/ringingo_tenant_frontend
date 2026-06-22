@@ -15,6 +15,9 @@ import {
   useTenantDashboardCallDistribution,
 } from "@/redux/slice/tenant-admin/tenantDashboardSlice";
 import { useAppDispatch } from "@/redux/hooks";
+import { userOptionsGet, useUserOptions } from "@/redux/slice/tenant-admin/userSlice";
+import { outboundOptionsGet, useOutboundOptions } from "@/redux/slice/tenant-admin/outboundSlice";
+import { inboundOptionsGet, useInboundOptions } from "@/redux/slice/tenant-admin/inboundSlice";
 import { DashboardProvider } from "@/contexts/DashboardContext";
 import { StatCard } from "@/components/tenant-admin/dashboard/StatCard";
 import {
@@ -64,7 +67,12 @@ type KpiCfg = {
 };
 const Dashboard = () => {
     const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
+    const [selectedAgent, setSelectedAgent] = useState<string>("");
+    const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const dispatch = useAppDispatch();
+  const userOptions = useUserOptions();
+  const outboundOptions = useOutboundOptions();
+  const inboundOptions = useInboundOptions();
   const selector: any = useTenantDashboardSelector();
   const callOverview = useTenantDashboardCallOverview();
   const callsData = useTenantCallData();
@@ -78,14 +86,22 @@ const callDistribution = useTenantDashboardCallDistribution();
 console.log(dashboardKpis,inbound, outbound, trafficTrends, dispositionTrends, callDistribution, 'dashboardData');
 const formatNum = (n: any) => Number(n ?? 0).toLocaleString();
 useEffect(() => {
+  dispatch(userOptionsGet());
+  dispatch(outboundOptionsGet());
+  dispatch(inboundOptionsGet());
+}, [dispatch]);
+
+useEffect(() => {
   dispatch(
     tenantDashboardDataGet({
       tenant_uuid: selector.tenant_uuid,
       filter: period, // daily/weekly/monthly
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      ...(selectedAgent ? { agent_uuid: selectedAgent } : {}),
+      ...(selectedCampaign ? { campaign_uuid: selectedCampaign } : {}),
     })
   );
-}, [selector?.tenant_uuid, period, dispatch]);
+}, [selector?.tenant_uuid, period, selectedAgent, selectedCampaign, dispatch]);
 const kpis: KpiCfg[] = useMemo(() => ([
   {
     key: "wait-time",
@@ -179,25 +195,18 @@ const outboundCards: CardCfg[] = useMemo(() => ([
   },
   {
     title: "Not Connected",
-    value: formatNum(outbound?.not_connected ?? 0),
+    value: formatNum((outbound?.total_calls ?? 0) - (outbound?.connected_calls ?? 0) - (outbound?.dropped_calls ?? 0)),   
     icon: <PhoneOff className="h-6 w-6" />,
     iconBgClassName: "bg-amber-50",
     iconClassName: "text-amber-600",
   },
   {
     title: "Dropped Calls",
-    value: formatNum(outbound?.missed_calls ?? 0),
+    value: formatNum(outbound?.dropped_calls ?? 0),
     icon: <PhoneMissed className="h-6 w-6" />,
     iconBgClassName: "bg-rose-50",
     iconClassName: "text-rose-500",
   },
-  // {
-  //   title: "Dropped Calls",
-  //   value: formatNum(outbound?.dropped_calls ?? 0),
-  //   icon: <PhoneOff className="h-6 w-6" />,
-  //   iconBgClassName: "bg-orange-50",
-  //   iconClassName: "text-orange-600",
-  // },
 ]), [outbound]);
 
 const inboundCards: CardCfg[] = useMemo(() => ([
@@ -607,30 +616,64 @@ const inboundCards: CardCfg[] = useMemo(() => ([
         {/* OUTBOUND */}
         <section className="mb-8">
         
-                {/* FILTER: Daily / Weekly / Monthly */}
+                {/* FILTER: Agent List / Campaign List / Daily / Weekly / Monthly */}
 <div className="mb-5 flex items-end justify-between">
     <h2 className="text-xs font-semibold tracking-widest text-slate-500">
             OUTBOUND OPERATIONS
           </h2>
-  <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
-    {(["daily", "weekly", "monthly"] as const).map((key) => {
-      const active = period === key;
-      return (
-        <button
-          key={key}
-          type="button"
-          onClick={() => setPeriod(key)}
-          className={[
-            "px-5 py-2 text-sm font-medium rounded-md transition-all",
-            active
-              ? "bg-white text-slate-900 shadow border border-slate-200"
-              : "text-slate-500 hover:text-slate-800",
-          ].join(" ")}
-        >
-          {key.charAt(0).toUpperCase() + key.slice(1)}
-        </button>
-      );
-    })}
+  <div className="flex items-center gap-3">
+    {/* Agent List Dropdown */}
+    <select
+      value={selectedAgent}
+      onChange={(e) => setSelectedAgent(e.target.value)}
+      className="h-9 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+    >
+      <option value="">All Agents</option>
+      {userOptions?.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+
+    {/* Campaign List Dropdown */}
+    <select
+      value={selectedCampaign}
+      onChange={(e) => setSelectedCampaign(e.target.value)}
+      className="h-9 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
+    >
+      <option value="">All Campaigns</option>
+      <optgroup label="Outbound">
+        {outboundOptions?.map((opt: any) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </optgroup>
+      <optgroup label="Inbound">
+        {inboundOptions?.map((opt: any) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </optgroup>
+    </select>
+
+    {/* Period Filter */}
+    <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
+      {(["daily", "weekly", "monthly"] as const).map((key) => {
+        const active = period === key;
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setPeriod(key)}
+            className={[
+              "px-5 py-2 text-sm font-medium rounded-md transition-all",
+              active
+                ? "bg-white text-slate-900 shadow border border-slate-200"
+                : "text-slate-500 hover:text-slate-800",
+            ].join(" ")}
+          >
+            {key.charAt(0).toUpperCase() + key.slice(1)}
+          </button>
+        );
+      })}
+    </div>
   </div>
 </div>
 
