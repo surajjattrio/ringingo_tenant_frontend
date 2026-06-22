@@ -118,6 +118,8 @@ const CreateEditRolesForm = () => {
         is_follow_up: false,
         custom_fields: "0",
         is_custom_fields: false,
+        lead_churning: "0",
+        is_lead_churning: false,
 
         oc: "0",
         is_oc: false,
@@ -270,7 +272,7 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addLmArray = ["leads", "lead_group", "follow_up", "custom_fields"];
+        const addLmArray = ["leads", "lead_group", "follow_up", "custom_fields", "lead_churning"];
 
         if (openLeadManagement) {
             payload["advanced_roles"]["lead_management"] = {};
@@ -470,6 +472,8 @@ const CreateEditRolesForm = () => {
             is_follow_up: !!getSingleRole?.module_permission?.lead_management?.follow_up,
             custom_fields: getSingleRole?.module_permission?.lead_management?.custom_fields || "0",
             is_custom_fields: !!getSingleRole?.module_permission?.lead_management?.custom_fields,
+            lead_churning: getSingleRole?.module_permission?.lead_management?.lead_churning || "0",
+            is_lead_churning: !!getSingleRole?.module_permission?.lead_management?.lead_churning,
 
             oc: getSingleRole?.module_permission?.call_center?.oc || "0",
             is_oc: !!getSingleRole?.module_permission?.call_center?.oc,
@@ -1058,7 +1062,7 @@ const CreateEditRolesForm = () => {
                                                         }}
                                                     />
                                                 </div>
-                                                {values[val.switchName] && val?.name !== "follow_up" && (
+                                                {values[val.switchName] && val?.name !== "follow_up" && val?.name !== "lead_churning" && (
                                                     <div>
                                                         <IncreaseDecreaseInput
                                                             name={val.name}
