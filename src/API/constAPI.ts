@@ -217,6 +217,7 @@ export const OUTBOUND_CAMPAIGN_DIALABLE_TABLE_ADD =
     "/outbound-campaign/add-dialable";
 export const OUTBOUND_CAMPAIGN_ADD_HANGUP = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_LEAD_RESET = "/outbound-campaign/lead-reset";
+export const OUTBOUND_CAMPAIGN_LEAD_CHURNING_DATA = "/outbound-campaign/lead-churning-data";
 export const OUTBOUND_CAMPAIGN_HNAGUP_ADD = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_HANGUP_DELETE =
     "/outbound-campaign/outbound-campaign-disposition";
@@ -240,6 +241,7 @@ export const BLENDED_CAMPAIGN_DIALABLE_TABLE_ADD =
     "/blended-campaign/add-dialable";
 export const BLENDED_CAMPAIGN_ADD_HANGUP = "/blended-campaign/disposition";
 export const BLENDED_CAMPAIGN_LEAD_RESET = "/blended-campaign/lead-reset";
+export const BLENDED_CAMPAIGN_LEAD_CHURNING_DATA = "/blended-campaign/lead-churning-data";
 export const BLENDED_CAMPAIGN_HNAGUP_ADD = "/blended-campaign/disposition";
 export const BLENDED_CAMPAIGN_HANGUP_DELETE =
     "/blended-campaign/blended-campaign-disposition";
@@ -283,6 +285,7 @@ export const LEAD_GROUP = "lead-group";
 export const LEAD_GROUP_CAMPAIGN_LIST = "lead-group/campaign/list";
 export const LEAD_GROUP_SEARCH = "lead-group/advanced-search";
 export const LEAD_GROUP_REMOVE_QUEUE = "/outbound-campaign/remove-queues";
+export const BLENDED_CAMPAIGN_REMOVE_QUEUE = "/blended-campaign/remove-queues";
 export const DELETE_ALL_LEADS = "/lead-group/all-leads";
 export const LEAD_GROUP_EXPORT_USER_INFO = "/lead-group/export-user-info";
 export const LEAD_GROUP_DOWNLOAD_LEADS = "lead-group/download/leads";

@@ -124,6 +124,11 @@ export const leadManagementData: AdvanceRoleTypes[] = [
         title: "Custom Fields",
         switchName: "is_custom_fields",
     },
+    {
+        name: "lead_churning",
+        title: "Lead Churning",
+        switchName: "is_lead_churning",
+    },
 ];
 
 /* ============================== ADVANCE CALL CENTER ROLES ============================== */

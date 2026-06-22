@@ -50,6 +50,8 @@ export interface InitialValueType {
     is_follow_up: boolean;
     custom_fields: string;
     is_custom_fields: boolean;
+    lead_churning: string;
+    is_lead_churning: boolean;
 
     oc: string;
     is_oc: boolean;

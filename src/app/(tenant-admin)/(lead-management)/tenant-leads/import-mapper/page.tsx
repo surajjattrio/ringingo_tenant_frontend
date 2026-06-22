@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // PROJECT IMPORT
 import { Icon, Loader, Stepper } from "@/components/ui-components";
@@ -57,6 +57,9 @@ const stepperData = [
 const ImportLeadManagement = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const prefilledLeadGroupUuid = searchParams.get("lead_group_uuid") || "";
+    const returnTo = searchParams.get("returnTo") || "";
     const leadGroupOptions = useLeadGroupOptions();
 
     const [selected, setSelected] = useState<number>(0);
@@ -65,7 +68,7 @@ const ImportLeadManagement = () => {
     const [importMsg, setImportMsg] = useState<string>("");
     const initialValues: InitialValueType = {
         file: "",
-        lead_group_uuid: "",
+        lead_group_uuid: prefilledLeadGroupUuid,
         phone_code: "",
         filter_by: "0",
         first_name: "",
@@ -128,7 +131,7 @@ const ImportLeadManagement = () => {
 
     const onGetLeadGroupOptions = async () => {
         try {
-            await dispatch(leadGroupOptionsGet()).unwrap();
+            await dispatch(leadGroupOptionsGet(undefined)).unwrap();
         } catch (err) {
             console.error("Get Lead Group Options =-=>", err);
         }
@@ -280,7 +283,7 @@ const ImportLeadManagement = () => {
     const onBack = () => {
         switch (selected) {
             case 0:
-                router.back();
+                returnTo ? router.push(returnTo) : router.back();
                 break;
 
             default:
@@ -682,7 +685,7 @@ const ImportLeadManagement = () => {
                                             handleSubmit();
                                             break;
                                         case 3:
-                                            router.back();
+                                            returnTo ? router.push(returnTo) : router.back();
                                             break;
                                         default:
                                             setSelected((selected) => ++selected);
