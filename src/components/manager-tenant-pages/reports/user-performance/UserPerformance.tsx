@@ -66,6 +66,7 @@ const initialValues: UserPerformanceFilterTypes = {
 const baseHeaders: any = [
   { label: "Date", key: "report_date" },
   { label: "User", key: "username" },
+  { label: "Full Name", key: "fullname" },
   { label: "Inbound Call Count", key: "inbound_call_count" },
   { label: "Outbound Call Count", key: "outbound_call_count" },
   { label: "Agent Disconnection Count", key: "disconnected_by_agent" },
@@ -592,6 +593,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
             : "",
           ...(data["direction"]?.["val"] ? { direction: data["direction"]["val"] } : {}),
           ...(data["campaign_uuid"]?.["val"]?.length ? { campaign_uuid: data["campaign_uuid"]["val"] } : {}),
+          page: filter.page,
+          limit: filter.limit,
         };
         Object.entries(payload).forEach(([key, val]) => {
           if (val === undefined || val === null || val === "") {
