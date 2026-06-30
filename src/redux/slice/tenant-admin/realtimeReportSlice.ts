@@ -122,6 +122,7 @@ const realtimeReportSlice = createSlice({
                                                         ? "Hold"
                                                         : "";
                         x.loginTime = x?.from_last_logged_in ? x?.from_last_logged_in : "";
+                        x.totalDuration = x?.total_duration ? x?.total_duration : "";
                         x.background =
                             x.status === "0"
                                 ? parseInt(x.from_last_logged_in) > 1
@@ -227,6 +228,7 @@ const realtimeReportSlice = createSlice({
                                                         ? "Hold"
                                                         : "";
                         x.loginTime = x?.from_last_logged_in ? x?.from_last_logged_in : "";
+                        x.totalDuration = x?.total_duration ? x?.total_duration : "";
                         x.background =
                             x.status === "0"
                                 ? parseInt(x.from_last_logged_in) > 1
