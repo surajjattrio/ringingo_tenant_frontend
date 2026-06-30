@@ -306,7 +306,12 @@ const RealTimeDB = () => {
     },
     {
       name: "loginTime",
-      title: "Duration",
+      title: "Status Duration",
+      sortable: true,
+    },
+    {
+      name: "totalDuration",
+      title: "Total Duration",
       sortable: true,
     },
     // {
