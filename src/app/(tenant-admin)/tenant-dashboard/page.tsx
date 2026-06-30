@@ -20,6 +20,7 @@ import { outboundOptionsGet, useOutboundOptions } from "@/redux/slice/tenant-adm
 import { inboundOptionsGet, useInboundOptions } from "@/redux/slice/tenant-admin/inboundSlice";
 import { DashboardProvider } from "@/contexts/DashboardContext";
 import { StatCard } from "@/components/tenant-admin/dashboard/StatCard";
+import { Select } from "@/components/forms";
 import {
   PhoneCall,
   PhoneIncoming,
@@ -67,8 +68,8 @@ type KpiCfg = {
 };
 const Dashboard = () => {
     const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
-    const [selectedAgent, setSelectedAgent] = useState<string>("");
-    const [selectedCampaign, setSelectedCampaign] = useState<string>("");
+    const [selectedAgent, setSelectedAgent] = useState<any[]>([]);
+    const [selectedCampaign, setSelectedCampaign] = useState<any[]>([]);
   const dispatch = useAppDispatch();
   const userOptions = useUserOptions();
   const outboundOptions = useOutboundOptions();
@@ -85,6 +86,20 @@ const dispositionTrends = useTenantDashboardDispositionTrends();
 const callDistribution = useTenantDashboardCallDistribution();
 console.log(dashboardKpis,inbound, outbound, trafficTrends, dispositionTrends, callDistribution, 'dashboardData');
 const formatNum = (n: any) => Number(n ?? 0).toLocaleString();
+
+const campaignOptions = useMemo(() => {
+  return [
+    {
+      label: "Outbound",
+      options: outboundOptions || [],
+    },
+    {
+      label: "Inbound",
+      options: inboundOptions || [],
+    },
+  ];
+}, [outboundOptions, inboundOptions]);
+
 useEffect(() => {
   dispatch(userOptionsGet());
   dispatch(outboundOptionsGet());
@@ -97,8 +112,8 @@ useEffect(() => {
       tenant_uuid: selector.tenant_uuid,
       filter: period, // daily/weekly/monthly
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      ...(selectedAgent ? { agent_uuid: selectedAgent } : {}),
-      ...(selectedCampaign ? { campaign_uuid: selectedCampaign } : {}),
+      ...(selectedAgent && selectedAgent.length > 0 ? { agent_uuid: selectedAgent } : {}),
+      ...(selectedCampaign && selectedCampaign.length > 0 ? { campaign_uuid: selectedCampaign } : {}),
     })
   );
 }, [selector?.tenant_uuid, period, selectedAgent, selectedCampaign, dispatch]);
@@ -195,7 +210,7 @@ const outboundCards: CardCfg[] = useMemo(() => ([
   },
   {
     title: "Not Connected",
-    value: formatNum((outbound?.total_calls ?? 0) - (outbound?.connected_calls ?? 0) - (outbound?.dropped_calls ?? 0)),   
+    value: formatNum((outbound?.total_calls ?? 0) - (outbound?.connected_calls ?? 0) - (outbound?.dropped_calls ?? 0)),
     icon: <PhoneOff className="h-6 w-6" />,
     iconBgClassName: "bg-amber-50",
     iconClassName: "text-amber-600",
@@ -623,35 +638,31 @@ const inboundCards: CardCfg[] = useMemo(() => ([
           </h2>
   <div className="flex items-center gap-3">
     {/* Agent List Dropdown */}
-    <select
-      value={selectedAgent}
-      onChange={(e) => setSelectedAgent(e.target.value)}
-      className="h-9 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
-    >
-      <option value="">All Agents</option>
-      {userOptions?.map((opt: any) => (
-        <option key={opt.value} value={opt.value}>{opt.label}</option>
-      ))}
-    </select>
+    <div className="min-w-[180px] max-w-[280px]">
+      <Select
+        name="selectedAgent"
+        placeholder="All Agents"
+        options={userOptions || []}
+        value={selectedAgent}
+        onChange={(val: any) => setSelectedAgent(val)}
+        isMulti
+        isShowLabel={false}
+      />
+    </div>
 
     {/* Campaign List Dropdown */}
-    <select
-      value={selectedCampaign}
-      onChange={(e) => setSelectedCampaign(e.target.value)}
-      className="h-9 rounded-lg border border-slate-200 bg-white px-3 py-1 text-sm text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
-    >
-      <option value="">All Campaigns</option>
-      <optgroup label="Outbound">
-        {outboundOptions?.map((opt: any) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </optgroup>
-      <optgroup label="Inbound">
-        {inboundOptions?.map((opt: any) => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
-        ))}
-      </optgroup>
-    </select>
+    <div className="min-w-[180px] max-w-[280px]">
+      <Select
+        name="selectedCampaign"
+        placeholder="All Campaigns"
+        options={campaignOptions as any}
+        value={selectedCampaign}
+        onChange={(val: any) => setSelectedCampaign(val)}
+        isMulti
+        isGroup
+        isShowLabel={false}
+      />
+    </div>
 
     {/* Period Filter */}
     <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
