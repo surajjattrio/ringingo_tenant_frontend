@@ -62,6 +62,14 @@ const disconnectedByOptions = [
     { label: "Customer", value: "1" }
 ];
 
+// Add By Rahul RIG-13 call status
+const callStatusOptions = [
+    { label: "Connected", value: "Connected" },
+    { label: "Not Connected", value: "Not Connected" },
+    { label: "Abandoned", value: "Abandoned" },
+
+];
+
 // NAME STATE
 const now = new Date();
 const startOfToday = new Date(now);
@@ -87,6 +95,7 @@ const initialValues: TenantCdrsFilterTypes = {
     disposition: { key: "disposition|4", val: "", dropdown: "4" },
     call_mode: { key: "call_mode|4", val: "", dropdown: "4" },
     direction: { key: "direction|4", val: "", dropdown: "4" },
+    call_status: { key: "call_status|4", val: "", dropdown: "4" },
     call_type: { key: "call_type|4", val: "", dropdown: "4" },
     user_uuid: { key: "user_uuid|4", val: "", dropdown: "4" },
     pbx_feature_uuid: { key: "pbx_feature_uuid|4", val: "", dropdown: "4" },
@@ -762,7 +771,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 const fields = [
                     "callstart", "callend", "caller_id_name", "caller_id_number",
                     "destination_number", "billsecond", "call_mode", "disposition",
-                    "direction", "call_type", "user_uuid", "pbx_feature_uuid",
+                    "direction","call_status", "call_type", "user_uuid", "pbx_feature_uuid",
                     "collection_name_for_display", "campaign_uuid",
                 ];
                 fields.forEach((field) => {
@@ -857,6 +866,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
             data["user_uuid"]["val"] ||
             data["pbx_feature_uuid"]["val"] ||
             data["campaign_uuid"]["val"]?.length > 0 ||
+            data["call_status"]["val"] ||
             // data["lead_group_name"]["val"] ||
             // data["disconnected_by"]["val"] ||
             // data["dial_method"]["val"] ||
@@ -887,6 +897,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     [data["billsecond"]["key"]]: data["billsecond"]["val"],
                     [data["call_mode"]["key"]]: data["call_mode"]["val"],
                     [data["direction"]["key"]]: data["direction"]["val"],
+                    [data["call_status"]["key"]]: data["call_status"]["val"],
                     [data["call_type"]["key"]]: data["call_type"]["val"],
                     [data["user_uuid"]["key"]]: data["user_uuid"]["val"],
                     [data["pbx_feature_uuid"]["key"]]: data["pbx_feature_uuid"]["val"],
@@ -1168,6 +1179,17 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     value={data.direction.val}
                     options={directionOptions}
                     onChange={(e: any) => handleChnage("direction", e.target.value)}
+                    isInfo
+                />
+                <Select
+                    name="call_status"
+                    label="Call Status"
+                    placeholder="Select Call Status"
+                    removable
+                    value={data.call_status.val}
+                    options={callStatusOptions}
+                    onChange={(e: any) =>
+                    handleChnage("call_status", e.target.value) }
                     isInfo
                 />
                 <Select
