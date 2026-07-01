@@ -368,29 +368,54 @@ const RealTimeDB = () => {
                 </>
               ) : (
                 <>
-                  <Icon tooltip="Monitor" name="UserCalling" width={20} height={20} alt="User" />
-                  <Icon tooltip="Watch" name="Eye" width={20} height={20} alt="Eye" />
-                  <Icon tooltip="Whisper" name="Ear" width={20} height={20} alt="Ear" />
-                  <Icon
-                    tooltip="Break"
-                    name="Breakcode"
-                    width={20}
-                    height={20}
-                    alt="Breakcode"
-                    onClick={() => {
-                      setSelectedBreakcodes(row.breakcode_data || []);
-                      setSelectedRow(row);
-                      setOpenBreakModal(true);
-                    }}
-                  />
-                  <Icon
-                    tooltip="Logout"
-                    name="Exit"
-                    width={20}
-                    height={20}
-                    alt="Exit"
-                    onClick={() => setLogoutId(row?.agent_uuid)}
-                  />
+                  {row?.agent_status !== "Break" && (
+                    <>
+                      <Icon tooltip="Monitor" name="UserCalling" width={20} height={20} alt="User" />
+                      <Icon tooltip="Watch" name="Eye" width={20} height={20} alt="Eye" />
+                      <Icon tooltip="Whisper" name="Ear" width={20} height={20} alt="Ear" />
+                      <Icon
+                        tooltip="Break"
+                        name="Breakcode"
+                        width={20}
+                        height={20}
+                        alt="Breakcode"
+                        onClick={() => {
+                          setSelectedBreakcodes(row.breakcode_data || []);
+                          setSelectedRow(row);
+                          setOpenBreakModal(true);
+                        }}
+                      />
+                      <Icon
+                        tooltip="Logout"
+                        name="Exit"
+                        width={20}
+                        height={20}
+                        alt="Exit"
+                        onClick={() => setLogoutId(row?.agent_uuid)}
+                      />
+
+                      <Icon
+                        tooltip="Break"
+                        name="Breakcode"
+                        width={20}
+                        height={20}
+                        alt="Breakcode"
+                        onClick={() => {
+                          setSelectedBreakcodes(row.breakcode_data || []);
+                          setSelectedRow(row);
+                          setOpenBreakModal(true);
+                        }}
+                      />
+                      <Icon
+                        tooltip="Logout"
+                        name="Exit"
+                        width={20}
+                        height={20}
+                        alt="Exit"
+                        onClick={() => setLogoutId(row?.agent_uuid)}
+                      />
+                    </>
+                  )}
                   {row?.agent_status === "Break" && (
                     <button
                       className={`bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors`}
