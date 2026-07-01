@@ -10,6 +10,7 @@ export { default as InputNumber } from "./InputNumber";// done -21-04
 export { default as InputSelect } from "./InputSelect"; 
 export { default as LabelSwitch } from "./LabelSwitch";
 export { default as MultiDropdown } from "./MultiDropdown"; // done -21-04
+export { default as MultiSelect } from "./MultiSelect";
 export { default as Select } from "./Select"; //done -18-04
 export { default as Switch } from "./Switch"; //done -18-04
 export { default as Textarea } from "./Textarea"; // done -21-04

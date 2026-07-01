@@ -27,6 +27,8 @@ interface HeadProps {
   onCreateClick?: () => void;
   onDeleteClick?: () => void;
   onStatusClick?: () => void;
+  onBatchUpdateClick?: () => void;
+  batchUpdateDisabled?: boolean;
   onChange?: (e: any) => any;
   onColumnClick?: () => void;
   onCsvClick?: () => void;
@@ -58,6 +60,8 @@ const Head = (props: HeadProps) => {
     onCreateClick,
     onDeleteClick,
     onStatusClick,
+    onBatchUpdateClick,
+    batchUpdateDisabled = false,
     onChange,
     onColumnClick,
     onSearchClick,
@@ -219,6 +223,17 @@ const Head = (props: HeadProps) => {
                   }}
                 />
               ))}
+            {onBatchUpdateClick && (
+              <Button
+                disabled={batchUpdateDisabled}
+                className={`px-3 h-full${batchUpdateDisabled ? " opacity-60" : ""}`}
+                text="Batch Update"
+                style="primary"
+                icon="Refresh2White"
+                responsive
+                onClick={onBatchUpdateClick}
+              />
+            )}
             {isBulkRecording &&
               <button
                 className=" px-4 py-2.5 text-xs font-bold rounded-full text-xs bg-[#322996] hover:opacity-0.5 text-white "

@@ -129,8 +129,8 @@ const LogoSection = ({
 
         <div
           className={`transition-transform duration-200 ${isdrawerOpen
-            ? "rotate- fixed left-[225px]  top-[43px] bg-white cursor-pointer  rounded-[36px] p-[3px] drop-shadow-lg hover:bg-white hover:shadow-sm"
-            : "rotate-180 "
+            ? "rotate-180 fixed left-[225px]  top-[43px] bg-white cursor-pointer  rounded-[36px] p-[3px]  hover:bg-white hover:shadow-sm"
+            : "rotate-0"
             }`}
         >
           <svg

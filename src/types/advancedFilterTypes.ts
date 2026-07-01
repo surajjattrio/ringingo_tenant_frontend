@@ -11,6 +11,7 @@ export interface TenantAdvancedFilterTypes {
     email: AdvancedFilterTypes;
     country_uuid: AdvancedFilterTypes;
     domain: AdvancedFilterTypes;
+    mobile_number: AdvancedFilterTypes;
 }
 
 export interface DispositionFilterTypes {

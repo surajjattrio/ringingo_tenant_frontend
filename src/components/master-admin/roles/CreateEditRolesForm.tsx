@@ -40,6 +40,7 @@ import {
     messagingData,
     pluginsData,
     schedulingReportData,
+    emailData
 } from "./mock";
 
 /* ============================== CREATE & EDIT ROLES FORM ============================== */
@@ -63,6 +64,7 @@ const CreateEditRolesForm = () => {
     const [openApi, setOpenApi] = useState<boolean>(false);
     const [openPlugins, setOpenPlugins] = useState<boolean>(false);
     const [openSchedulingReport, setOpenSchedulingReport] = useState<boolean>(false);
+    const [openEmail, setOpenEmail] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const initialValues: InitialValueType = {
@@ -116,6 +118,8 @@ const CreateEditRolesForm = () => {
         is_follow_up: false,
         custom_fields: "0",
         is_custom_fields: false,
+        lead_churning: "0",
+        is_lead_churning: false,
 
         oc: "0",
         is_oc: false,
@@ -201,6 +205,14 @@ const CreateEditRolesForm = () => {
         cdrs_report: "0",
         is_cdrs_report: false,
 
+        email_configs: "0",
+        is_email_configs: false,
+        email_templates: "0",
+        is_email_templates: false,
+
+        mail_schedule: "0",
+        is_mail_schedule: false,
+
     };
 
     const validationSchema = Yup.object<any>({
@@ -260,7 +272,7 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addLmArray = ["leads", "lead_group", "follow_up", "custom_fields"];
+        const addLmArray = ["leads", "lead_group", "follow_up", "custom_fields", "lead_churning"];
 
         if (openLeadManagement) {
             payload["advanced_roles"]["lead_management"] = {};
@@ -367,12 +379,21 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addSchedulingReportArray = ["cdrs_report"];
+        const addSchedulingReportArray = ["cdrs_report", "mail_schedule"];
         if (openSchedulingReport) {
             payload["advanced_roles"]["report_scheduling"] = {};
             addSchedulingReportArray.forEach((val: any) => {
                 if (values[`is_${val}`]) {
                     payload["advanced_roles"]["report_scheduling"][val] = values[val];
+                }
+            });
+        }
+         const addEmailArray = ["email_configs", "email_templates"];
+        if (openEmail) {
+            payload["advanced_roles"]["email"] = {};
+            addEmailArray.forEach((val: any) => {
+                if (values[`is_${val}`]) {
+                    payload["advanced_roles"]["email"][val] = values[val];
                 }
             });
         }
@@ -451,6 +472,8 @@ const CreateEditRolesForm = () => {
             is_follow_up: !!getSingleRole?.module_permission?.lead_management?.follow_up,
             custom_fields: getSingleRole?.module_permission?.lead_management?.custom_fields || "0",
             is_custom_fields: !!getSingleRole?.module_permission?.lead_management?.custom_fields,
+            lead_churning: getSingleRole?.module_permission?.lead_management?.lead_churning || "0",
+            is_lead_churning: !!getSingleRole?.module_permission?.lead_management?.lead_churning,
 
             oc: getSingleRole?.module_permission?.call_center?.oc || "0",
             is_oc: !!getSingleRole?.module_permission?.call_center?.oc,
@@ -544,6 +567,16 @@ const CreateEditRolesForm = () => {
             cdrs_report: getSingleRole?.module_permission?.report_scheduling?.cdrs_report || "0",
             is_cdrs_report: !!getSingleRole?.module_permission?.report_scheduling?.cdrs_report,
 
+            mail_schedule: getSingleRole?.module_permission?.report_scheduling?.mail_schedule || "0",
+            is_mail_schedule: !!getSingleRole?.module_permission?.report_scheduling?.mail_schedule,
+
+            email_configs: getSingleRole?.module_permission?.email?.email_configs || "0",
+            is_email_configs: !!getSingleRole?.module_permission?.email?.email_configs,
+            email_templates: getSingleRole?.module_permission?.email?.email_templates || "0",
+            is_email_templates: !!getSingleRole?.module_permission?.email?.email_templates,
+            email_channel: getSingleRole?.module_permission?.email?.email_channel || "0",
+            is_email_channel: !!getSingleRole?.module_permission?.email?.email_channel,
+
         });
         setOpenUser(!!getSingleRole?.module_permission?.users)
         setOpenOutgoing(!!getSingleRole?.module_permission?.outgoing_rules)
@@ -557,6 +590,7 @@ const CreateEditRolesForm = () => {
         setOpenApi(!!getSingleRole?.module_permission?.api)
         setOpenPlugins(!!getSingleRole?.module_permission?.plugins)
         setOpenSchedulingReport(!!getSingleRole?.module_permission?.report_scheduling)
+        setOpenEmail(!!getSingleRole?.module_permission?.email)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [getSingleRole]);
 
@@ -1028,7 +1062,7 @@ const CreateEditRolesForm = () => {
                                                         }}
                                                     />
                                                 </div>
-                                                {values[val.switchName] && val?.name !== "follow_up" && (
+                                                {values[val.switchName] && val?.name !== "follow_up" && val?.name !== "lead_churning" && (
                                                     <div>
                                                         <IncreaseDecreaseInput
                                                             name={val.name}
@@ -1597,6 +1631,103 @@ const CreateEditRolesForm = () => {
                             </>
                             <>
                                 {pluginsData
+                                    ?.filter((val) => !values[val.switchName])
+                                    ?.map((val: any, index: number) => {
+                                        return (
+                                            <div key={index} className="grid grid-cols-2 space-x-10">
+                                                <div className="flex justify-between items-center">
+                                                    <label className="text-txt-primary font-bold text-xs">
+                                                        {val.title}
+                                                    </label>
+                                                    <LabelSwitch
+                                                        checked={values[val.switchName]}
+                                                        onChange={(e: any) => {
+                                                            setFieldValue(
+                                                                `${val.switchName}`,
+                                                                e.target.checked
+                                                            );
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                            </>
+                        </div>
+                    </div>
+                </div>
+
+                      <div className="mb-4 mx-4 bg-main-background border-dark-500 rounded-[40px]">
+                    <div
+                        className={`${openEmail ? "bg-main-background text-primary" : ""
+                            }  bg-main-background py-2 px-2 flex justify-between items-center relative rounded-[40px]`}
+                    >
+                        <CheckBox
+                            label="Email"
+                            labelClassName="font-bold text-xs"
+                            isAdmin={true}
+                            checked={getIsAllChecked(emailData)}
+                            onChange={(checked: boolean) => onSelectAllChange(checked, emailData, setOpenEmail)}
+                        />
+                        <Icon
+                            className="absolute right-4"
+                            name={openEmail ? "UpsideArrowWhite" : "DownsideArrowWhite"}
+                            width={24}
+                            height={24}
+                            alt={openEmail ? "IconMinus" : "IconPlus"}
+                            onClick={() => setOpenEmail(!openEmail)}
+                        />
+                    </div>
+                    <div
+                        className={`px-6 bg-main-background py-6 transition-transform rounded-[20px] ${!openEmail && "hidden"
+                            }`}
+                    >
+                        <div className="space-y-5">
+                            <>
+                                {emailData
+                                    ?.filter((val) => values[val.switchName])
+                                    ?.map((val: any, index: number, array: any[]) => {
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`grid grid-cols-2 space-x-10 ${array?.length - 1 === index &&
+                                                    "border-b border-dark-700 pb-6"
+                                                    }`}
+                                            >
+                                                <div className="flex justify-between items-center">
+                                                    <label className="text-txt-primary font-bold text-xs">
+                                                        {val.title}
+                                                    </label>
+                                                    <LabelSwitch
+                                                        checked={values[val.switchName]}
+                                                        onChange={(e: any) => {
+                                                            setValues({
+                                                                ...values,
+                                                                [val.name]: 0,
+                                                                [val.switchName]: e.target.checked,
+                                                            });
+                                                        }}
+                                                    />
+                                                </div>
+                                                {values[val.switchName] && (
+                                                    <div>
+                                                        <IncreaseDecreaseInput
+                                                            name={val.name}
+                                                            min={0}
+                                                            value={values[val.name]}
+                                                            onChange={(value: string) => {
+                                                                setFieldValue(val.name, value);
+                                                            }}
+                                                            isIconSuccess
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                            </>
+                            <>
+                                {emailData
                                     ?.filter((val) => !values[val.switchName])
                                     ?.map((val: any, index: number) => {
                                         return (

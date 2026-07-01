@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 // PROJECT IMPORT
@@ -11,11 +11,13 @@ import {
     tenantDispositionSearch,
     tenantDispositionStatusUpdate,
     useTenantDispositionData,
+    tenantDispositionUpdate,
 } from "@/redux/slice/tenant-admin/tenantDispositionSlice";
+import { campaignOptionsGet, useCampaignOptions } from "@/redux/slice/tenant-admin/campaignReportSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
-import { InputSelect, Switch, Toggle } from "@/components/forms";
-import { Head, Table } from "@/components/ui-components";
+import { Button, InputSelect, Select, Switch, Toggle } from "@/components/forms";
+import { Head, Icon, Table } from "@/components/ui-components";
 import { DeleteModal } from "@/components/modals";
 
 // THIRD-PARTY IMPORT
@@ -42,6 +44,7 @@ const TenantDisposition = (props: ManagerPageTypes) => {
     const router = useRouter();
     const isLoading = useIsLoading();
     const dispositionData = useTenantDispositionData();
+    const campaignOptions = useCampaignOptions();
     console.log(" dispositionData", dispositionData);
 
 
@@ -56,8 +59,22 @@ const TenantDisposition = (props: ManagerPageTypes) => {
     const [selectedRow, setSelectedRow] = useState<string[]>([]);
     const [deleteId, setDeleteId] = useState<any>("");
     const [data, setData] = useState<any>(initialValues);
+    const [isBatchUpdate, setIsBatchUpdate] = useState<boolean>(false);
+    const [batchCampaign, setBatchCampaign] = useState<any[]>([]);
+    const [batchLoading, setBatchLoading] = useState<boolean>(false);
 
     const [status, setStatus] = useState<string>("0");
+
+    // Build a flat map of campaign UUID -> label from grouped options
+    const campaignMap = useMemo(() => {
+        const map: Record<string, string> = {};
+        campaignOptions?.forEach((group: any) => {
+            group?.options?.forEach((opt: any) => {
+                if (opt?.value) map[opt.value] = opt.label;
+            });
+        });
+        return map;
+    }, [campaignOptions]);
 
     const columns: ColumnsType[] = [
         {
@@ -69,6 +86,30 @@ const TenantDisposition = (props: ManagerPageTypes) => {
             name: "code",
             title: "Code",
             sortable: true,
+        },
+        {
+            name: "campaign",
+            title: "Campaign",
+            sortable: false,
+            action: (row: any) => {
+                const uuids: string[] = Array.isArray(row?.campaign_uuid) ? row.campaign_uuid : [];
+                const names = uuids
+                    .map((uuid: string) => campaignMap[uuid])
+                    .filter(Boolean);
+                if (!names.length) return <span className="text-gray-400">—</span>;
+                return (
+                    <div className="flex flex-wrap gap-1">
+                        {names.map((name: string, i: number) => (
+                            <span
+                                key={i}
+                                className="bg-blue-100 text-blue-700 text-xs font-medium px-2 py-0.5 rounded-full"
+                            >
+                                {name}
+                            </span>
+                        ))}
+                    </div>
+                );
+            },
         },
         {
             name: "status",
@@ -94,6 +135,19 @@ const TenantDisposition = (props: ManagerPageTypes) => {
             title: "Actions",
         },
     ];
+
+    useEffect(() => {
+        onGetCampaignOptions();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const onGetCampaignOptions = async () => {
+        try {
+            await dispatch(campaignOptionsGet()).unwrap();
+        } catch (err) {
+            console.error("Get Campaign Options Err =-=>", err);
+        }
+    };
 
     useEffect(() => {
         // onGetTennatDispositionOptions();
@@ -259,6 +313,58 @@ const TenantDisposition = (props: ManagerPageTypes) => {
         const selectedRows = [...selectedRow];
         setDeleteId(selectedRows.join(","));
     };
+    // Batch Update - Update campaign for all selected dispositions
+    const onBatchUpdateDisposition = async () => {
+        if (!selectedRow.length) {
+            Danger("Please select at least one disposition");
+            return;
+        }
+        if (!batchCampaign.length) {
+            Danger("Please select at least one campaign");
+            return;
+        }
+        setBatchLoading(true);
+        try {
+            // Find the full disposition objects for the selected UUIDs
+            const selectedDispositions = (dispositionData?.data || []).filter(
+                (d: any) => selectedRow.includes(d.disposition_uuid || d.uuid)
+            );
+            const promises = selectedDispositions.map((d: any) => {
+                const id = d.disposition_uuid || d.uuid;
+                return dispatch(
+                    tenantDispositionUpdate({
+                        id,
+                        name: d.name?.replace(" (admin)", "") || d.name,
+                        code: d.code,
+                        status: d.status,
+                        level: d.level ?? 0,
+                        parent_disposition: d.parent_disposition || "",
+                        has_children: d.has_children ?? false,
+                        campaign_uuid: batchCampaign.map((c: any) => c.value ?? c),
+                        human_answer: d.human_answer === "1" || d.human_answer === 1 ? "1" : "0",
+                        sale: d.sale === "1" || d.sale === 1 ? "1" : "0",
+                        callback: d.callback === "0" || d.callback === 0 ? "0" : "1",
+                    })
+                ).unwrap();
+            });
+            const results: any[] = await Promise.all(promises);
+            const allOk = results.every((r) => r?.statusCode === 200);
+            if (allOk) {
+                Success(`Campaign updated for ${selectedDispositions.length} disposition(s)`);
+            } else {
+                Danger("Some updates failed. Please try again.");
+            }
+            setBatchCampaign([]);
+            setIsBatchUpdate(false);
+            setSelectedRow([]);
+            setFilter({ ...filter });
+        } catch (err: any) {
+            Danger("Batch update failed");
+            console.error("Batch Update Disposition Err ==>", err?.message);
+        } finally {
+            setBatchLoading(false);
+        }
+    };
 
     return (
         <div className="bg-white p-5 rounded-[25px]">
@@ -269,6 +375,8 @@ const TenantDisposition = (props: ManagerPageTypes) => {
                 createText="Create Disposition"
                 onCreateClick={onCreateDisposition}
                 onDeleteClick={onMassDeleteDisposition}
+                onBatchUpdateClick={() => setIsBatchUpdate(!isBatchUpdate)}
+                batchUpdateDisabled={!selectedRow.length}
                 onChange={(e: any) =>
                     setFilter({
                         ...filter,
@@ -287,7 +395,11 @@ const TenantDisposition = (props: ManagerPageTypes) => {
                         isAdvance: true,
                     })
                 }
-                onHide={onEmptySearch}
+                onHide={() => {
+                    onEmptySearch();
+                    setIsBatchUpdate(false);
+                    setBatchCampaign([]);
+                }}
             >
                 <InputSelect
                     name="name"
@@ -320,6 +432,71 @@ const TenantDisposition = (props: ManagerPageTypes) => {
                     onClick={(value: string) => setStatus(value)}
                 />
             </Head>
+            {/* ── Batch Update Panel ── */}
+            <div
+                className={`relative z-[1] flex flex-col mt-5 bg-white rounded-md drop-shadow-lg border border-slate-200 ${
+                    isBatchUpdate ? "" : "hidden"
+                }`}
+            >
+                <div className="flex items-center justify-between border-b border-dark-700 pl-10 pr-4 py-4">
+                    <span className="text-sm font-bold">Batch Update — Campaign</span>
+                    <Icon
+                        className="cursor-pointer"
+                        tooltip="Close"
+                        name="Close"
+                        width={20}
+                        height={20}
+                        alt="Close"
+                        onClick={() => {
+                            setIsBatchUpdate(false);
+                            setBatchCampaign([]);
+                        }}
+                    />
+                </div>
+                <div className="px-5 pt-4 pb-8 gap-y-[30px] grid grid-cols-3 gap-x-4">
+                    <Select
+                        name="batch_campaign_uuid"
+                        isMulti
+                        isGroup
+                        icon="Group"
+                        label="Campaign"
+                        placeholder="Select campaigns to assign"
+                        options={campaignOptions}
+                        value={batchCampaign}
+                        onChange={(e: any) => setBatchCampaign(e)}
+                        isInfo
+                    />
+                    <div className="col-span-2 flex items-start pt-6">
+                        <p className="text-sm text-gray-500">
+                            {selectedRow.length
+                                ? `${selectedRow.length} disposition(s) selected. Campaign will be replaced for all of them.`
+                                : "Select rows in the table first, then choose a campaign above."}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex py-4 justify-end items-center border-t shadow-box rounded-sm">
+                    <div className="flex gap-3 px-10">
+                        <Button
+                            className="px-3 py-2"
+                            text="Cancel"
+                            style="dark-outline"
+                            onClick={() => {
+                                setIsBatchUpdate(false);
+                                setBatchCampaign([]);
+                            }}
+                        />
+                        <Button
+                            className={`px-3 py-2${
+                                !batchCampaign.length || !selectedRow.length ? " opacity-60" : ""
+                            }`}
+                            text={batchLoading ? "Updating..." : "Batch Update"}
+                            style="primary"
+                            disabled={!batchCampaign.length || !selectedRow.length || batchLoading}
+                            onClick={onBatchUpdateDisposition}
+                        />
+                    </div>
+                </div>
+            </div>
             <div className="mt-5">
                 <Table
                     name={name}

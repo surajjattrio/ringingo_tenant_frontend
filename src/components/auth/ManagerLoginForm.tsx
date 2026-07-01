@@ -33,6 +33,7 @@ const ManagerLoginForm = () => {
         entity: "manager",
         rememberMe: false,
         key: "",
+        company_code: "",
     };
 
     const validationSchema = Yup.object<LoginFormValues>({
@@ -44,55 +45,83 @@ const ManagerLoginForm = () => {
     const onSubmit = async (values: LoginFormValues) => {
         setLoading(true);
 
-        if (!navigator.geolocation) {
-            Danger("Geolocation is not supported by your browser");
-            setLoading(false);
-            return;
-        }
+        const trackLocation = process.env.NEXT_PUBLIC_TRACK_LOCATION === "true";
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                // Success: Proceed with login
-                try {
-                    // Explicitly set cookies here to ensure interceptor picks them up immediately
-                    Cookies.set("geo_lat", String(position.coords.latitude), { expires: 1 });
-                    Cookies.set("geo_lng", String(position.coords.longitude), { expires: 1 });
-
-            const res: any = await login(
-                values.username,
-                values.password,
-                values.tenant_domain,
-                values.key,
-                values.rememberMe,
-                values.entity,
-            );
-            if (res?.statusCode === 200) {
-                Success(res?.data);
-            } else if (res?.data === false || res?.data?.key_details === "") {
-                router.push("/verify-license");
-            } else {
-                Danger(res?.data);
-            }
-            setLoading(false);
-        } catch (e: any) {
-            setLoading(false);
-            console.error("Login Err =-=>", e?.message);
-        }
-            },
-            (error) => {
-                // Error/Denied
+        if (trackLocation) {
+            if (!navigator.geolocation) {
+                Danger("Geolocation is not supported by your browser");
                 setLoading(false);
-                let errorMessage = "Location permission is required to login.";
-                if (error.code === error.PERMISSION_DENIED) {
-                    errorMessage = "You denied the request for Geolocation. Please allow location access to login.";
-                } else if (error.code === error.POSITION_UNAVAILABLE) {
-                    errorMessage = "Location information is unavailable.";
-                } else if (error.code === error.TIMEOUT) {
-                    errorMessage = "The request to get user location timed out.";
-                }
-                Danger(errorMessage);
+                return;
             }
-        );
+
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    // Success: Proceed with login
+                    try {
+                        // Explicitly set cookies here to ensure interceptor picks them up immediately
+                        Cookies.set("geo_lat", String(position.coords.latitude), { expires: 1 });
+                        Cookies.set("geo_lng", String(position.coords.longitude), { expires: 1 });
+
+                        const res: any = await login(
+                            values.username,
+                            values.password,
+                            values.company_code ? `${values.company_code}.ringingo.com`.toLowerCase() : values.tenant_domain,
+                            values.key,
+                            values.rememberMe,
+                            values.entity,
+                            values.company_code
+                        );
+                        if (res?.statusCode === 200) {
+                            Success(res?.data);
+                        } else if (res?.data === false || res?.data?.key_details === "") {
+                            router.push("/verify-license");
+                        } else {
+                            Danger(res?.data);
+                        }
+                        setLoading(false);
+                    } catch (e: any) {
+                        setLoading(false);
+                        console.error("Login Err =-=>", e?.message);
+                    }
+                },
+                (error) => {
+                    // Error/Denied
+                    setLoading(false);
+                    let errorMessage = "Location permission is required to login.";
+                    if (error.code === error.PERMISSION_DENIED) {
+                        errorMessage = "You denied the request for Geolocation. Please allow location access to login.";
+                    } else if (error.code === error.POSITION_UNAVAILABLE) {
+                        errorMessage = "Location information is unavailable.";
+                    } else if (error.code === error.TIMEOUT) {
+                        errorMessage = "The request to get user location timed out.";
+                    }
+                    Danger(errorMessage);
+                }
+            );
+        } else {
+            try {
+                const res: any = await login(
+                    values.username,
+                    values.password,
+                    values.company_code ? `${values.company_code}.ringingo.com`.toLowerCase() : values.tenant_domain,
+                    values.key,
+                    values.rememberMe,
+                    values.entity,
+                    values.company_code
+                );
+                if (res?.statusCode === 200) {
+                    Success(res?.data);
+                } else if (res?.data === false || res?.data?.key_details === "") {
+                    router.push("/verify-license");
+                } else {
+                    Danger(res?.data);
+                }
+                setLoading(false);
+            } catch (e: any) {
+                setLoading(false);
+                console.error("Login Err =-=>", e?.message);
+            }
+        }
     };
 
     const {
@@ -113,6 +142,20 @@ const ManagerLoginForm = () => {
         <>
             <form onSubmit={handleSubmit}>
                 <div className="space-y-2">
+                    { process.env.NEXT_PUBLIC_SHOW_COMPANY_CODE == "true" && (
+                        <Input
+                            name="company_code"
+                            label="Company Code"
+                            value={values.company_code}
+                            placeholder="Enter Company Code"
+                            icon="UserTenant"
+                            touched={touched}
+                            errors={errors}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            noSpace
+                        />
+                    )}
                     <Input
                         label="Your Email/Username"
                         name="username"

@@ -7,6 +7,7 @@ import {
     useUsers,
     userCreate,
     userSingleGet,
+    userSyncWaba,
     userUpdate,
 } from "@/redux/slice/tenant-admin/userSlice";
 import {
@@ -72,6 +73,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
     const [sipOptions, setSipOptions] = useState<OptionTypes[]>([]);
     const [msgChannelOptionsForWhatsApp, setMsgChannelOptionsForWhatsApp] = useState([]);
     const [msgChannelOptionsForSMS, setMsgChannelOptionsForSMS] = useState([]);
+    const [isWhatsAppPermission, setIsWhatsAppPermission] = useState<boolean>(false);
 
     const initialValues: InitialValueType = {
         username: "",
@@ -95,6 +97,9 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
         create_sip_device: "1",
         caller_id_name: "",
         caller_id_number: "",
+        mobile_number: "",
+        vendor_uid: "",
+        team_user_uid: "",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -266,7 +271,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
     // Fetching Single User Data
     const onGetSingleUserData = async () => {
         try {
-            const res: any = await dispatch(userSingleGet(id)).unwrap();
+            const res: any = await dispatch(userSingleGet(id as string)).unwrap();
             if (res?.statusCode === 200) {
                 const userData = res?.data;
                 const campaignUUIDs = userData?.allowed_campaign.map((item: any) => item.value);
@@ -289,7 +294,10 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                     zoho_user_id: userData?.zoho_user_id,
                     campaign_uuid: userData?.campaign_uuid,
                     allowed_campaign: campaignUUIDs,
-                    omni_messaging_channel_uuid: omniChannelMessagingUUID
+                    omni_messaging_channel_uuid: omniChannelMessagingUUID,
+                    mobile_number: userData?.mobile_number,
+                    vendor_uid: userData?.vendor_uid,
+                    team_user_uid: userData?.team_user_uid,
                 });
                 // ✅ FIX: set selectedUserRole on edit
                 const role = userRoleData?.find(
@@ -297,6 +305,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                 );
 
                 setSelectedUserRole(role);
+                setIsWhatsAppPermission(Number(res?.data?.tenant_role?.module_permission?.messaging?.whatsapp) > 1)
 
                 // also sync restriction flag
                 const restricted =
@@ -451,6 +460,22 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                     placeholder="Enter Email"
                     icon="GrayEmail"
                     value={values.email}
+                    touched={touched}
+                    errors={errors}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInfo
+                />
+                <Input
+                    name="mobile_number"
+                    label={
+                        <>
+                            Mobile Number
+                        </>
+                    }
+                    placeholder="Enter Mobile Number"
+                    icon="CallGray"
+                    value={values.mobile_number}
                     touched={touched}
                     errors={errors}
                     onChange={handleChange}
@@ -769,6 +794,35 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                             isInfo
                         />{" "}
                     </>
+                )}
+
+                {(!values.vendor_uid || !values.team_user_uid) && isWhatsAppPermission &&
+                    (
+                        <div className="flex items-end">
+                            <button
+                                type="button"
+                                disabled={loading}
+                            onClick={async () => {
+                                setLoading(true);
+                                try {
+                                    const res: any = await dispatch(userSyncWaba(id as string)).unwrap();
+                                    if (res?.statusCode === 200) {
+                                        Success(res.message || "Sync initiated successfully");
+                                        onGetSingleUserData(); // Refresh data to get vendor IDs
+                                    } else {
+                                        Danger(res?.message || res?.data || "Sync failed");
+                                    }
+                                } catch (err: any) {
+                                    Danger(err.message || "An error occurred");
+                                } finally {
+                                    setLoading(false);
+                                }
+                            }}
+                            className={`bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors h-[42px] mb-[2px] ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                        >
+                            {loading ? "Syncing..." : "Sync WABA"}
+                        </button>
+                    </div>
                 )}
             </div>
         </CardForm>

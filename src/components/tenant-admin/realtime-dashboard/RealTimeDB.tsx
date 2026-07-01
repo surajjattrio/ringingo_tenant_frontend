@@ -306,7 +306,12 @@ const RealTimeDB = () => {
     },
     {
       name: "loginTime",
-      title: "Duration",
+      title: "Status Duration",
+      sortable: true,
+    },
+    {
+      name: "totalDuration",
+      title: "Total Duration",
       sortable: true,
     },
     // {
@@ -329,30 +334,30 @@ const RealTimeDB = () => {
               {row?.agent_status === "On Outgoing call" ||
                 row?.agent_status === "On Incoming call" ? (
                 <>
-                  <Icon
+                  {/* <Icon
                     tooltip="Monitor"
                     name="UserCalling"
                     width={20}
                     height={20}
                     alt="User"
                     onClick={() => onCallPause(row, "Monitor")}
-                  />
+                  /> */}
                   <Icon
-                    tooltip="Watch"
+                    tooltip="Barge"
                     name="Eye"
                     width={20}
                     height={20}
                     alt="Eye"
                     onClick={() => onCallPause(row, "Barge")}
                   />
-                  <Icon
+                  {/* <Icon
                     tooltip="Whisper"
                     name="Ear"
                     width={20}
                     height={20}
                     alt="Ear"
                     onClick={() => onCallPause(row, "Whisper")}
-                  />
+                  /> */}
                   <Icon
                     tooltip="Break"
                     name="Breakcode"
@@ -980,7 +985,7 @@ const RealTimeDB = () => {
           <div className="flex items-center justify-center">
             <div className="h-6 w-[1px] bg-gray-300"></div>
           </div>
-          <Filter onClick={() => setIsOpen(!isOpen)} />
+          {/* <Filter onClick={() => setIsOpen(!isOpen)} /> */}
           <Button
             // tooltip="Refresh"
             style="header"
@@ -1090,7 +1095,7 @@ const RealTimeDB = () => {
             );
           })}
         </div>
-        <div className="py-2">
+        {/* <div className="py-2">
           <Table
             // tdStyle="!3xl:px-2 !px-1"
             mainClassName="!min-h-[calc(200px)]"
@@ -1104,11 +1109,11 @@ const RealTimeDB = () => {
             showIcon={false}
             isExtra={false}
           />
-        </div>
+        </div> */}
 
-        <div className="py-2 grid grid-cols-2 2lg:grid-cols-2 lg:grid-cols-2 2md:grid-cols-3 sm:grid-cols-2 sm:gap-2 gap-4">
+        {/* <div className="py-2 grid grid-cols-2 2lg:grid-cols-2 lg:grid-cols-2 2md:grid-cols-3 sm:grid-cols-2 sm:gap-2 gap-4"> */}
           {/* Live Calls Pie */}
-          <div className="bg-white border rounded-lg p-4 shadow">
+          {/* <div className="bg-white border rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2">Live Calls</h2>
             <Chart
               options={liveCallsOptions}
@@ -1116,10 +1121,10 @@ const RealTimeDB = () => {
               type="pie"
               height={320}
             />
-          </div>
+          </div> */}
 
           {/* Agents Pie */}
-          <div className="bg-white border rounded-lg p-4 shadow">
+          {/* <div className="bg-white border rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2">Agents</h2>
             <Chart
               options={agentsOptions}
@@ -1127,8 +1132,8 @@ const RealTimeDB = () => {
               type="pie"
               height={320}
             />
-          </div>
-        </div>
+          </div> */}
+        {/* </div> */}
 
         {/* <RealtimeAccordion title="Campaign List">
       </RealtimeAccordion> */}

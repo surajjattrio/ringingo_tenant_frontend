@@ -64,6 +64,18 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
     }
   };
 
+  const getSubEventStatus = (rowData: any) => {
+    if (rowData.login_status === "3") {
+      return "Pause End";
+    } else if (rowData.login_status === "4") {
+      return "Pause Start";
+    } else if (rowData.login_status === "5") {
+      return "ACW Start";
+    } else if (rowData.login_status === "6") {
+      return "ACW End";
+    }
+  };
+
   const getDuration = (startDate: any, endDate: any) => {
     let newTime: any = intervalToDuration({
       start: new Date(startDate),
@@ -89,8 +101,25 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
       const duration = getDuration(infoData[index - 1]?.date_time, rowData?.date_time);
       return <span className={`text-${isDurationOver(duration,rowData.breakcode[0])}`} >{duration}</span>;
     } else if (rowData.login_status === "2") {
-      const duration = getDuration(infoData[0]?.date_time, rowData?.date_time);
+      // const duration = getDuration(infoData[0]?.date_time, rowData?.date_time);
+      const firstLogin = infoData.find((d: any) => d.login_status === "0" && !d.breakcode?.length);
+      const startTime = firstLogin ? firstLogin.date_time : infoData[0]?.date_time;
+      const duration = getDuration(startTime, rowData?.date_time);
       return <span className="text-heading">{duration}</span>;
+    } else if (rowData.login_status === "3") {
+      for (let i = index - 1; i >= 0; i--) {
+        if (infoData[i].login_status === "4") {
+          const duration = getDuration(infoData[i].date_time, rowData.date_time);
+          return <span className="text-heading">{duration}</span>;
+        }
+      }
+    } else if (rowData.login_status === "6") {
+      for (let i = index - 1; i >= 0; i--) {
+        if (infoData[i].login_status === "5") {
+          const duration = getDuration(infoData[i].date_time, rowData.date_time);
+          return <span className="text-heading">{duration}</span>;
+        }
+      }
     }
   };
 
@@ -128,7 +157,7 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
           <>
             {infoData && infoData.length ? (
               <div className="px-4 pb-4">
-                <div className="grid grid-cols-3 gap-x-1">
+                <div className="grid grid-cols-4 gap-x-1">
                   <div className="p-[5px] text-sm font-bold text-heading">
                     Time Stamp
                   </div>
@@ -136,10 +165,13 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
                     Event
                   </div>
                   <div className="p-[5px] text-sm font-bold text-heading">
+                    Sub Event
+                  </div>
+                  <div className="p-[5px] text-sm font-bold text-heading">
                     Duration(HH:MM)
                   </div>
                 </div>
-                <div className="grid grid-cols-3 gap-x-1">
+                <div className="grid grid-cols-4 gap-x-1">
                   {infoData.map((data: any, index: number) => {
                     return (
                       <>
@@ -153,6 +185,11 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
                         <div className="p-[10px]">
                           <span className="3xl:text-xs text-[11px] text-heading">
                             {getEventStatus(data)}
+                          </span>
+                        </div>
+                         <div className="p-[10px]">
+                          <span className="3xl:text-xs text-[11px] text-heading">
+                            {getSubEventStatus(data)}
                           </span>
                         </div>
                         <div className="p-[10px]">

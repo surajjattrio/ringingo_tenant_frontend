@@ -124,6 +124,11 @@ export const leadManagementData: AdvanceRoleTypes[] = [
         title: "Custom Fields",
         switchName: "is_custom_fields",
     },
+    {
+        name: "lead_churning",
+        title: "Lead Churning",
+        switchName: "is_lead_churning",
+    },
 ];
 
 /* ============================== ADVANCE CALL CENTER ROLES ============================== */
@@ -342,7 +347,19 @@ export const pluginsData: AdvanceRoleTypes[] = [
         switchName: "is_google_sheet",
     },
 ];
-
+/* ============================== EMAIL DATA ============================== */
+export const emailData: AdvanceRoleTypes[] = [
+    {
+        name: "email_configs",
+        title: "Notification Configs",
+        switchName: "is_email_configs",
+    },
+    {
+        name: "email_templates",
+        title: "Email Templates",
+        switchName: "is_email_templates",
+    },
+];
 
 /* ============================== SCHEDULING REPORT DATA ============================== */
 
@@ -351,5 +368,10 @@ export const schedulingReportData: AdvanceRoleTypes[] = [
         name: "cdrs_report",
         title: "CDR",
         switchName: "is_cdrs_report",
+    },
+    {
+        name: "mail_schedule",
+        title: "Mail Schedule",
+        switchName: "is_mail_schedule",
     },
 ];

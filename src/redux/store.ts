@@ -88,6 +88,12 @@ import accountDashboardSlice from "./slice/tenant-admin/accountDashboardSlice";
 import omniChannelReportSlice from "./slice/tenant-admin/omniChannelReportSlice"
 import tenantCsatReportSlice from "./slice/tenant-admin/tenantCsatSlice";
 import scheduleReportSlice from "./slice/tenant-admin/scheduleReportSlice";
+import realtimeDashboardSlice from "./slice/tenant-admin/realtimeDashboardSlice";
+import inboundCallDebugSlice from "./slice/tenant-admin/inboundCallDebugSlice";
+import mailScheduleSlice from "./slice/tenant-admin/mailScheduleSlice";
+import emailSlice from "./slice/tenant-admin/emailSlice";
+import apiConfigurationSlice from "./slice/tenant-admin/apiConfigurationSlice";
+import messageConfigurationSlice from "./slice/tenant-admin/messageConfigurationSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -169,7 +175,13 @@ const rootReducer = combineReducers({
   accountDashboard: accountDashboardSlice,
   omniChannelReport: omniChannelReportSlice,
   tenantCsatReport: tenantCsatReportSlice,
-  scheduleReport: scheduleReportSlice
+  scheduleReport: scheduleReportSlice,
+  realtimeDashboard: realtimeDashboardSlice,
+  inboundCallDebug: inboundCallDebugSlice,
+  email: emailSlice,
+  apiConfiguration: apiConfigurationSlice,
+  messageConfiguration: messageConfigurationSlice,
+  mailSchedule: mailScheduleSlice,
 
 
 });
@@ -177,6 +189,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
+  blacklist: ["inboundCallDebug"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

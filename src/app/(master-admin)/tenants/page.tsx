@@ -38,6 +38,7 @@ const initialValues: TenantAdvancedFilterTypes = {
     email: { key: "email|1", val: "", dropdown: "1" },
     country_uuid: { key: "country_uuid|4", val: "", dropdown: "4" },
     domain: { key: "domain|1", val: "", dropdown: "1" },
+    mobile_number: { key: "mobile_number|1", val: "", dropdown: "1" },
 };
 
 /* ============================== TENANT PAGE ============================== */
@@ -102,6 +103,7 @@ const Tenant = () => {
             sortable: true,
         },
         { name: "domain", title: "Domain", sortable: true },
+        { name: "mobile_number", title: "Mobile", sortable: true },
         {
             name: "assign_did",
             title: "Assign DID",
@@ -224,6 +226,7 @@ const Tenant = () => {
                 [data["email"]["key"]]: data["email"]["val"],
                 [data["country_uuid"]["key"]]: data["country_uuid"]["val"],
                 [data["domain"]["key"]]: data["domain"]["val"],
+                [data["mobile_number"]["key"]]: data["mobile_number"]["val"],
                 status: status,
             };
             Object.entries(payload)?.forEach(([key, val]: any) => {
@@ -390,6 +393,17 @@ const Tenant = () => {
                     options={advanceSearchOptions}
                     onChange={(e: any) => handleChnage("domain", e.target.value)}
                     onDropdownChange={(e: any) => handleSelect("domain", e.target.value)}
+                    isInfo
+                />
+                <InputSelect
+                    name="mobile_number"
+                    label="Mobile Number"
+                    placeholder="Enter Mobile"
+                    value={data.mobile_number.val}
+                    dropdownValue={data.mobile_number.dropdown}
+                    options={advanceSearchOptions}
+                    onChange={(e: any) => handleChnage("mobile_number", e.target.value)}
+                    onDropdownChange={(e: any) => handleSelect("mobile_number", e.target.value)}
                     isInfo
                 />
                 <Switch

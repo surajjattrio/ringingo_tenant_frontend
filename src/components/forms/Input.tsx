@@ -26,6 +26,7 @@ interface InputProps {
   onClick?: () => void;
   onIconClick?: () => void;
   onRightIconClick?: () => void;
+  autoComplete?: string;
 }
 
 const Input = ({
@@ -52,6 +53,7 @@ const Input = ({
   onClick,
   onIconClick,
   onRightIconClick,
+  autoComplete = "off",
 }: InputProps) => {
   const hasError = touched?.[name] && errors?.[name];
   const showLabelAsFloating = Boolean(value);
@@ -90,7 +92,7 @@ const Input = ({
           name={name}
           type={type}
           value={value}
-          autoComplete="off"
+          autoComplete={autoComplete}
           placeholder={isShowLabel ? "" : placeholder}
           disabled={disabled}
           onFocus={onFocus}

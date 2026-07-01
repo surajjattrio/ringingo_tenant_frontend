@@ -79,6 +79,10 @@ const initialValues: InitialValueType = {
     agent_script: "1",
     agent_script_text: "",
     allowed_messaging_queue: [],
+    email_config_uuid: "",
+    api_config_uuid: "",
+    email_type: "none",
+    message_config_uuid: "",
 };
 
 const BlendedContext = createContext<BlendedContextTypes | null>(null);

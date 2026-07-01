@@ -50,6 +50,8 @@ export interface InitialValueType {
     is_follow_up: boolean;
     custom_fields: string;
     is_custom_fields: boolean;
+    lead_churning: string;
+    is_lead_churning: boolean;
 
     oc: string;
     is_oc: boolean;
@@ -140,6 +142,14 @@ export interface InitialValueType {
 
     activity_log: string;
     is_activity_log: boolean;
+
+    mail_schedule: string;
+    is_mail_schedule: boolean;
+    
+    email_configs: string;
+    is_email_configs: boolean;
+    email_templates: string;
+    is_email_templates: boolean;
 }
 
 export interface BasicRoleTypes {

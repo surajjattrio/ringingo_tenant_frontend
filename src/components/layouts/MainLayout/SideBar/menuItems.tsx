@@ -438,6 +438,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 icon: "custom1",
                 url: "/tenant-custom-fields",
             },
+            {
+                id: "tenant-lead-churning",
+                name: "lead_churning",
+                title: "Lead Churning",
+                icon: "RefreshCircle",
+                url: "/tenant-lead-churning",
+            },
         ],
     },
     {
@@ -548,6 +555,30 @@ export const tenantAdmin: NavItemsTypes[] = [
         ],
     },
     {
+        id: "tenant-email",
+        icon: "Emailsetting",
+        iconActive: "SettingGreen",
+        title: "Notification",
+        url: "",
+        name: "email",
+        subItems: [
+            {
+                id: "tenant-email-configs",
+                name: "email_configs",
+                title: "Notification Configs",
+                icon: "EmailGray",
+                url: "/tenant-email-configs",
+            },
+            {
+                id: "tenant-email-templates",
+                name: "email_templates",
+                title: "Email Templates",
+                icon: "DocumentText",
+                url: "/tenant-email-templates",
+            },
+        ],
+    },
+    {
         id: "tenant-activity-log",
         name: "activity_log",
         title: "Activity Log",
@@ -585,6 +616,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 title: "CDR Report",
                 icon: "Report",
                 url: "/tenant-report-scheduling",
+            },
+            {
+                id: "tenant-mail-schedule",
+                name: "mail_schedule",
+                title: "Mail Schedule",
+                icon: "Report",
+                url: "/tenant-mail-schedule",
             },
         ],
     },
@@ -725,6 +763,7 @@ export const tenantAdminUrls = [
     "/tenant-lead-group",
     "/tenant-follow-up",
     "/tenant-custom-fields",
+    "/tenant-lead-churning",
 
     // Call Center
     "/tenant-inbound-campaign",
@@ -841,6 +880,7 @@ export const tenantAdminTitles = [
     { url: "/tenant-lead-group", title: "Lead Group", name: "lead_group" },
     { url: "/tenant-follow-up", title: "Follow Up", name: "follow_up" },
     { url: "/tenant-custom-fields", title: "Custom Fields", name: "custom_fields" },
+    { url: "/tenant-lead-churning", title: "Lead Churning", name: "lead_churning" },
 
     // Contact Center
     { url: "/tenant-inbound-campaign", title: "Inbound Campaign", name: "ic" },
@@ -858,6 +898,9 @@ export const tenantAdminTitles = [
     // Messaging
     // { url: "/tenant-messaging-channel", title: "Messaging Channel", name: "messaging_channel" },
     // { url: "/tenant-messaging-queue", title: "Messaging Queue", name: "messaging_queue" },
+
+    { url: "/tenant-email-configs", title: "Notification Configs", name: "email_configs" },
+    { url: "/tenant-email-templates", title: "Email Templates", name: "email_templates" },
 
     // Reports
     { url: "/tenant-cdrs", title: "CDRs" },
@@ -915,6 +958,13 @@ export const managerAdmin: NavItemsTypes[] = [
         iconActive: "HomeGreen",
         title: "Account Dashboard",
         url: "/manager-account-dashboard",
+    },
+    {
+        id: "manager-realtime-dashboard",
+        title: "Realtime Dashboard",
+        icon: "Dashboard",
+        url: "/manager-realtime-dashboard",
+        iconActive: "HomeGreen",
     },
     {
         id: "manager-users",
@@ -1080,6 +1130,13 @@ export const managerAdmin: NavItemsTypes[] = [
                 title: "Custom Fields",
                 url: "/manager-custom-fields",
             },
+            {
+                id: "manager-lead-churning",
+                name: "lead-churning",
+                title: "Lead Churning",
+                icon: "RefreshCircle",
+                url: "/manager-lead-churning",
+            },
         ],
     },
     {
@@ -1167,11 +1224,11 @@ export const managerAdmin: NavItemsTypes[] = [
     },
     {
         id: "manager-reports",
-        name: "reports",
+        name: "manager-reports",
         icon: "Notes",
         iconActive: "NotesGreen",
         title: "Reports",
-        url: "/reports",
+        url: "/manager-reports",
 
     },
     {
@@ -1244,6 +1301,7 @@ export const managerAdmin: NavItemsTypes[] = [
 export const managerAdminUrls = [
     "/manager-dashboard",
     "/manager-account-dashboard",
+    "/manager-realtime-dashboard",
 
     // users
     "/manager-user",
@@ -1273,6 +1331,7 @@ export const managerAdminUrls = [
     "/manager-lead-group",
     "/manager-follow-up",
     "/manager-custom-fields",
+    "/manager-lead-churning",
 
     // Call Center
     "/manager-inbound-campaign",
@@ -1309,7 +1368,7 @@ export const managerAdminUrls = [
     // "/manager-email-smtp",
     // "/manager-telecomcircle",
     "/manager-breakcode",
-
+    "/manager-reports",
 
 
     // API Integrations
@@ -1325,6 +1384,7 @@ export const managerAdminUrls = [
 export const managerAdminTitles = [
     { url: "/manager-dashboard", title: "Dashboard" },
     { url: "/manager-account-dashboard", title: "Account Dashboard" },
+    { url: "/manager-realtime-dashboard", title: "Realtime Dashboard" },
 
     // users
     { url: "/manager-user", title: "User", name: "user" },
@@ -1374,6 +1434,7 @@ export const managerAdminTitles = [
     { url: "/manager-lead-group", title: "Lead Group", name: "lead-group" },
     { url: "/manager-follow-up", title: "Follow Up", name: "follow-up" },
     { url: "/manager-custom-fields", title: "Custom Fields", name: "custom-fields" },
+    { url: "/manager-lead-churning", title: "Lead Churning", name: "lead-churning" },
 
     // Contact Center
     {
@@ -1403,6 +1464,7 @@ export const managerAdminTitles = [
         title: "Voice Broadcast",
         name: "voice-broadcast",
     },
+    { url: "/manager-reports", title: "Reports", name: "manager-reports" },
 
 
     // Reports

@@ -27,6 +27,19 @@ import {
   callerIdGroupOptionsGet,
   useCallerIdGroupOptions,
 } from "@/redux/slice/tenant-admin/callerIdGroupSlice";
+import {
+  emailConfigsGet,
+  useEmailConfigs,
+} from "@/redux/slice/tenant-admin/emailSlice";
+import {
+  apiConfigsGet,
+  useApiConfigs,
+} from "@/redux/slice/tenant-admin/apiConfigurationSlice";
+import {
+  messageConfigsGet,
+  useMessageConfigs,
+} from "@/redux/slice/tenant-admin/messageConfigurationSlice";
+
 
 import { useParams, usePathname } from "next/navigation";
 import { blendedSingleGet } from "@/redux/slice/tenant-admin/blendedSlice";
@@ -95,6 +108,15 @@ const General = () => {
   const ringGroupCallCenterOptions = useCallCenterRingOptions();
   const webFormOptions = useWebFormOptions();
   const msgQueueOptions = useMsgQueueOptions();
+   const emailConfigs = useEmailConfigs();
+  const apiConfigs = useApiConfigs();
+  const messageConfigs = useMessageConfigs();
+
+  const emailTypeOptions = [
+    { label: "Select Type", value: "none" },
+    { label: "Email Config", value: "email" },
+    { label: "API Config", value: "api" },
+  ];
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isOptionalInfo, setIsOptionalInfo] = useState<boolean>(true);
@@ -173,10 +195,37 @@ const General = () => {
     onGetLeadGroupOptions();
     onGetWebFormOptions();
     onGetMessagingQueueOptions();
+    onGetEmailConfigs();
+    onGetApiConfigs();
+    onGetMessageConfigs();
 
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+   // Fetching Message Config Options
+  const onGetMessageConfigs = async () => {
+    try {
+      await dispatch(messageConfigsGet({ limit: 1000 }));
+    } catch (err) {
+      console.error("Get Message Configs Err =-=>", err);
+    }
+  };
+    const onGetEmailConfigs = async () => {
+    try {
+      await dispatch(emailConfigsGet({ limit: 1000 }));
+    } catch (err) {
+      console.error("Get Email Configs Err =-=>", err);
+    }
+  };
+
+  // Fetching API Config Options
+  const onGetApiConfigs = async () => {
+    try {
+      await dispatch(apiConfigsGet({ limit: 1000 }));
+    } catch (err) {
+      console.error("Get API Configs Err =-=>", err);
+    }
+  };
 
   // Fetching Call Queue Options
   const onGetCallQueueOptions = async () => {
@@ -236,7 +285,7 @@ const General = () => {
   // Fetching lead-group-Options Options
   const onGetLeadGroupOptions = async () => {
     try {
-      await dispatch(leadGroupOptionsGet());
+      await dispatch(leadGroupOptionsGet(undefined));
     } catch (err) {
       console.error("Get DID Options Err =-=>", err);
     }
@@ -355,6 +404,10 @@ const General = () => {
             res?.data?.max_predictive_call_count || "1",
           answering_machine_detection:
             res?.data?.answering_machine_detection || "1",
+           email_config_uuid: res?.data?.email_config_uuid || "",
+          api_config_uuid: res?.data?.api_config_uuid || "",
+          email_type: res?.data?.email_type || "none",
+          message_config_uuid: res?.data?.message_config_uuid || "",
         });
         setIsLoading(false);
       }
@@ -535,6 +588,87 @@ const General = () => {
               label="Status"
               value={values.status}
               onClick={(value: string) => setFieldValue("status", value)}
+            />
+              <Select
+              name="email_type"
+              label="Email Type"
+              icon="Settings"
+              placeholder="Select Email Type"
+              options={emailTypeOptions}
+              value={values.email_type}
+              touched={touched}
+              errors={errors}
+              onChange={(e: any) => {
+                setValues({
+                  ...values,
+                  email_type: e.target.value,
+                  email_config_uuid: "",
+                  api_config_uuid: "",
+                });
+              }}
+              onBlur={handleBlur}
+              isInfo
+            />
+            {values.email_type === "email" && (
+              <Select
+                name="email_config_uuid"
+                label="Email Configuration"
+                icon="EmailGray"
+                placeholder="Select Email Configuration"
+                removable
+                options={emailConfigs?.data?.map((val: any) => ({
+                  label: val?.name,
+                  value: val?.uuid,
+                })) || []}
+                value={values.email_config_uuid}
+                touched={touched}
+                errors={errors}
+                onChange={(e: any) => {
+                  setFieldValue("email_config_uuid", e.target.value);
+                }}
+                onBlur={handleBlur}
+                isInfo
+              />
+            )}
+            {values.email_type === "api" && (
+              <Select
+                name="api_config_uuid"
+                label="API Configuration"
+                icon="Settings"
+                placeholder="Select API Configuration"
+                removable
+                options={apiConfigs?.data?.map((val: any) => ({
+                  label: val?.name,
+                  value: val?.uuid,
+                })) || []}
+                value={values.api_config_uuid}
+                touched={touched}
+                errors={errors}
+                onChange={(e: any) => {
+                  setFieldValue("api_config_uuid", e.target.value);
+                }}
+                onBlur={handleBlur}
+                isInfo
+              />
+            )}
+            <Select
+              name="message_config_uuid"
+              label="Message Configuration"
+              icon="Settings"
+              placeholder="Select Message Configuration"
+              removable
+              options={messageConfigs?.data?.map((val: any) => ({
+                label: val?.name,
+                value: val?.uuid,
+              })) || []}
+              value={values.message_config_uuid}
+              touched={touched}
+              errors={errors}
+              onChange={(e: any) => {
+                setFieldValue("message_config_uuid", e.target.value);
+              }}
+              onBlur={handleBlur}
+              isInfo
             />
           </div>
           <div className="shadow-box mb-10">

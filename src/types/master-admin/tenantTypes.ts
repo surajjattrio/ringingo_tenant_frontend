@@ -15,4 +15,7 @@ export interface InitialValueType {
     add_anonymous_lead: string;
     system_disposition: string;
     company_code: string;
+    mobile_number?: string;
+    vendor_uid?: string;
+    vendor_token?: string;
 }

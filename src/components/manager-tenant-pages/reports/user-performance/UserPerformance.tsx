@@ -66,6 +66,7 @@ const initialValues: UserPerformanceFilterTypes = {
 const baseHeaders: any = [
   { label: "Date", key: "report_date" },
   { label: "User", key: "username" },
+  { label: "Full Name", key: "fullname" },
   { label: "Inbound Call Count", key: "inbound_call_count" },
   { label: "Outbound Call Count", key: "outbound_call_count" },
   { label: "Agent Disconnection Count", key: "disconnected_by_agent" },
@@ -73,7 +74,8 @@ const baseHeaders: any = [
   { label: "Login Hours", key: "login_hours" },
   { label: "Net Login Hours", key: "net_login_hours" },
   { label: "Idle Hours", key: "total_idle_time" },
-  { label: "Talktime", key: "talk_time" },
+  { label: "Answer Time", key: "talk_time" },
+  { label: "Actual Talktime", key: "actual_talktime" },
   { label: "BreakTime", key: "break_time" },
   { label: "ACW", key: "total_acw_time" },
   { label: "Pause Duration", key: "total_pause_time" },
@@ -186,7 +188,12 @@ const UserPerformance = (props: ManagerPageTypes) => {
     },
     {
       name: "talk_time",
-      title: "Talk time(HH:MM:SS)",
+      title: "Answer Time(HH:MM:SS)",
+      sortable: true,
+    },
+    {
+      name: "actual_talktime",
+      title: "Actual Talktime(HH:MM:SS)",
       sortable: true,
     },
     {
@@ -354,6 +361,28 @@ const UserPerformance = (props: ManagerPageTypes) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Update labels for user_uuid when userOptions are available
+  useEffect(() => {
+    if (userOptions && userOptions.length > 0 && data.user_uuid.val.length > 0) {
+      const isAnyLoading = data.user_uuid.val.some((u: any) => u.label === "Loading...");
+      if (isAnyLoading) {
+        const updatedUserUuids = data.user_uuid.val.map((u: any) => {
+          if (u.label === "Loading...") {
+            const found = userOptions.find((opt: any) => opt.value === u.value);
+            return found ?? u;
+          }
+          return u;
+        });
+
+        setData((prev: any) => ({
+          ...prev,
+          user_uuid: { ...prev.user_uuid, val: updatedUserUuids }
+        }));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userOptions]);
 
   useLayoutEffect(() => {
     /*if (filter?.isAdvance) {
@@ -564,6 +593,8 @@ const UserPerformance = (props: ManagerPageTypes) => {
             : "",
           ...(data["direction"]?.["val"] ? { direction: data["direction"]["val"] } : {}),
           ...(data["campaign_uuid"]?.["val"]?.length ? { campaign_uuid: data["campaign_uuid"]["val"] } : {}),
+          page: filter.page,
+          limit: filter.limit,
         };
         Object.entries(payload).forEach(([key, val]) => {
           if (val === undefined || val === null || val === "") {

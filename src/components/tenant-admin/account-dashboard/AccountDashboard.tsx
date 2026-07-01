@@ -148,7 +148,7 @@ const AccountDashboard = () => {
         { label: "Campaigns", value: "campaigns" },
         { label: "Lead Groups", value: "lead-groups" },
         { label: "Managers & Agents", value: "manager-and-agent" },
-        { label: "Call Queues", value: "call-queue" },
+        // { label: "Call Queues", value: "call-queue" },
         { label: "DIDs", value: "dids" },
     ];
 

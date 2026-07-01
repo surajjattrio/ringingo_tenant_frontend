@@ -4,7 +4,13 @@ export const LOGIN = "/login";
 // PROFILE
 export const SMTP_CONFIGURATION = "/mail-configuration";
 export const WEBHOOK = "/profile/web-hook";
-
+export const SMTP_TEST_CONFIGURATION = "/mail-configuration/test-smtp";
+export const EMAIL_TEMPLATE = "/email-template";
+export const EMAIL_TEMPLATE_SEARCH = "/email-template/advanced-search";
+export const EMAIL_CHANNEL = "/email-channel";
+export const EMAIL_CHANNEL_SEARCH = "/email-channel/advanced-search";
+export const API_CONFIGURATION = "/api-configuration";
+export const MESSAGE_CONFIGURATION = "/message-configuration";
 // ===================== MASTER ADMIN =====================
 
 // DASHBOARD
@@ -75,6 +81,7 @@ export const TENANT_DASHBOARD = "/dashboard/tenant";
 export const TENANT_DASHBOARD_CALL_OVERVIEW = "/dashboard/tenant/call-overview";
 export const TENANT_DASHBOARD_FILTER = "/dashboard/tenant/filter";
 export const TENANT_DASHBOARD_ACCOUNT_DETAILS = "/dashboard/tenant/account-details";
+export const TENANT_DASHBOARD_DATA = "/dashboard/tenant/dashboard-data";
 
 // TENANT DISPOSITION
 export const TENANT_DISPOSITION = "/disposition";
@@ -187,6 +194,8 @@ export const IP_MAPPING_SEARCH = "/ip-mapping/advanced-search";
 
 // INBOUND - CAMPAIGN
 export const INBOUND_CAMPAIGN = "/inbound-campaign";
+export const INBOUND_CALL_DEBUG_SNAPSHOT = "/inbound-call-debug/snapshot";
+export const INBOUND_CALL_DEBUG_FORM_OPTIONS = "/inbound-call-debug/form-options";
 export const INBOUND_CAMPAIGN_SEARCH = "/inbound-campaign/advanced-search";
 export const INBOUND_CAMPAIGN_PRESET = "";
 export const INBOUND_CAMPAIGN_PRESET_ADD = "/preset/create";
@@ -208,6 +217,7 @@ export const OUTBOUND_CAMPAIGN_DIALABLE_TABLE_ADD =
     "/outbound-campaign/add-dialable";
 export const OUTBOUND_CAMPAIGN_ADD_HANGUP = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_LEAD_RESET = "/outbound-campaign/lead-reset";
+export const OUTBOUND_CAMPAIGN_LEAD_CHURNING_DATA = "/outbound-campaign/lead-churning-data";
 export const OUTBOUND_CAMPAIGN_HNAGUP_ADD = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_HANGUP_DELETE =
     "/outbound-campaign/outbound-campaign-disposition";
@@ -231,6 +241,7 @@ export const BLENDED_CAMPAIGN_DIALABLE_TABLE_ADD =
     "/blended-campaign/add-dialable";
 export const BLENDED_CAMPAIGN_ADD_HANGUP = "/blended-campaign/disposition";
 export const BLENDED_CAMPAIGN_LEAD_RESET = "/blended-campaign/lead-reset";
+export const BLENDED_CAMPAIGN_LEAD_CHURNING_DATA = "/blended-campaign/lead-churning-data";
 export const BLENDED_CAMPAIGN_HNAGUP_ADD = "/blended-campaign/disposition";
 export const BLENDED_CAMPAIGN_HANGUP_DELETE =
     "/blended-campaign/blended-campaign-disposition";
@@ -274,6 +285,7 @@ export const LEAD_GROUP = "lead-group";
 export const LEAD_GROUP_CAMPAIGN_LIST = "lead-group/campaign/list";
 export const LEAD_GROUP_SEARCH = "lead-group/advanced-search";
 export const LEAD_GROUP_REMOVE_QUEUE = "/outbound-campaign/remove-queues";
+export const BLENDED_CAMPAIGN_REMOVE_QUEUE = "/blended-campaign/remove-queues";
 export const DELETE_ALL_LEADS = "/lead-group/all-leads";
 export const LEAD_GROUP_EXPORT_USER_INFO = "/lead-group/export-user-info";
 export const LEAD_GROUP_DOWNLOAD_LEADS = "lead-group/download/leads";
@@ -410,3 +422,6 @@ export const REQUEST_SCHEDULER_DELETE = "/request-scheduler/delete";
 
 // ACTIVITY LOG
 export const ACTIVITY_LOG = "/activity-log";
+
+// REALTIME DASHBOARD - LEAD GROUP
+export const REALTIME_DASHBOARD_LEAD_GROUP_STATS = "/realtime-dashboard/lead-group-stats";

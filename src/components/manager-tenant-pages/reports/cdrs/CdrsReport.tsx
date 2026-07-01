@@ -62,6 +62,14 @@ const disconnectedByOptions = [
     { label: "Customer", value: "1" }
 ];
 
+// Add By Rahul RIG-13 call status
+const callStatusOptions = [
+    { label: "Connected", value: "Connected" },
+    { label: "Not Connected", value: "Not Connected" },
+    { label: "Abandoned", value: "Abandoned" },
+
+];
+
 // NAME STATE
 const now = new Date();
 const startOfToday = new Date(now);
@@ -87,6 +95,7 @@ const initialValues: TenantCdrsFilterTypes = {
     disposition: { key: "disposition|4", val: "", dropdown: "4" },
     call_mode: { key: "call_mode|4", val: "", dropdown: "4" },
     direction: { key: "direction|4", val: "", dropdown: "4" },
+    call_status: { key: "call_status|4", val: "", dropdown: "4" },
     call_type: { key: "call_type|4", val: "", dropdown: "4" },
     user_uuid: { key: "user_uuid|4", val: "", dropdown: "4" },
     pbx_feature_uuid: { key: "pbx_feature_uuid|4", val: "", dropdown: "4" },
@@ -121,6 +130,8 @@ const headers = [
     { label: "Agent", key: "agent" },
     { label: "Duration", key: "total_duration" },
     { label: "Answer Time", key: "billsecond" },
+    { label: "Actual Talk Time", key: "actual_talktime" },
+    { label: "Call Status", key: "call_status" },
     { label: "Hold Time", key: "hold_time" },
     { label: "Waiting Time", key: "waiting_time" },
     { label: "Ringing Time", key: "ringing_time" },
@@ -132,6 +143,7 @@ const headers = [
     { label: "Sub Disposition 1", key: "hangup_cause_1" },
     { label: "Sub Disposition 2", key: "hangup_cause_2" },
     { label: "Direction", key: "direction" },
+    { label: "CSAT Score", key: "is_csat" },
     { label: "Comment", key: "comment" },
     // { label: "Recording", key: "recording_path" },
 ];
@@ -260,13 +272,21 @@ const CdrsReport = (props: ManagerPageTypes) => {
         // },
         {
             name: "caller_id_number",
-            title: "Caller ID Number",
+            title: "Caller ID Number / DID",
             sortable: true,
+            action: (row: any) => {
+                const isI = row.direction?.toString().toLowerCase().includes("inbound");
+                return isI ? (row.destination_number || "-") : (row.caller_id_number || "-")
+            }
         },
         {
             name: "destination_number",
-            title: "DID / Phone Number",
+            title: "Phone Number",
             sortable: true,
+            action: (row: any) => {
+                const isI = row.direction?.toString().toLowerCase().includes("inbound");
+                return isI ? (row.caller_id_number || "-") : (row.destination_number || "-")
+            }
         },
         {
             name: "username",
@@ -311,6 +331,16 @@ const CdrsReport = (props: ManagerPageTypes) => {
             title: "Answer Time",
             sortable: true,
             //action: (row: any) => formatTime(parseInt(row.billsecond), true)
+        },
+        {
+            name: "actual_talktime",
+            title: "Actual Talk Time",
+            sortable: true,
+        },
+        {
+            name: "call_status",
+            title: "Call Status",
+            sortable: true,
         },
         {
             name: "hold_time",
@@ -448,6 +478,12 @@ const CdrsReport = (props: ManagerPageTypes) => {
             name: "direction",
             title: "Direction",
             sortable: true,
+        },
+        {
+            name: "is_csat",
+            title: "CSAT Score",
+            sortable: true,
+            action: (row: any) => row?.ivr_feedback_score || "-"
         },
         {
             name: "custom_callid",
@@ -668,12 +704,19 @@ const CdrsReport = (props: ManagerPageTypes) => {
         const lead_group_name = row?.lead_details[0]?.lead_group[0]?.name;
         const user_group_name = row?.user[0]?.user_group[0]?.name;
         const disconnected_by_label = getDisconnectedByLabel(row.disconnected_by);
+        const direction = String(row.direction || "").toLowerCase();
+        const raw_actual_talk_time = direction === "inbound" ? row.actual_talk_time : row.billsecond;
+        const actual_talk_time = (typeof raw_actual_talk_time === "string" && raw_actual_talk_time.includes(":"))
+            ? raw_actual_talk_time
+            : formatTime(parseInt(raw_actual_talk_time) || 0, true);
 
         // const hierarchyNames = getDispositionHierarchyNames(row.hangup_cause, allDispositions, "");
         const hangup_cause_0 = row?.hangup_cause;
         // const hangup_cause_1 = hierarchyNames.length >= 2 ? hierarchyNames[hierarchyNames.length - 2] : "";
         // const hangup_cause_2 = hierarchyNames.length >= 3 ? hierarchyNames[0] : "";
-
+        const isI = direction.includes("inbound");
+        const caller_id_number = isI ? (row.destination_number || "-") : (row.caller_id_number || "-");
+        const destination_number = isI ? (row.caller_id_number || "-") : (row.destination_number || "-");
         return {
             ...row,
             campaign_name,
@@ -681,9 +724,13 @@ const CdrsReport = (props: ManagerPageTypes) => {
             lead_group_name,
             user_group_name,
             disconnected_by_label,
+            caller_id_number,
+            destination_number,
+            actual_talk_time,
             hangup_cause_0,
-            // hangup_cause_1,
-            // hangup_cause_2,
+            //hangup_cause_1,
+            //hangup_cause_2,
+            is_csat: row?.ivr_feedback_score || "-",
             comment: row?.notes?.[0]?.comment || "",
         };
     });
@@ -724,11 +771,11 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 const fields = [
                     "callstart", "callend", "caller_id_name", "caller_id_number",
                     "destination_number", "billsecond", "call_mode", "disposition",
-                    "direction", "call_type", "user_uuid", "pbx_feature_uuid",
+                    "direction","call_status", "call_type", "user_uuid", "pbx_feature_uuid",
                     "collection_name_for_display", "campaign_uuid",
                 ];
                 fields.forEach((field) => {
-                    const val = field === "callstart" || field === "callend"
+                    let val = field === "callstart" || field === "callend"
                         ? formatDate(data[field]?.["val"], true)
                         : data[field]?.["val"];
                     if (val != null && val !== "" && !(Array.isArray(val) && val.length === 0)) {
@@ -819,6 +866,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
             data["user_uuid"]["val"] ||
             data["pbx_feature_uuid"]["val"] ||
             data["campaign_uuid"]["val"]?.length > 0 ||
+            data["call_status"]["val"] ||
             // data["lead_group_name"]["val"] ||
             // data["disconnected_by"]["val"] ||
             // data["dial_method"]["val"] ||
@@ -849,6 +897,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     [data["billsecond"]["key"]]: data["billsecond"]["val"],
                     [data["call_mode"]["key"]]: data["call_mode"]["val"],
                     [data["direction"]["key"]]: data["direction"]["val"],
+                    [data["call_status"]["key"]]: data["call_status"]["val"],
                     [data["call_type"]["key"]]: data["call_type"]["val"],
                     [data["user_uuid"]["key"]]: data["user_uuid"]["val"],
                     [data["pbx_feature_uuid"]["key"]]: data["pbx_feature_uuid"]["val"],
@@ -1038,7 +1087,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 />
                 <InputSelect
                     name="caller_id_number"
-                    label="Caller Id Number"
+                    label="Caller Id Number / DID"
                     placeholder="Select Caller Id Number"
                     value={data.caller_id_number.val}
                     dropdownValue={data.caller_id_number.dropdown}
@@ -1054,7 +1103,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 <InputSelect
                     type="number"
                     name="destination_number"
-                    label="DID / Phone Number"
+                    label="Phone Number"
                     placeholder="Select Phone Number"
                     value={data.destination_number.val}
                     dropdownValue={data.destination_number.dropdown}
@@ -1130,6 +1179,17 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     value={data.direction.val}
                     options={directionOptions}
                     onChange={(e: any) => handleChnage("direction", e.target.value)}
+                    isInfo
+                />
+                <Select
+                    name="call_status"
+                    label="Call Status"
+                    placeholder="Select Call Status"
+                    removable
+                    value={data.call_status.val}
+                    options={callStatusOptions}
+                    onChange={(e: any) =>
+                    handleChnage("call_status", e.target.value) }
                     isInfo
                 />
                 <Select
