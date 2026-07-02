@@ -6,6 +6,7 @@ import {
     REALTIME_REPORT,
     REALTIME_REPORT_SEARCH,
     REALTIME_REPORT_UPDATE,
+    AGENT_STATE,
 } from "@/API/constAPI";
 import { apiInstance } from "@/redux/axiosApi";
 
@@ -29,6 +30,10 @@ export const getCampaign = () => {
 
 export const callPause = (payload: any) => {
     return apiInstance.post(CALL_PAUSE, payload);
+};
+
+export const toggleAgentState = (feature: string, uuid: string) => {
+    return apiInstance.put(`${AGENT_STATE}/${feature}/${uuid}`);
 };
 
 export const updateRealTimeReport = (id: string, payload: any) => {

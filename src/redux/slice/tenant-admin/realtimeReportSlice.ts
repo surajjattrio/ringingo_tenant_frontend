@@ -11,6 +11,7 @@ import {
     logoutAdmin,
     putAgentOnBreak,
     searchRealTimeReport,
+    toggleAgentState,
     updateRealTimeReport,
 } from "@/redux/services/tenant-admin/realtimeReportServices";
 
@@ -53,6 +54,13 @@ export const agentCallPause = createAsyncThunk(
     "realtime-report/agent-call-pause",
     async (payload: any) => {
         return await callPause(payload);
+    }
+);
+
+export const agentStateToggle = createAsyncThunk(
+    "realtime-report/agent-state-toggle",
+    async ({ feature, uuid }: { feature: string; uuid: string }) => {
+        return await toggleAgentState(feature, uuid);
     }
 );
 

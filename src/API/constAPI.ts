@@ -310,6 +310,7 @@ export const REALTIME_REPORT_SEARCH = "/tenant/realtime-report/advanced-search";
 export const CAMPAIGN = "/agent-call-center/campaign";
 export const ADMIN_LOGOUT = "/agent-call-center/agent-admin-logout";
 export const CALL_PAUSE = "/tenant/realtime-report/call-pause";
+export const AGENT_STATE = "/tenant/agent-state";
 export const REALTIME_REPORT_UPDATE = "/outbound-campaign/outbound-campaign-dial";
 
 // CLICK TO CALL

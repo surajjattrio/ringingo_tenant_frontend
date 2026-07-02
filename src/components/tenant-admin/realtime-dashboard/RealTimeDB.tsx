@@ -20,6 +20,7 @@ import {
   useRealtimeliveAgentsOnCallsData,
   useRealtimeCallsCountData,
   adminLogout,
+  agentStateToggle,
 } from "@/redux/slice/tenant-admin/realtimeReportSlice";
 import { Button, Select } from "@/components/forms";
 import { Danger, Success } from "@/redux/services/toasterServices";
@@ -49,6 +50,15 @@ import { sipNameOptionsGet } from "@/redux/slice/tenant-admin/sipDevicesSlice";
 import BreakTimerModal from "@/components/manager-tenant-pages/reports/realtime-report/BreakTimerModal";
 import { formatTime } from "@/helperFunctions";
 import { Modal } from "@/components/modals";
+import {
+  Eye,
+  Headphones,
+  Mic,
+  Pause,
+  Coffee,
+  LogOut,
+  Play,
+} from "lucide-react";
 
 interface RealtimeStaticCardType {
   icon: IconKey;
@@ -171,6 +181,36 @@ const RealTimeDB = () => {
     setOpenBreakModal(false);
   }
 
+  const handleAgentStateToggle = async (row: any) => {
+    const agentUuid = row?.agent_uuid || row?.uuid;
+    const feature = row?.agent_status === "Pause" ? "idle" : "pause";
+
+    if (!agentUuid) {
+      Danger("Agent UUID is missing.");
+      return;
+    }
+
+    try {
+      const result: any = await dispatch(
+        agentStateToggle({ feature, uuid: agentUuid })
+      ).unwrap();
+      const message =
+        result?.message ||
+        result?.data?.message ||
+        result?.payload?.message ||
+        `${feature === "pause" ? "Paused" : "Set idle"} successfully`;
+
+      if (result?.success || result?.statusCode === 200 || result?.status === 200 || result?.data?.success) {
+        Success(message);
+      } else {
+        Danger(message);
+      }
+    } catch (error: any) {
+      console.log("agent state toggle err:->", error?.message);
+      Danger(error?.message || "Failed to update agent state.");
+    }
+  };
+
   const [filter, setFilter] = useState<FilterTypes>({
     page: 1,
     limit: 10,
@@ -237,6 +277,31 @@ const RealTimeDB = () => {
     },
   ];
 
+  const ActionButton = ({
+    tooltip,
+    name,
+    color,
+    onClick,
+  }: {
+    tooltip: string;
+    name: any;
+    color: any;
+    onClick: () => void;
+  }) => (
+    <div
+     
+    >
+      <Icon
+        tooltip={tooltip}
+        name={name}
+        width={18}
+        height={18}
+        alt={tooltip}
+        onClick={onClick}
+      />
+    </div>
+  );
+
   // AGENT TABLE COLUMNS
   const Agentcolumns: ColumnsType[] = [
     {
@@ -259,10 +324,10 @@ const RealTimeDB = () => {
                       : row?.status === "5"
                         ? "bg-[#90DAE4]"
                         : row?.status === "6"
-                        ? "bg-amber-500"
-                        : row?.status === "7"
-                          ? "bg-[#000000]"
-                          : ""
+                          ? "bg-amber-500"
+                          : row?.status === "7"
+                            ? "bg-[#000000]"
+                            : ""
               } px-3 py-1 rounded-md`}
           >
             <label className="text-white">{row?.agent_status}</label>
@@ -329,110 +394,147 @@ const RealTimeDB = () => {
       title: "Monitor",
       action: (row: any) => {
         return (
-          <>
-            <div className="flex gap-2">
-              {row?.agent_status === "On Outgoing call" ||
-                row?.agent_status === "On Incoming call" ? (
-                <>
-                  {/* <Icon
-                    tooltip="Monitor"
-                    name="UserCalling"
-                    width={20}
-                    height={20}
-                    alt="User"
-                    onClick={() => onCallPause(row, "Monitor")}
-                  /> */}
-                  <Icon
-                    tooltip="Barge"
-                    name="Eye"
-                    width={20}
-                    height={20}
-                    alt="Eye"
-                    onClick={() => onCallPause(row, "Barge")}
-                  />
-                  {/* <Icon
-                    tooltip="Whisper"
-                    name="Ear"
-                    width={20}
-                    height={20}
-                    alt="Ear"
-                    onClick={() => onCallPause(row, "Whisper")}
-                  /> */}
-                  <Icon
-                    tooltip="Break"
-                    name="Breakcode"
-                    width={20}
-                    height={20}
-                    alt="Breakcode"
-                    onClick={() => {
-                      setSelectedBreakcodes(row.breakcode_data || []);
-                      setSelectedRow(row);
-                      setOpenBreakModal(true);
-                    }}
-                  />
-                </>
-              ) : (
-                <>
-                  {row?.agent_status !== "Break" && (
+          <div className="flex flex-wrap items-center gap-2">
+            {(() => {
+              switch (row?.agent_status) {
+                case "On Outgoing call":
+                case "On Incoming call":
+                  return (
                     <>
-                      <Icon tooltip="Monitor" name="UserCalling" width={20} height={20} alt="User" />
-                      <Icon tooltip="Watch" name="Eye" width={20} height={20} alt="Eye" />
-                      <Icon tooltip="Whisper" name="Ear" width={20} height={20} alt="Ear" />
-                      <Icon
-                        tooltip="Break"
-                        name="Breakcode"
-                        width={20}
-                        height={20}
-                        alt="Breakcode"
-                        onClick={() => {
-                          setSelectedBreakcodes(row.breakcode_data || []);
-                          setSelectedRow(row);
-                          setOpenBreakModal(true);
-                        }}
-                      />
-                      <Icon
-                        tooltip="Logout"
-                        name="Exit"
-                        width={20}
-                        height={20}
-                        alt="Exit"
-                        onClick={() => setLogoutId(row?.agent_uuid)}
+                      <ActionButton
+                        tooltip="Monitor"
+                        name="UserCalling"
+                        color=""
+                        // color="bg-blue-600"
+                        onClick={() => onCallPause(row, "Monitor")}
                       />
 
-                      <Icon
+                      <ActionButton
+                        tooltip="Barge"
+                        name="Eye"
+                        color=""
+                        // color="bg-purple-600"
+                        onClick={() => onCallPause(row, "Barge")}
+                      />
+
+                      <ActionButton
+                        tooltip="Whisper"
+                        name="Ear"
+                        color=""
+                        // color="bg-indigo-600"
+                        onClick={() => onCallPause(row, "Whisper")}
+                      />
+
+                      <ActionButton
+                        tooltip="Logout"
+                        name="Exit"
+                        color=""
+                        // color="bg-red-600"
+                        onClick={() => setLogoutId(row.agent_uuid)}
+                      />
+                    </>
+                  );
+
+                case "Break":
+                  return (
+                    <>
+                      <ActionButton
+                        tooltip="Make Ready"
+                        name="Play"
+                        // color=""
+                        color="bg-green-600"
+                        onClick={() => handleBackToWork(row.agent_uuid, 0)}
+                      />
+
+                      <ActionButton
+                        tooltip="Logout"
+                        name="Exit"
+                        color=""
+                        // color="bg-red-600"
+                        onClick={() => setLogoutId(row.agent_uuid)}
+                      />
+                    </>
+                  );
+
+                case "Pause":
+                  return (
+                    <>
+                      <ActionButton
+                        tooltip="Make Idle"
+                        name="Play"
+                        color=""
+                        // color="bg-green-600"
+                        onClick={() => handleAgentStateToggle(row)}
+                      />
+
+                      <ActionButton
                         tooltip="Break"
                         name="Breakcode"
-                        width={20}
-                        height={20}
-                        alt="Breakcode"
+                        color=""
+                        // color="bg-orange-500"
                         onClick={() => {
                           setSelectedBreakcodes(row.breakcode_data || []);
                           setSelectedRow(row);
                           setOpenBreakModal(true);
                         }}
                       />
-                      <Icon
+
+                      <ActionButton
                         tooltip="Logout"
                         name="Exit"
-                        width={20}
-                        height={20}
-                        alt="Exit"
-                        onClick={() => setLogoutId(row?.agent_uuid)}
+                        color=""
+                        // color="bg-red-600"
+                        onClick={() => setLogoutId(row.agent_uuid)}
                       />
                     </>
-                  )}
-                  {row?.agent_status === "Break" && (
-                    <button
-                      className={`bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded text-xs font-semibold transition-colors`}
-                      onClick={() => handleBackToWork(row.agent_uuid, 0)}
-                    >
-                      Make Ready
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-          </>
+                  );
+
+                case "ACW":
+                  return (
+                    <ActionButton
+                      tooltip="Logout"
+                      name="Exit"
+                      color=""
+                      // color="bg-red-600"
+                      onClick={() => setLogoutId(row.agent_uuid)}
+                    />
+                  );
+
+                default:
+                  return (
+                    <>
+                      <ActionButton
+                        tooltip="Pause"
+                        name="Pause"
+                        color=""
+                        // color="bg-amber-500"
+                        onClick={() => handleAgentStateToggle(row)}
+                      />
+
+                      <ActionButton
+                        tooltip="Break"
+                        name="Breakcode"
+                        color=""
+                        // color="bg-orange-500"
+                        onClick={() => {
+                          setSelectedBreakcodes(row.breakcode_data || []);
+                          setSelectedRow(row);
+                          setOpenBreakModal(true);
+                        }}
+                      />
+
+                      <ActionButton
+                        tooltip="Logout"
+                        name="Exit"
+                        color=""
+                        // color="bg-red-600"
+                        onClick={() => setLogoutId(row.agent_uuid)}
+                      />
+                    </>
+                  );
+              }
+            })()}
+          </div>
         );
       },
     },
@@ -1112,8 +1214,8 @@ const RealTimeDB = () => {
         </div> */}
 
         {/* <div className="py-2 grid grid-cols-2 2lg:grid-cols-2 lg:grid-cols-2 2md:grid-cols-3 sm:grid-cols-2 sm:gap-2 gap-4"> */}
-          {/* Live Calls Pie */}
-          {/* <div className="bg-white border rounded-lg p-4 shadow">
+        {/* Live Calls Pie */}
+        {/* <div className="bg-white border rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2">Live Calls</h2>
             <Chart
               options={liveCallsOptions}
@@ -1123,8 +1225,8 @@ const RealTimeDB = () => {
             />
           </div> */}
 
-          {/* Agents Pie */}
-          {/* <div className="bg-white border rounded-lg p-4 shadow">
+        {/* Agents Pie */}
+        {/* <div className="bg-white border rounded-lg p-4 shadow">
             <h2 className="text-lg font-semibold mb-2">Agents</h2>
             <Chart
               options={agentsOptions}
