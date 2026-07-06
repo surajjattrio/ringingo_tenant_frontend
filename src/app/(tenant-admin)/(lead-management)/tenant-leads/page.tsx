@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -194,6 +194,8 @@ const LeadManagement = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isBatchUpdate, setIsBatchUpdate] = useState<boolean>(false);
+  const [isBatchDelete, setIsBatchDelete] = useState<boolean>(false);
+  const [batchDeleteScope, setBatchDeleteScope] = useState<"all_filtered" | "current_page">("all_filtered");
   const [batchDetails, setBatchDetails] = useState(initialBatchValues);
   const [csvLoading, setCsvLoading] = useState<boolean>(false);
   const [isCsvDownload, setIsCsvDownload] = useState<boolean>(false);
@@ -694,10 +696,76 @@ const LeadManagement = () => {
     }
   };
 
-  // Mass Delete Click - Open Delete Modal
-  const onMassDeleteLead = () => {
-    const selectedRows = [...selectedRow];
-    setDeleteId(selectedRows.join(","));
+  // // Mass Delete Click - Open Delete Modal
+  // const onMassDeleteLead = () => {
+  //   const selectedRows = [...selectedRow];
+  //   setDeleteId(selectedRows.join(","));
+  // };
+
+  // Mass Delete — honoring the scope chosen in the Batch Delete panel
+  const onBulkDeleteLeads = async () => {
+    // Guard: "All Filtered Records" requires advance filter to be active
+    if (batchDeleteScope === "all_filtered" && !filter.isAdvance) {
+      Danger("Please apply a filter before deleting all records.");
+      return;
+    }
+
+    if (batchDeleteScope === "all_filtered" && filter.isAdvance) {
+      // Fetch ALL matching UUIDs using the current advanced-search filters
+      const payload: Record<string, any> = {
+        [data["first_name"]["key"]]: data["first_name"]["val"],
+        [data["last_name"]["key"]]: data["last_name"]["val"],
+        [data["phone_number"]["key"]]: data["phone_number"]["val"],
+        [data["phone_code"]["key"]]: data["phone_code"]["val"],
+        [data["user_uuid"]["key"]]: data["user_uuid"]["val"],
+        [data["lead_group_uuid"]["key"]]: data["lead_group_uuid"]["val"],
+        [data["lead_status"]["key"]]: data["lead_status"]["val"],
+        [data["lead_status_1"]["key"]]: data["lead_status_1"]["val"],
+        [data["lead_status_2"]["key"]]: data["lead_status_2"]["val"],
+        page: 1,
+        limit: lead?.count || 0,
+      };
+      if (data["start_date"]["val"] && data["end_date"]["val"]) {
+        payload["date_filter_type"] = data.date_filter_type.val;
+        payload["start_date"] = data.start_date.val
+          ? format(new Date(data.start_date.val), "yyyy-MM-dd HH:mm:ss")
+          : "";
+        payload["end_date"] = data.end_date.val
+          ? format(new Date(data.end_date.val), "yyyy-MM-dd HH:mm:ss")
+          : "";
+      }
+      Object.entries(payload).forEach(([key, val]: any) => {
+        if (!val) delete payload[key];
+      });
+      try {
+        setLoading(true);
+        const res: any = await dispatch(leadAllSearch(payload)).unwrap();
+        const allIds: string[] = (res?.data || [])
+          .map((item: any) => item?.lead_management_uuid)
+          .filter(Boolean);
+        if (allIds.length === 0) {
+          setLoading(false);
+          Danger("No matching records found to delete.");
+          return;
+        }
+        setLoading(false);
+        setIsBatchDelete(false);
+        setDeleteId(allIds.join(","));
+      } catch (e: any) {
+        setLoading(false);
+        console.error("Fetch all leads for batch delete Err --->", e?.message);
+        Danger("");
+      }
+    } else {
+      // Current-page scope — use only the UUIDs that the user has selected
+      const selectedRows = [...selectedRow];
+      if (selectedRows.length === 0) {
+        Danger("No records selected. Please select records to delete.");
+        return;
+      }
+      setIsBatchDelete(false);
+      setDeleteId(selectedRows.join(","));
+    }
   };
 
   const isDisabled = () => {
@@ -797,13 +865,23 @@ const LeadManagement = () => {
                 setIsBatchUpdate(!isBatchUpdate);
               }}
             />
-            <Button
+            {/* <Button
               className="flex items-center gap-1 rounded-[2px] text-white py-2 px-4 text-sm font-medium"
               style="error"
               text="Delete"
               icon="DeleteWhite"
               onClick={() => {
                 onMassDeleteLead();
+              }}
+            /> */}
+            <Button
+              className="flex items-center gap-1 rounded-[2px] text-white py-2 px-4 text-sm font-medium"
+              style="error"
+              text="Batch Delete"
+              icon="DeleteWhite"
+              onClick={() => {
+                setIsBatchDelete(!isBatchDelete);
+                setIsBatchUpdate(false);
               }}
             />
             <div className="ml-auto flex gap-3 items-center">
@@ -1227,6 +1305,89 @@ const LeadManagement = () => {
             </div>
           </div>
         </div>
+
+        {/* ── Batch Delete Panel ─────────────────────────────────────────── */}
+        <div
+          className={`relative z-[1] flex flex-col mt-5 bg-white rounded-md drop-shadow-lg ${isBatchDelete ? "" : "hidden"
+            }`}
+        >
+          <div className="flex items-center justify-between border-b border-dark-700 pl-10 pr-4 py-4">
+            <span className="text-sm font-bold">Batch Delete</span>
+            <Icon
+              className="cursor-pointer"
+              tooltip="Close"
+              name="Close"
+              width={20}
+              height={20}
+              alt="Close"
+              onClick={() => setIsBatchDelete(false)}
+            />
+          </div>
+          <div className="px-10 pt-6 pb-8">
+            <p className="text-sm font-medium text-gray-700 mb-4">Select which records to delete:</p>
+            <div className="flex flex-col gap-4">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="batchDeleteScope"
+                  value="all_filtered"
+                  checked={batchDeleteScope === "all_filtered"}
+                  onChange={() => setBatchDeleteScope("all_filtered")}
+                  className="mt-0.5 w-4 h-4 accent-red-600"
+                />
+                <div>
+                  <span className="text-sm font-semibold text-gray-800 group-hover:text-red-600 transition-colors">
+                    All records matching the applied filters
+                  </span>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Deletes every record returned by the current search/filter across all pages.
+                    {!filter.isAdvance && (
+                      <span className="ml-1 text-amber-600 font-medium">
+                        (Requires advanced filters to be active)
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <input
+                  type="radio"
+                  name="batchDeleteScope"
+                  value="current_page"
+                  checked={batchDeleteScope === "current_page"}
+                  onChange={() => setBatchDeleteScope("current_page")}
+                  className="mt-0.5 w-4 h-4 accent-red-600"
+                />
+                <div>
+                  <span className="text-sm font-semibold text-gray-800 group-hover:text-red-600 transition-colors">
+                    Records on the current page only
+                  </span>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Deletes only the {lead?.data?.length || 0} records visible on page {filter.page}.
+                  </p>
+                </div>
+              </label>
+            </div>
+          </div>
+          <div className="flex py-4 justify-end items-center border-t shadow-box rounded-sm">
+            <div className="flex gap-3 px-10">
+              <Button
+                className="px-3 py-2"
+                text="Cancel"
+                style="dark-outline"
+                onClick={() => setIsBatchDelete(false)}
+              />
+              <Button
+                className="px-3 py-2"
+                text="Delete"
+                style="error"
+                // disabled={batchDeleteScope === "all_filtered" && !filter.isAdvance}
+                onClick={() => onBulkDeleteLeads()}
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="mt-5">
           <div
             className={`${infoData
