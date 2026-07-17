@@ -42,6 +42,7 @@ COPY --from=builder /app/certs ./certs
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/package-lock.json ./
 COPY --from=builder /app/server.js ./server.js
+COPY --from=builder /app/src ./src
 
 EXPOSE 3001
 CMD ["npm", "run", "start", "--", "-p", "3001"]
