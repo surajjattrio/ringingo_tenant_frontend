@@ -285,7 +285,7 @@ const AddAdvanceList = (props: AddAdvanceListProps) => {
                           // Number Input
                           <Input
                             name="routing_options"
-                            type="number"
+                            // type="number"
                             isShowLabel={false}
                             placeholder="Enter Routing Options"
                             value={val.routing_options}

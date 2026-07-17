@@ -3,6 +3,10 @@ import { useEffect } from "react";
 // PROJECT IMPORT
 import { useAppDispatch } from "@/redux/hooks";
 import {
+    didOptionsGet,
+    useDidOptions,
+} from "@/redux/slice/tenant-admin/didSlice";
+import {
     tenantTrunkOptionsGet,
     useTenantTrunkOptions,
 } from "@/redux/slice/tenant-admin/tenantTrunkSlice";
@@ -23,6 +27,7 @@ const initialRulesValues = {
     strip: "",
     prepend: "",
     trunk_uuid: "",
+    call_id_value: "",
     failover_trunk_1_uuid: "",
     failover_trunk_2_uuid: "",
 };
@@ -31,11 +36,13 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
     const { rulesData, setRulesData } = props;
     const dispatch = useAppDispatch();
     const trunkOptions = useTenantTrunkOptions();
+    const didOptions = useDidOptions();
     const pathname = usePathname();
     let isPathname = pathname?.split("-")?.[0] === "/manager";
 
     useEffect(() => {
         onGetTrunkOptions();
+        onGetDidOptions();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -49,6 +56,15 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
             await dispatch(tenantTrunkOptionsGet());
         } catch (err) {
             console.error("Get Trunk Options Err =-=>", err);
+        }
+    };
+
+    // Fetching DID Options
+    const onGetDidOptions = async () => {
+        try {
+            await dispatch(didOptionsGet());
+        } catch (err) {
+            console.error("Get DID Options Err =-=>", err);
         }
     };
 
@@ -122,6 +138,19 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
                                     value={val.prepend}
                                     onChange={(e: any) => {
                                         handleChange("prepend", e.target.value, index);
+                                    }}
+                                    isInfo
+                                />
+                                <Select
+                                    name="call_id_value"
+                                    label="Call ID Value"
+                                    icon="CallerID"
+                                    placeholder="Select Call ID Value"
+                                    removable
+                                    options={didOptions || []}
+                                    value={val.call_id_value}
+                                    onChange={(e: any) => {
+                                        handleChange("call_id_value", e.target.value, index);
                                     }}
                                     isInfo
                                 />

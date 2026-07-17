@@ -516,7 +516,7 @@ const CreateEditCallQueueForm = (props: ManagerNameTypes) => {
                     <>
                         {values.failover_routing_type === "8" ? (
                             <Input
-                                type="number"
+                                // type="number"
                                 name="failover_routing_options"
                                 label={
                                     <>

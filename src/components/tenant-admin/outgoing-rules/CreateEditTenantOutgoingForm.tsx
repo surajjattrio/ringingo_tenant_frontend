@@ -32,6 +32,7 @@ const initialRulesValues = {
     strip: "",
     prepend: "",
     trunk_uuid: "",
+    call_id_value: "",
     failover_trunk_1_uuid: "",
     failover_trunk_2_uuid: "",
 };
