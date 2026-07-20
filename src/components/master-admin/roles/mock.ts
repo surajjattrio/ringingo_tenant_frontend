@@ -320,11 +320,11 @@ export const apiData: AdvanceRoleTypes[] = [
     //     title: "API Key",
     //     switchName: "is_api_key",
     // },
-    {
-        name: "zoho_id",
-        title: "Zoho CRM",
-        switchName: "is_zoho_id",
-    },
+    // {
+    //     name: "zoho_id",
+    //     title: "Zoho CRM",
+    //     switchName: "is_zoho_id",
+    // },
 
     {
         name: "webhooks",

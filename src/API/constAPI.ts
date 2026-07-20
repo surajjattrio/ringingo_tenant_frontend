@@ -59,6 +59,10 @@ export const TRUNK = "/trunk";
 export const TRUNK_SEARCH = "/trunk/advanced-search";
 export const TRUNK_ASSIGN = "/trunk/assign";
 
+// CDR WEBHOOK
+export const CDR_WEBHOOK = "/cdr-webhook";
+export const CDR_WEBHOOK_LOGS = "/cdr-webhook-logs";
+
 // CDRS
 export const CDRS = "/cdrs";
 export const CDRS_SEARCH = "/cdrs/advanced-search";

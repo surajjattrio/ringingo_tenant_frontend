@@ -357,7 +357,7 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addApiArray = ["webhooks", "zoho_id"];
+        const addApiArray = ["webhooks"];
 
         if (openApi) {
             payload["advanced_roles"]["api"] = {};
@@ -1838,7 +1838,7 @@ const CreateEditRolesForm = () => {
                     </div>
                 </div>
 
-                {/* <div className="mb-10 mx-4 bg-main-background border-dark-500 rounded-[40px]">
+                <div className="mb-10 mx-4 bg-main-background border-dark-500 rounded-[40px]">
                     <div
                         className={`${openApi ? "bg-main-background text-primary" : ""
                             }  bg-main-background py-2 px-2 flex justify-between items-center relative rounded-[40px]`}
@@ -1890,7 +1890,7 @@ const CreateEditRolesForm = () => {
                                                         }}
                                                     />
                                                 </div>
-                                                {values[val.switchName] && (val?.name !== "fc" && val?.name !== "zoho_id" && val?.name !== "webhooks") && (
+                                                {/* {values[val.switchName] && (val?.name !== "fc" && val?.name !== "zoho_id") && (
                                                     <div>
                                                         <IncreaseDecreaseInput
                                                             name={val.name}
@@ -1902,7 +1902,7 @@ const CreateEditRolesForm = () => {
                                                             isIconSuccess
                                                         />
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         );
                                     })}
@@ -1933,7 +1933,7 @@ const CreateEditRolesForm = () => {
                             </>
                         </div>
                     </div>
-                </div> */}
+                </div>
 
             </CardForm>
         </>
