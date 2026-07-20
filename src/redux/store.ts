@@ -33,6 +33,7 @@ import callQueueSlice from "./slice/tenant-admin/callQueueSlice";
 import timeConditionSlice from "./slice/tenant-admin/timeConditionSlice";
 import userGroupSlice from "./slice/tenant-admin/userGroupSlice";
 import tenantTrunkSlice from "./slice/tenant-admin/tenantTrunkSlice";
+import tenantWebhookSlice from "./slice/tenant-admin/tenantWebhookSlice";
 import featureCodeSlice from "./slice/tenant-admin/featureCodeSlice";
 import tenantOutgoingSlice from "./slice/tenant-admin/tenantOutgoingSlice";
 import conferenceSlice from "./slice/tenant-admin/conferenceSlice";
@@ -130,6 +131,7 @@ const rootReducer = combineReducers({
   timeCondition: timeConditionSlice,
   userGroup: userGroupSlice,
   tenantTrunk: tenantTrunkSlice,
+  tenantWebhook: tenantWebhookSlice,
   featureCode: featureCodeSlice,
   tenantOutgoing: tenantOutgoingSlice,
   conference: conferenceSlice,

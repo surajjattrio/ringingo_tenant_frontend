@@ -125,8 +125,8 @@ const Head = (props: HeadProps) => {
       allData = { ...allData, ...data?.module_permission?.call_center };
     if (data?.module_permission?.broadcasting)
       allData = { ...allData, ...data?.module_permission?.broadcasting };
-    if (data?.module_permission?.api)
-      allData = { ...allData, ...data?.module_permission?.api };
+    // if (data?.module_permission?.api)
+    //   allData = { ...allData, ...data?.module_permission?.api };
 
     if (
       name &&

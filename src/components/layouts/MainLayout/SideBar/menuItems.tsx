@@ -696,35 +696,42 @@ export const tenantAdmin: NavItemsTypes[] = [
 
         ],
     },
-    // {
-    //     id: "api",
-    //     icon: "Integrations",
-    //     iconActive: "IntegrationGreen",
-    //     title: "Integration",
-    //     name: "api",
-    //     url: "",
-    //     subItems: [
-    // {
-    //     id: "tenant-crm",
-    //     name: "crm",
-    //     title: "CRM",
-    //     url: "/tenant-crm",
-    // },
-    // {
-    //     id: "tenant-api-key",
-    //     name: "api_key",
-    //     title: "API Key",
-    //     url: "/tenant-api-key",
-    // },
-    //         {
-    //             id: "tenant-wedhooks",
-    //             name: "webhooks",
-    //             title: "Webhooks",
-    //             icon: "WebhookFill",
-    //             url: "/tenant-wedhooks",
-    //         },
-    //     ],
-    // },
+    {
+        id: "api",
+        icon: "Integrations",
+        iconActive: "IntegrationGreen",
+        title: "Integration",
+        name: "api",
+        url: "",
+        subItems: [
+            // {
+            //     id: "tenant-crm",
+            //     name: "crm",
+            //     title: "CRM",
+            //     url: "/tenant-crm",
+            // },
+            // {
+            //     id: "tenant-api-key",
+            //     name: "api_key",
+            //     title: "API Key",
+            //     url: "/tenant-api-key",
+            // },
+            {
+                id: "tenant-webhooks",
+                name: "webhooks",
+                title: "Webhooks",
+                icon: "WebhookFill",
+                url: "/tenant-webhooks",
+            },
+            {
+                id: "tenant-webhooks-logs",
+                name: "webhooks",
+                title: "Webhook Logs",
+                icon: "WebhookFill",
+                url: "/tenant-webhooks/logs",
+            },
+        ],
+    },
 
 ];
 
@@ -823,6 +830,7 @@ export const tenantAdminUrls = [
 
 
     // API Integrations
+    "/tenant-webhooks",
 
     // "/tenant-crm",
     // "/tenant-api-key",
@@ -935,9 +943,9 @@ export const tenantAdminTitles = [
 
 
     // API Integrations
+    { url: "/tenant-webhooks", title: "Webhooks", name: "webhooks" },
     // { url: "/tenant-crm", title: "CRM", name: "crm" },
     // { url: "/tenant-api-key", title: "API Key", name: "api_key" },
-    // { url: "/tenant-wedhooks", title: "Webhooks", name: "webhooks" },
 
     // { url: "/tenant-profile", title: "Profile" },
 

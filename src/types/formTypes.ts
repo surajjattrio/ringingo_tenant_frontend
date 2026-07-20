@@ -12,6 +12,11 @@ export interface ObjectOptionTypes {
   label?: string;
 }
 
+export interface GroupedOptionTypes {
+  label: string;
+  options: OptionTypes[] | ObjectOptionTypes[];
+}
+
 export interface ManagerNameTypes {
   managerName?: string;
 }

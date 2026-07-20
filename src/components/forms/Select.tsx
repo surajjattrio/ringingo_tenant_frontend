@@ -7,8 +7,9 @@ import Selects, { StylesConfig, components } from "react-select";
 import { Icon } from "../ui-components";
 import Button from "./Button";
 
-import { ObjectOptionTypes, OptionTypes } from "@/types/formTypes";
+import {GroupedOptionTypes, ObjectOptionTypes, OptionTypes} from "@/types/formTypes";
 import { IconKey } from "../ui-components/Icon";
+type SelectOptions = OptionTypes[] | ObjectOptionTypes[] | GroupedOptionTypes[];
 
 interface SelectProps {
   className?: string;
@@ -20,7 +21,7 @@ interface SelectProps {
   placeholder?: string;
   icon?: IconKey;
   isInfo?: boolean;
-  options: OptionTypes[] | ObjectOptionTypes[];
+  options: SelectOptions;
   value?: any;
   touched?: any;
   errors?: any;
@@ -104,7 +105,7 @@ const [menuOpen, setMenuOpen] = useState(false);
     }),
     menuPortal: (base: any) => ({
   ...base,
-  zIndex: 10, // increase if still hidden
+  zIndex: 9999,
 }),
     menu: (base: any) => ({
       ...base,
@@ -114,12 +115,17 @@ const [menuOpen, setMenuOpen] = useState(false);
       boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
       borderRadius: "0.5rem",
       marginTop: "4px",
-        zIndex: 20,
+        // Was 20 — tied with other absolute-positioned field decorations (e.g. the
+        // DatePicker's calendar icon, also z-20), so on a tie the later-DOM-order
+        // sibling painted on top of this open menu instead of the menu winning.
+        // Bumped well above any in-form field decoration so an open dropdown always
+        // renders on top, regardless of DOM order.
+        zIndex: 9999,
 
     }),
     menuList: (base: any) => ({
   ...base,
-  zIndex: 10,
+  zIndex: 9999,
   padding: 0,
   maxHeight: 200, // ✅ already good, adjust if needed
   overflowY: "auto",
