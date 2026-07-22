@@ -29,7 +29,9 @@ const initialRulesValues = {
     trunk_uuid: "",
     call_id_value: "",
     failover_trunk_1_uuid: "",
+    failover_trunk_1_call_id: "",
     failover_trunk_2_uuid: "",
+    failover_trunk_2_call_id: "",
 };
 
 const TenantAddRules = (props: TenantAddRulesProps) => {
@@ -59,7 +61,7 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
         }
     };
 
-    // Fetching DID Options
+    // Fetching this tenant's DID list — used as the Failover Trunk Caller ID options (pick, don't type)
     const onGetDidOptions = async () => {
         try {
             await dispatch(didOptionsGet());
@@ -204,6 +206,32 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
                                     }}
                                     isInfo
                                 />
+                                {val.failover_trunk_1_uuid ? (
+                                    <Select
+                                        name="failover_trunk_1_call_id"
+                                        label="Failover Trunk 1 Caller ID"
+                                        icon="CallerID"
+                                        placeholder="Select Failover Trunk 1 Caller ID"
+                                        removable
+                                        isAdd
+                                        createName="Create DID"
+                                        createPath={
+                                            isPathname
+                                                ? "/manager-did/create"
+                                                : "/tenant-did/create"
+                                        }
+                                        options={didOptions}
+                                        value={val.failover_trunk_1_call_id}
+                                        onChange={(e: any) => {
+                                            handleChange(
+                                                "failover_trunk_1_call_id",
+                                                e.target.value,
+                                                index
+                                            );
+                                        }}
+                                        isInfo
+                                    />
+                                ) : null}
                                 <Select
                                     name="failover_trunk_2_uuid"
                                     label="Failover Trunk 2"
@@ -231,6 +259,32 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
                                     }}
                                     isInfo
                                 />
+                                {val.failover_trunk_2_uuid ? (
+                                    <Select
+                                        name="failover_trunk_2_call_id"
+                                        label="Failover Trunk 2 Caller ID"
+                                        icon="CallerID"
+                                        placeholder="Select Failover Trunk 2 Caller ID"
+                                        removable
+                                        isAdd
+                                        createName="Create DID"
+                                        createPath={
+                                            isPathname
+                                                ? "/manager-did/create"
+                                                : "/tenant-did/create"
+                                        }
+                                        options={didOptions}
+                                        value={val.failover_trunk_2_call_id}
+                                        onChange={(e: any) => {
+                                            handleChange(
+                                                "failover_trunk_2_call_id",
+                                                e.target.value,
+                                                index
+                                            );
+                                        }}
+                                        isInfo
+                                    />
+                                ) : null}
                                 {/* {array?.length !== 1 ? (
                                     <div
                                         onClick={() => onDelete(index)}

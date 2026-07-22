@@ -34,7 +34,20 @@ const initialRulesValues = {
     prepend: "",
     trunk_uuid: "",
     failover_trunk_1_uuid: "",
+    failover_trunk_1_call_id: "",
     failover_trunk_2_uuid: "",
+    failover_trunk_2_call_id: "",
+};
+
+// A Failover Trunk's Caller ID becomes required the moment that failover trunk is selected on a rule row
+// (main Trunk's Caller ID is unaffected — it keeps coming from the campaign/extension as today).
+const getMissingFailoverDidRow = (rules: any[]) => {
+    const idx = rules?.findIndex(
+        (r: any) =>
+            (r?.failover_trunk_1_uuid && !r?.failover_trunk_1_call_id) ||
+            (r?.failover_trunk_2_uuid && !r?.failover_trunk_2_call_id)
+    );
+    return idx ?? -1;
 };
 
 const CreateTenantOutgoingForm = (props: CreateTenantOutgoingFormProps) => {
@@ -60,6 +73,11 @@ const CreateTenantOutgoingForm = (props: CreateTenantOutgoingFormProps) => {
 
     // Create or Update Outgoing Rules
     const onSubmit = (values: any) => {
+        const missingRow = getMissingFailoverDidRow(rulesData);
+        if (missingRow !== -1) {
+            Danger(`Row ${missingRow + 1}: select the Caller ID for the selected Failover Trunk before saving.`);
+            return;
+        }
         const payload = { ...values };
         payload["tenant_uuid"] = user?.tenant_detail?.uuid;
         payload["rules"] = rulesData;

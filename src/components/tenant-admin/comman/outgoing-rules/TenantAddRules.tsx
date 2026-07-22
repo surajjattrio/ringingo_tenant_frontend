@@ -6,6 +6,7 @@ import {
     tenantTrunkOptionsGet,
     useTenantTrunkOptions,
 } from "@/redux/slice/tenant-admin/tenantTrunkSlice";
+import { didOptionsGet, useDidOptions } from "@/redux/slice/tenant-admin/didSlice";
 import { Button, Input, InputNumber, Select } from "@/components/forms";
 import { Icon } from "@/components/ui-components";
 
@@ -24,16 +25,21 @@ const initialRulesValues = {
     prepend: "",
     trunk_uuid: "",
     failover_trunk_1_uuid: "",
+    failover_trunk_1_call_id: "",
     failover_trunk_2_uuid: "",
+    failover_trunk_2_call_id: "",
 };
 
 const TenantAddRules = (props: TenantAddRulesProps) => {
     const { rulesData, setRulesData, trunkPath } = props;
     const dispatch = useAppDispatch();
     const trunkOptions = useTenantTrunkOptions();
+    const didOptions = useDidOptions();
+    const didCreatePath = trunkPath?.startsWith("manager") ? "/manager-did/create" : "/tenant-did/create";
 
     useEffect(() => {
         onGetTrunkOptions();
+        onGetDidOptions();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -47,6 +53,15 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
             await dispatch(tenantTrunkOptionsGet());
         } catch (err) {
             console.error("Get Trunk Options Err =-=>", err);
+        }
+    };
+
+    // Fetching this tenant's DID list — used as the Failover Trunk Caller ID options (pick, don't type)
+    const onGetDidOptions = async () => {
+        try {
+            await dispatch(didOptionsGet());
+        } catch (err) {
+            console.error("Get DID Options Err =-=>", err);
         }
     };
 
@@ -159,6 +174,28 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
                                     }}
                                     isInfo
                                 />
+                                {val.failover_trunk_1_uuid ? (
+                                    <Select
+                                        name="failover_trunk_1_call_id"
+                                        label="Failover Trunk 1 Caller ID"
+                                        icon="CallerID"
+                                        placeholder="Select Failover Trunk 1 Caller ID"
+                                        removable
+                                        isAdd
+                                        createName="Create DID"
+                                        createPath={didCreatePath}
+                                        options={didOptions}
+                                        value={val.failover_trunk_1_call_id}
+                                        onChange={(e: any) => {
+                                            handleChange(
+                                                "failover_trunk_1_call_id",
+                                                e.target.value,
+                                                index
+                                            );
+                                        }}
+                                        isInfo
+                                    />
+                                ) : null}
                                 <Select
                                     name="failover_trunk_2_uuid"
                                     label="Failover Trunk 2"
@@ -181,6 +218,28 @@ const TenantAddRules = (props: TenantAddRulesProps) => {
                                     }}
                                     isInfo
                                 />
+                                {val.failover_trunk_2_uuid ? (
+                                    <Select
+                                        name="failover_trunk_2_call_id"
+                                        label="Failover Trunk 2 Caller ID"
+                                        icon="CallerID"
+                                        placeholder="Select Failover Trunk 2 Caller ID"
+                                        removable
+                                        isAdd
+                                        createName="Create DID"
+                                        createPath={didCreatePath}
+                                        options={didOptions}
+                                        value={val.failover_trunk_2_call_id}
+                                        onChange={(e: any) => {
+                                            handleChange(
+                                                "failover_trunk_2_call_id",
+                                                e.target.value,
+                                                index
+                                            );
+                                        }}
+                                        isInfo
+                                    />
+                                ) : null}
                                 {array?.length !== 1 ? (
                                     <div
                                         onClick={() => onDelete(index)}
