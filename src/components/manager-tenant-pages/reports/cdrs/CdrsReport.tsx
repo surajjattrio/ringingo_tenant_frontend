@@ -361,6 +361,11 @@ const CdrsReport = (props: ManagerPageTypes) => {
             // action: (row: any) => formatTime(parseInt(row.ringing_time), true)
         },
         {
+            name: "acw_time",
+            title: "ACW Time",
+            sortable: true,
+        },
+        {
             name: "campaign_uuid",
             title: "Campaign",
             sortable: true,
