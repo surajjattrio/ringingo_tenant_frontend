@@ -188,7 +188,7 @@ const leadGroupSlice = createSlice({
       (state, action: PayloadAction<any>) => {
         state.leadGroupOptions = action.payload?.data?.map((val: any) => ({
           value: val.uuid,
-          label: val.name,
+          label: val.name ? val.name.trim().replace(/\s+/g, " ") : "",
         })) || []
       }
     );
