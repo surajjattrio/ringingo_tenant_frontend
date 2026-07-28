@@ -126,12 +126,12 @@ const MissedCall = (props: ManagerPageTypes) => {
     },
     {
       name: "caller_id_number",
-      title: "Source No. / Caller ID",
+      title: "Caller's Number",
       sortable: true,
     },
     {
       name: "destination_number",
-      title: "DID / Phone Number",
+      title: "Receiver's Number",
       sortable: true,
     },
     {
@@ -197,9 +197,11 @@ const MissedCall = (props: ManagerPageTypes) => {
   const headers = [
     { label: "Date", key: "converted_date" },
     { label: "User", key: "user_name" },
-    { label: "Caller ID", key: "caller_id_number" },
-    { label: "Phone Number", key: "destination_number" },
-    { label: "Route", key: "pbx_feature" },
+    { label: "Full Name", key: "fullname" },
+    { label: "Campaign Name", key: "campaign_details" },
+    { label: "Caller's Number", key: "caller_id_number" },
+    { label: "Receiver's Number", key: "phone_number" },
+    { label: "Path / Route", key: "pbx_feature" }
   ];
 
   const prepareExportProps = () => {
@@ -436,7 +438,7 @@ const MissedCall = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="caller_id_number"
-          label="Caller Id Number"
+          label="Caller's Number"
           placeholder="Enter Caller Id Number"
           value={data.caller_id_number.val}
           dropdownValue={data.caller_id_number.dropdown}
@@ -452,8 +454,8 @@ const MissedCall = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="destination_number"
-          label="Phone Number"
-          placeholder="Enter Phone Number"
+          label="Receiver's Number"
+          placeholder="Enter Receiver's Number"
           value={data.destination_number.val}
           dropdownValue={data.destination_number.dropdown}
           options={advanceSearchOptions}

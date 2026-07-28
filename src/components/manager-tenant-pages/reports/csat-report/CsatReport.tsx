@@ -37,8 +37,8 @@ interface CsatReportCardType {
 const headers = [
   { label: "Start Date", key: "callstart" },
   { label: "End Date", key: "callend" },
-  { label: "Caller Id Number", key: "caller_id_number" },
-  { label: "Phone Number", key: "destination_number" },
+  { label: "Caller's' Number", key: "caller_id_number" },
+  { label: "Receiver's Number", key: "destination_number" },
   { label: "User", key: "username" },
   { label: "Duration", key: "total_duration" },
   { label: "Campaign", key: "campaign_name" },
@@ -131,12 +131,12 @@ const CsatReport = () => {
     },
     {
       name: "caller_id_number",
-      title: "Caller Id Number",
+      title: "Caller's Number",
       sortable: true,
     },
     {
       name: "destination_number",
-      title: "Phone Number",
+      title: "Receiver's Number",
       sortable: true,
     },
     {
@@ -468,8 +468,8 @@ const CsatReport = () => {
         />
         <InputSelect
           name="caller_id_number"
-          label="Caller Id Number"
-          placeholder="Select Caller Id Number"
+          label="Caller's Number"
+          placeholder="Select Caller's Number"
           value={data.caller_id_number.val}
           dropdownValue={data.caller_id_number.dropdown}
           options={advanceSearchOptions}
@@ -484,8 +484,8 @@ const CsatReport = () => {
         <InputSelect
           type="number"
           name="destination_number"
-          label="Phone Number"
-          placeholder="Select Phone Number"
+          label="Receiver's Number"
+          placeholder="Select Receiver's Number"
           value={data.destination_number.val}
           dropdownValue={data.destination_number.dropdown}
           options={advanceSearchOptions}

@@ -72,8 +72,8 @@ const initialValues: VoiceBroadcastReportFilterTypes = {
 // DATA
 const headers: any = [
     { label: "Date", key: "callstart" },
-    { label: "Caller Id Number", key: "caller_id_number" },
-    { label: "Destination Number", key: "destination_number" },
+    { label: "Caller's Number", key: "caller_id_number" },
+    { label: "Receiver's Number", key: "destination_number" },
     { label: "Voice Broadcast", key: "name" },
     { label: "Duration", key: "total_duration" },
     { label: "Ringing Time", key: "ringing_time" },
@@ -115,12 +115,12 @@ const VoiceBroadcastReport = (props: ManagerPageTypes) => {
         },
         {
             name: "caller_id_number",
-            title: "Caller Id Number",
+            title: "Caller's Number",
             sortable: true,
         },
         {
             name: "destination_number",
-            title: "Destination Number",
+            title: "Receiver's Number",
             sortable: true,
         },
         {

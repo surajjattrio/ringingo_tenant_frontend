@@ -194,7 +194,7 @@ const ScheduleReportForm: React.FC<ScheduleReportFormProps> = ({ onSubmit, initi
                 onChange={(val: any) => formik.setFieldValue("filters.callend", val)}
                 isInfo
             />
-            <InputSelect
+            {/* <InputSelect
                 label="Caller ID Name"
                 name="filters.caller_id_name"
                 value={formik.values.filters.caller_id_name.val}
@@ -203,9 +203,9 @@ const ScheduleReportForm: React.FC<ScheduleReportFormProps> = ({ onSubmit, initi
                 onChange={(e: any) => formik.setFieldValue("filters.caller_id_name.val", e.target.value)}
                 onDropdownChange={(e: any) => formik.setFieldValue("filters.caller_id_name.dropdown", e.target.value)}
                 isInfo
-            />
+            /> */}
             <InputSelect
-                label="Caller ID Number"
+                label="Caller's Number"
                 name="filters.caller_id_number"
                 value={formik.values.filters.caller_id_number.val}
                 dropdownValue={formik.values.filters.caller_id_number.dropdown}
@@ -215,7 +215,7 @@ const ScheduleReportForm: React.FC<ScheduleReportFormProps> = ({ onSubmit, initi
                 isInfo
             />
             <InputSelect
-                label="Phone Number"
+                label="Receiver's Number"
                 name="filters.destination_number"
                 value={formik.values.filters.destination_number.val}
                 dropdownValue={formik.values.filters.destination_number.dropdown}

@@ -76,7 +76,7 @@ const startOfToday = new Date(now);
 startOfToday.setHours(0, 0, 0, 0);
 const endOfToday = new Date(now);
 endOfToday.setHours(23, 59, 59, 999);
-const initialValues: TenantCdrsFilterTypes = {
+const initialValues: any = {
     callstart: {
         key: "callstart",
         val: startOfToday,
@@ -122,8 +122,8 @@ const initialValues: TenantCdrsFilterTypes = {
 const headers = [
     { label: "Start Date", key: "callstart" },
     { label: "End Date", key: "callend" },
-    { label: "Caller Id Number", key: "caller_id_number" },
-    { label: "Phone Number", key: "destination_number" },
+    { label: "Caller's Number", key: "caller_id_number" },
+    { label: "Receiver's Number", key: "destination_number" },
     { label: "User ID", key: "username" },
     { label: "User Group Name", key: "user_group_name" },
     { label: "IVR Name", key: "ivr_cq_group_name" },
@@ -272,7 +272,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
         // },
         {
             name: "caller_id_number",
-            title: "Caller ID Number / DID",
+            title: "Caller's Number",
             sortable: true,
             action: (row: any) => {
                 const isI = row.direction?.toString().toLowerCase().includes("inbound");
@@ -281,7 +281,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
         },
         {
             name: "destination_number",
-            title: "Phone Number",
+            title: "Receiver's Number",
             sortable: true,
             action: (row: any) => {
                 const isI = row.direction?.toString().toLowerCase().includes("inbound");
@@ -1077,7 +1077,7 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     selectsEnd
                     isInfo
                 />
-                <InputSelect
+                {/* <InputSelect
                     name="caller_id_name"
                     label="Caller Id Name"
                     placeholder="Select Caller Id Name"
@@ -1089,11 +1089,11 @@ const CdrsReport = (props: ManagerPageTypes) => {
                         handleSelect("caller_id_name", e.target.value)
                     }
                     isInfo
-                />
+                /> */}
                 <InputSelect
                     name="caller_id_number"
-                    label="Caller Id Number / DID"
-                    placeholder="Select Caller Id Number"
+                    label="Caller's Number"
+                    placeholder="Select Caller's Number"
                     value={data.caller_id_number.val}
                     dropdownValue={data.caller_id_number.dropdown}
                     options={advanceSearchOptions}
@@ -1108,8 +1108,8 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 <InputSelect
                     type="number"
                     name="destination_number"
-                    label="Phone Number"
-                    placeholder="Select Phone Number"
+                    label="Receiver's Number"
+                    placeholder="Select Receiver's Number"
                     value={data.destination_number.val}
                     dropdownValue={data.destination_number.dropdown}
                     options={advanceSearchOptions}

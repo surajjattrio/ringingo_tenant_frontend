@@ -116,12 +116,12 @@ const Recording = (props: ManagerPageTypes) => {
         },
         {
             name: "caller_id_number",
-            title: "Caller Id Number",
+            title: "Caller's Number",
             sortable: true,
         },
         {
             name: "destination_number",
-            title: "Phone Number",
+            title: "Receiver's Number",
             sortable: true,
         },
         {
@@ -319,8 +319,8 @@ const Recording = (props: ManagerPageTypes) => {
                 <InputSelect
                     type="number"
                     name="caller_id_number"
-                    label="Caller Id Number"
-                    placeholder="Enter Caller Id Number"
+                    label="Caller's Number"
+                    placeholder="Enter Caller's Number"
                     value={data.caller_id_number.val}
                     dropdownValue={data.caller_id_number.dropdown}
                     options={advanceSearchOptions}
@@ -335,8 +335,8 @@ const Recording = (props: ManagerPageTypes) => {
                 <InputSelect
                     type="number"
                     name="destination_number"
-                    label="Phone Number"
-                    placeholder="Enter Phone Number"
+                    label="Receiver's Number"
+                    placeholder="Enter Receiver's Number"
                     value={data.destination_number.val}
                     dropdownValue={data.destination_number.dropdown}
                     options={advanceSearchOptions}

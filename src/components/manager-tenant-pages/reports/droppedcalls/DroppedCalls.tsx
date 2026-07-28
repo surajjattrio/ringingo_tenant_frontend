@@ -59,8 +59,8 @@ const initialValues: DroppedCallsFilterTypes = {
 const headers: any = [
   { label: "Date", key: "converted_date" },
   { label: "User", key: "user" },
-  { label: "Caller ID", key: "caller_id_number" },
-  { label: "Destination Number", key: "destination_number" },
+  { label: "Caller's Number", key: "caller_id_number" },
+  { label: "Receiver's Number", key: "destination_number" },
   { label: "Call Start", key: "callstart" },
   { label: "Duration (sec)", key: "billsecond" },
   { label: "Disposition", key: "disposition" },
@@ -117,12 +117,12 @@ const DroppedCalls = (props: ManagerPageTypes) => {
     },
     {
       name: "caller_id_number",
-      title: "Caller ID",
+      title: "Caller's Number",
       sortable: true,
     },
     {
       name: "destination_number",
-      title: "Destination Number",
+      title: "Receiver's Number",
       sortable: true,
     },
     {
@@ -167,6 +167,19 @@ const DroppedCalls = (props: ManagerPageTypes) => {
   }, [filter]);
 
   // Preapring Data for Export File
+  const headers = [
+    { label: "Date", key: "converted_date" },
+    { label: "User", key: "user_name" },
+    { label: "Full Name", key: "fullname" },
+    { label: "Caller's Number", key: "caller_id_number" },
+    { label: "Receiver's Number", key: "destination_number" },
+    { label: "Call Start", key: "callstart" },
+    { label: "Duration (sec)", key: "billsecond" },
+    { label: "Disposition", key: "disposition" },
+    { label: "Direction", key: "direction" },
+    { label: "Call Type", key: "call_type" },
+  ];
+
   const prepareExportProps = () => {
     const data = droppedCalls?.data || [];
     
@@ -390,8 +403,8 @@ const DroppedCalls = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="caller_id_number"
-          label="Caller Id Number"
-          placeholder="Enter Caller Id Number"
+          label="Caller's Number"
+          placeholder="Enter Caller's Number"
           value={data.caller_id_number.val}
           dropdownValue={data.caller_id_number.dropdown}
           options={advanceSearchOptions}
@@ -406,8 +419,8 @@ const DroppedCalls = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="destination_number"
-          label="Phone Number"
-          placeholder="Enter Phone Number"
+          label="Receiver's Number"
+          placeholder="Enter Receiver's Number"
           value={data.destination_number.val}
           dropdownValue={data.destination_number.dropdown}
           options={advanceSearchOptions}

@@ -1,8 +1,8 @@
 export const CSV_SYSTEM_FIELDS = [
     { key: "Date", label: "Start Date" },
     // { key: "callend", label: "End Date" },
-    { key: "Caller Id Number", label: "Caller Id Number" },
-    { key: "Phone Number", label: "Phone Number" },
+    { key: "Caller Id Number", label: "Caller's Number" },
+    { key: "Phone Number", label: "Receiver's Number" },
     { key: "Username", label: "Username" },
     { key: "Agent", label: "Agent" },
     { key: "Campaign", label: "Campaign Name" },

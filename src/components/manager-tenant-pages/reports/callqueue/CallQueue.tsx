@@ -52,8 +52,8 @@ const initialValues: CallQueueReportFilterTypes = {
 const headers: any = [
   { label: "Date", key: "converted_date" },
   { label: "User", key: "user" },
-  { label: "Caller ID", key: "caller_id_number" },
-  { label: "Destination Number", key: "destination_number" },
+  { label: "Caller's Number", key: "caller_id_number" },
+  { label: "Receiver's Number", key: "destination_number" },
   { label: "Call Start", key: "callstart" },
   { label: "Duration (sec)", key: "billsecond" },
   { label: "Disposition", key: "disposition" },
@@ -99,17 +99,12 @@ const CallQueue = (props: ManagerPageTypes) => {
     },
     {
       name: "caller_id_number",
-      title: "Caller ID",
+      title: "Caller's Number",
       sortable: true,
     },
     {
       name: "destination_number",
-      title: "Destination Number",
-      sortable: true,
-    },
-    {
-      name: "callstart",
-      title: "Call Start",
+      title: "Receiver's Number",
       sortable: true,
     },
     {
@@ -149,6 +144,17 @@ const CallQueue = (props: ManagerPageTypes) => {
   }, [filter]);
 
   // Preapring Data for Export File
+  const headers = [
+    { label: "Call Start", key: "callstart" },
+    { label: "User", key: "user_name" },
+    { label: "Caller's Number", key: "caller_id_number" },
+    { label: "Receiver's Number", key: "destination_number" },
+    { label: "Duration (sec)", key: "billsecond" },
+    { label: "Disposition", key: "disposition" },
+    { label: "Direction", key: "direction" },
+    { label: "Call Queue Type", key: "pbx_feature" },
+  ];
+
   const prepareExportProps = () => {
     const data = callQueue?.data || [];
     
@@ -372,8 +378,8 @@ const CallQueue = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="caller_id_number"
-          label="Caller Id Number"
-          placeholder="Enter Caller Id Number"
+          label="Caller's Number"
+          placeholder="Enter Caller's Number"
           value={data.caller_id_number.val}
           dropdownValue={data.caller_id_number.dropdown}
           options={advanceSearchOptions}
@@ -388,8 +394,8 @@ const CallQueue = (props: ManagerPageTypes) => {
         <InputSelect
           type="number"
           name="destination_number"
-          label="Phone Number"
-          placeholder="Enter Phone Number"
+          label="Receiver's Number"
+          placeholder="Enter Receiver's Number"
           value={data.destination_number.val}
           dropdownValue={data.destination_number.dropdown}
           options={advanceSearchOptions}

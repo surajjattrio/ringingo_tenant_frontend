@@ -61,12 +61,12 @@ const LiveCall = (props: ManagerPageTypes) => {
         },
         {
             name: "caller_id_name_number",
-            title: "Caller-Id",
+            title: "Caller's Number",
             sortable: true,
         },
         {
             name: "destinationNumber",
-            title: "Phone Number",
+            title: "Receiver's Number",
             sortable: true,
         },
         {

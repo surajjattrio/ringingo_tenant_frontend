@@ -52,7 +52,7 @@ const VoiceMail = (props: ManagerPageTypes) => {
         },
         {
             name: "phoneNumber",
-            title: "Phone Number",
+            title: "Receiver's Number",
             sortable: true,
         },
         {
