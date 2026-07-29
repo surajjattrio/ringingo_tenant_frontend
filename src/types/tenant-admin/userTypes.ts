@@ -14,11 +14,11 @@ export interface InitialValueType {
     default_extension: string;
     zoho_user_id: string;
     campaign_uuid: string;
-    allowed_campaign:any;
-    omni_messaging_channel_uuid:any
-    create_sip_device:any
-    caller_id_name: any
-    caller_id_number: any
+    allowed_campaign: any;
+    omni_messaging_channel_uuid: any
+    create_sip_device: any;
+    caller_id_name?: any;
+    caller_id_number?: any;
     mobile_number: string;
     vendor_uid?: string;
     team_user_uid?: string;

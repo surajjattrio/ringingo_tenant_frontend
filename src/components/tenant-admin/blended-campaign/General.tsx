@@ -692,9 +692,9 @@ const General = () => {
             >
               <Select
                 name="call_id_type"
-                label="Caller ID"
+                label="Caller ID Type"
                 icon="CallerID"
-                placeholder="Select Caller ID"
+                placeholder="Select Caller ID Type"
                 options={callIdOptions}
                 value={values.call_id_type}
                 touched={touched}

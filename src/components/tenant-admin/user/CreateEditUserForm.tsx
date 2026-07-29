@@ -700,7 +700,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                             isInfo
                         /> : <></>
                 }
-                <Select
+                {/* <Select
                     name="campaign_uuid"
                     label="Campaign Options"
                     icon="Group"
@@ -716,7 +716,7 @@ const CreateEditUserForm = (props: ManagerNameTypes) => {
                     isInfo
                     isManual
                     isGroup
-                />
+                /> */}
                 <Select
                     name="allowed_campaign"
                     isMulti
