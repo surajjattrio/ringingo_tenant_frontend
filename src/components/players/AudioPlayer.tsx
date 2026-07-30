@@ -167,7 +167,9 @@ const AudioPlayer = ({ className, src, name }: AudioPlayerProps) => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const myId = useRef(Math.random());
   const ref = useRef<HTMLAudioElement>(null);
-  const audioUrl = `${baseUrl.replace(/\/$/, "")}/${src.replace(/^\//, "")}`;
+  const audioUrl = /^https?:\/\//i.test(src)
+    ? src
+    : `${baseUrl.replace(/\/$/, "")}/${src.replace(/^\//, "")}`;
   console.log("audioUrl", audioUrl);
 
   /**

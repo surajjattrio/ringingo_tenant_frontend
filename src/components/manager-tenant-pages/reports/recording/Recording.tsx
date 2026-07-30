@@ -134,10 +134,16 @@ const Recording = (props: ManagerPageTypes) => {
             title: "Play/Download",
             sortable: true,
             action: (row: any) => {
+                // Recordings uploaded to S3/Spaces already carry a full public URL —
+                // use it directly instead of routing through the backend download route.
+                const isRemoteRecording = /^https?:\/\//i.test(row?.recording_path || "");
+                const src = isRemoteRecording
+                    ? row.recording_path
+                    : `recordings/download/recording?recording=${row?.recording_path}`;
                 return (
                     <>
                         <AudioPlayer
-                            src={`recordings/download/recording?recording=${row?.recording_path}`}
+                            src={src}
                             name={row?.fileName}
                             index={row?.index}
                         />
