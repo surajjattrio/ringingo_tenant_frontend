@@ -20,4 +20,5 @@ export interface InitialValueType {
     broadcast_type: string;
     ivr_uuid: string;
     survey_value: any;
+    lead_group_uuid?: any;
 }

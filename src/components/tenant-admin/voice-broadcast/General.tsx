@@ -29,6 +29,10 @@ import {
   outgoingOptionsGet,
   useOutgoingOptions,
 } from "@/redux/slice/master-admin/outgoingSlice";
+import {
+  leadGroupOptionsGet,
+  useLeadGroupOptions,
+} from "@/redux/slice/tenant-admin/leadGroupSlice";
 
 const General = () => {
   const {
@@ -49,6 +53,7 @@ const General = () => {
   const callerIdGroupOptions = useCallerIdGroupOptions();
   const dispositionOptions = useTenantDispositionOptions();
   const outgoingOptions = useOutgoingOptions();
+  const leadGroupOptions = useLeadGroupOptions();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [settingData, setSettingData] = useState(values?.survey_value || []);
@@ -63,8 +68,18 @@ const General = () => {
     onGetCallerIdGroupOptions();
     onGetPromptsOptions();
     onGetOutgoingOptions();
+    onGetLeadGroupOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetching Lead Group Options
+  const onGetLeadGroupOptions = async () => {
+    try {
+      await dispatch(leadGroupOptionsGet(undefined));
+    } catch (err) {
+      console.error("Get Lead Group Options Err =-=>", err);
+    }
+  };
 
   // Fetching Caller Id Group Options
   const onGetCallerIdGroupOptions = async () => {
@@ -131,7 +146,7 @@ const General = () => {
   const onGetSingleVoiceBroadcast = async () => {
     setIsLoading(true);
     try {
-      const res: any = await dispatch(voiceBroadcastSingleGet(id)).unwrap();
+      const res: any = await dispatch(voiceBroadcastSingleGet(id as string)).unwrap();
       if (res?.statusCode === 200) {
         setValues({
           ...values,
@@ -142,6 +157,11 @@ const General = () => {
           max_retries: res?.data?.max_retries || "3",
           max_retries_disposition_uuid:
             res?.data?.max_retries_disposition_uuid || [],
+          lead_group_uuid: Array.isArray(res?.data?.lead_group_uuid)
+            ? res?.data?.lead_group_uuid
+            : res?.data?.lead_group_uuid
+            ? [res?.data?.lead_group_uuid]
+            : [],
           outgoing_rule_uuid: res?.data?.outgoing_rule_uuid || "",
           timeout: res?.data?.timeout || "",
           status: res?.data?.status || "0",
@@ -370,6 +390,29 @@ const General = () => {
               removable
               onChange={(e: any) => {
                 setFieldValue("outgoing_rule_uuid", e.target.value);
+              }}
+              onBlur={handleBlur}
+              isInfo
+            />
+            <Select
+              name="lead_group_uuid"
+              label="Lead Group"
+              isMulti
+              icon="GroupLead"
+              placeholder="Select Lead Group"
+              isAdd
+              createName="Create Lead Group"
+              createPath={
+                isPathname
+                  ? "/manager-voice-broadcast/create-lead-group"
+                  : "/tenant-voice-broadcast/create-lead-group"
+              }
+              options={leadGroupOptions}
+              value={values.lead_group_uuid || []}
+              touched={touched}
+              errors={errors}
+              onChange={(e: any) => {
+                setFieldValue("lead_group_uuid", e);
               }}
               onBlur={handleBlur}
               isInfo

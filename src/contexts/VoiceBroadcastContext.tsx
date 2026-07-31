@@ -75,6 +75,7 @@ const initialValues: InitialValueType = {
             prompt_name: "",
         },
     ],
+    lead_group_uuid: [],
 };
 
 const VoiceBroadcastContext = createContext<VoiceBroadcastTypes | null>(null);
