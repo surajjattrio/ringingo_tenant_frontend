@@ -733,49 +733,38 @@ const UserPerformance = (props: ManagerPageTypes) => {
         />
       </Head>
       <div className="mt-5">
-        <div
-          className={`${infoData
-            ? "grid grid-cols-3 gap-4 tsm:grid-cols-1 tsm:gap-y-4 tsm:gap-x-0"
-            : ""
-            }`}
-        >
-          <div className="col-span-2">
-            <Table
-              managerName={managerName}
-              isLoading={loading}
-              columns={columns}
-              data={userPerformance?.data?.length ? userPerformance?.data : []}
-              page={filter.page}
-              totalCount={userPerformance?.count || 0}
-              limit={filter.limit}
-              selectable={false}
-              onPageClick={(page: number) => {
-                setFilter({
-                  ...filter,
-                  page,
-                });
-              }}
-              onLimitChange={(limit: number) => {
-                setFilter({
-                  ...filter,
-                  page: 1,
-                  limit,
-                });
-              }}
-              onRefresh={() => setFilter({ ...filter })}
-            />
-          </div>
-          <div className="col-span-1">
-            <DispositionInformation
-              isUserInfoID={infoData}
-              setIsUserInfoID={setInfoData}
-            />
-            <BreakInformation
-              breakDetails={breakDetails}
-              setBreakDetails={setBreakDetails}
-            />
-          </div>
-        </div>
+        <Table
+          managerName={managerName}
+          isLoading={loading}
+          columns={columns}
+          data={userPerformance?.data?.length ? userPerformance?.data : []}
+          page={filter.page}
+          totalCount={userPerformance?.count || 0}
+          limit={filter.limit}
+          selectable={false}
+          onPageClick={(page: number) => {
+            setFilter({
+              ...filter,
+              page,
+            });
+          }}
+          onLimitChange={(limit: number) => {
+            setFilter({
+              ...filter,
+              page: 1,
+              limit,
+            });
+          }}
+          onRefresh={() => setFilter({ ...filter })}
+        />
+        <DispositionInformation
+          isUserInfoID={infoData}
+          setIsUserInfoID={setInfoData}
+        />
+        <BreakInformation
+          breakDetails={breakDetails}
+          setBreakDetails={setBreakDetails}
+        />
 
         <UserPerformancePopup
           visible={columnsVisible}

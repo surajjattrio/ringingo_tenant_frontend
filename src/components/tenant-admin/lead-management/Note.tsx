@@ -96,16 +96,21 @@ const Note = (props: NoteProps) => {
     }
   };
 
+  if (!noteData) return null;
+
   return (
-    <>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={() => setNoteData(null)}
+    >
       <div
-        className={`w-full scrollbar-hide h-[calc(100vh-178px)] overflow-y-auto drop-shadow-xl bg-white rounded-lg ${
-          !noteData && "hidden"
-        }`}
+        className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden relative"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="py-2 bg-secondary 3xl:px-4 px-3 rounded-t-lg sticky top-0 z-[5]">
+        <div className="py-2 bg-secondary 3xl:px-4 px-3 rounded-t-lg sticky top-0 z-[5] flex-shrink-0">
           <div className="flex items-center flex-row-reverse justify-between">
             <Icon
+              className="cursor-pointer"
               name="CloseWhite"
               height={16}
               width={16}
@@ -119,77 +124,79 @@ const Note = (props: NoteProps) => {
           </div>
         </div>
 
-        <div className="px-6 border-b-2 border-dark-800 py-4">
-          <Textarea
-            label="Add Note"
-            name="addNote"
-            rows={2}
-            tooltipRight={true}
-            value={comment}
-            placeholder="Type something here..."
-            onChange={(e: any) => {
-              setComment(e.target.value);
-            }}
-          />
-          <div className="py-3 flex">
-            <Button
-              disabled={loading}
-              className="3xl:py-1.5 3xl:px-2 px-1.5 py-1 rounded-lg"
-              text="Add Note"
-              icon="PlusWhite"
-              onClick={() => {
-                onSubmit();
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-6 border-b-2 border-dark-800 py-4">
+            <Textarea
+              label="Add Note"
+              name="addNote"
+              rows={2}
+              tooltipRight={true}
+              value={comment}
+              placeholder="Type something here..."
+              onChange={(e: any) => {
+                setComment(e.target.value);
               }}
             />
+            <div className="py-3 flex">
+              <Button
+                disabled={loading}
+                className="3xl:py-1.5 3xl:px-2 px-1.5 py-1 rounded-lg"
+                text="Add Note"
+                icon="PlusWhite"
+                onClick={() => {
+                  onSubmit();
+                }}
+              />
+            </div>
+          </div>
+          <div className="py-2">
+            {isLoading ? (
+              <div className="h-[200px] flex items-center justify-center">
+                <Loader />
+              </div>
+            ) : data && data.length ? (
+              data?.map((val: any, index: number) => {
+                return (
+                  <div
+                    key={index}
+                    className={`px-3 border-b border-dark-800 ${
+                      index === 0 ? "3xl:pb-2 pb-1" : "3xl:py-2 py-1"
+                    }`}
+                  >
+                    <div className="grid grid-cols-3">
+                      <div className="flex items-center gap-2 col-span-1">
+                        <Icon name="DocumentIcon" width={18} height={18} />
+                        <span className="3xl:text-sm text-xs">{val.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 justify-end col-span-2">
+                        <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
+                          {val.day}
+                        </span>
+                        <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
+                          {val.date}
+                        </span>
+                        <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
+                          {val.time}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="3xl:pl-8 pl-7">
+                      <p className="3xl:text-xs text-[11px] font-normal text-txt-primary break-words">
+                        {val.comment}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-full h-[200px] flex justify-center items-center">
+                <Chip title="No Notes Found" />
+              </div>
+            )}
           </div>
         </div>
-        <div className="py-2">
-          {isLoading ? (
-            <div className="h-[270px] 3xl:h-[350px]">
-              <Loader />
-            </div>
-          ) : data && data.length ? (
-            data?.map((val: any, index: number) => {
-              return (
-                <div
-                  key={index}
-                  className={`px-3 border-b border-dark-800 ${
-                    index === 0 ? "3xl:pb-2 pb-1" : "3xl:py-2 py-1"
-                  }`}
-                >
-                  <div className="grid grid-cols-3">
-                    <div className="flex items-center gap-2 col-span-1">
-                      <Icon name="DocumentIcon" width={18} height={18} />
-                      <span className="3xl:text-sm text-xs">{val.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2 justify-end col-span-2">
-                      <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
-                        {val.day}
-                      </span>
-                      <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
-                        {val.date}
-                      </span>
-                      <span className="3xl:text-xs text-[11px] font-normal text-txt-primary">
-                        {val.time}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="3xl:pl-8 pl-7">
-                    <p className="3xl:text-xs text-[11px] font-normal text-txt-primary break-words">
-                      {val.comment}
-                    </p>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="w-full h-[270px] 3xl:h-[350px] flex justify-center items-center">
-              <Chip title="No Notes Found" />
-            </div>
-          )}
-        </div>
       </div>
-    </>
+    </div>
   );
 };
 

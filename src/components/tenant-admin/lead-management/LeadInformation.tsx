@@ -71,185 +71,175 @@ const LeadInformation = (props: LeadInformationProps) => {
     ).padStart(2, "0")}:${String(dur.seconds).padStart(2, "0")}`;
   };
 
+  if (!isLeadInfoID) return null;
+
   return (
     <div
-      className={`w-full h-[calc(100vh-178px)] overflow-y-auto scrollbar-hide bg-white rounded-lg shadow-md transition-all duration-300 ${
-        !isLeadInfoID && "hidden"
-      }`}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+      onClick={() => {
+        setIsLeadInfoID(null);
+        setInfoData("");
+        setCdrsNotesData([]);
+      }}
     >
-      {/* Header */}
-      {/* <div className="py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-t-lg flex justify-between items-center sticky top-0 z-10 shadow-md"> */}
-      <div className="py-3 px-4 from-blue-600 via-indigo-600 to-purple-600 rounded-t-lg flex justify-between items-center sticky top-0 z-10 ">
-      <div className="w-full text-center ">
-        <h2 className="text-blue-900 font-semibold text-sm text-xl  tracking-wide ">
-
-          Lead Information
-        </h2>
-        </div>
-        <Icon
-          name="CloseBlack"
-          height={22}
-          width={22}
-          className="cursor-pointer hover:scale-110 transition-transform duration-200"
-          onClick={() => {
-            setIsLeadInfoID(null);
-            setInfoData("");
-            setCdrsNotesData([]);
-          }}
-        />
-      </div>
-
-      {/* Loading */}
-      {isLoading ? (
-        <div className="h-[calc(100vh-233px)]   ">
-          <Loader />
-        </div>
-      ) : (
-        <>
-          {/* Lead Info */}
-          {infoData && Object.keys(infoData).length > 0 && (
-            <div className="px-4 py-4 space-y-4">
-            {/* <div className="px-4  p-4"> */}
-              {/* <div className="mb-4">
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {infoData?.first_name + " " + infoData?.last_name}
-                  {infoData?.user?.length ? (
-                    <span className="ml-2 text-sm text-indigo-600 font-medium">
-                      (Assigned To {infoData?.user[0].username})
-                    </span>
-                  ) : null}
-                </h3>
-              </div> */}
-
-              {/* Table Grid */}
-              {/* <div className="overflow-x-auto border rounded-md border"> */}
-      {/* <div className="overflow-x-auto py-3 px-4 from-blue-600 via-indigo-600 to-purple-600 border rounded-md border rounded-t-lg flex justify-between items-center sticky top-0 z-10 shadow-md"> */}
-
-                <table className=" min-w-full bg-white text-sm text-gray-700 ">
-
-                  <tbody>
-                    {[
-                      
-                      ["Name", infoData?.first_name],
-
-                      ["Email", infoData?.email],
-                      ["Phone No", infoData?.phone_number],
-                      ["Alternate Phone No", infoData?.alternate_phone_number],
-                      [
-                        "DOB",
-                        infoData?.dob
-                          ? formatDate(new Date(infoData?.dob))
-                          : "",
-                      ],
-                      ["Description", infoData?.description],
-                      ["Address", infoData?.address],
-                      ["City", infoData?.city],
-                      ["State", infoData?.state],
-                      ["Province", infoData?.province],
-                      ["Postal Code", infoData?.postal_code],
-                      ["Country", infoData?.country?.[0]?.country || ""],
-                    ].map(([label, value], index) => (
-                      <tr
-                        key={index}
-                        className={`border-b border-gray-200 rounded-lg py-1 px-1  bg-white py-1 px-1 flex justify-between items-center sticky top-0 z-10 shadow-[0_2px_2px_-2px_rgba(0,0,0,0.2)]  ${
-                          index % 2 === 0 ? "bg-white" : "bg-white"   //form background color
-                        }`}
-                      >
-                        <td className="px-4 py-2 font-medium text-gray-500 w-1/3">   
-                          {label}
-                        </td>
-                        <td className="px-4 py-2 text-black">          
-                          {value || "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  </table>
-                {/* </div> */}
-                 </div>
-            // </div>
-          )}
-
-          {/* Call Notes */}
-          <div className="px-4 pb-4">
-            {cdrsNotesData?.length > 0 &&
-              cdrsNotesData.map((value: any, index: number) => (
-                <div
-                  key={index}
-                  className="border rounded-md p-4 mb-3 bg-gray-50"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3 text-xs text-gray-600">
-                      <Icon
-                        name={
-                          value?.cdrs_info?.direction === "missed"
-                            ? "call_missed"
-                            : value?.cdrs_info?.direction === "outbound"
-                            ? "call_outbound"
-                            : "call_inbond"
-                        }
-                        width={18}
-                        height={18}
-                      />
-                      <span>{getInfoDay(value?.cdrs_info?.callstart)}</span>
-                      <span>
-                        {format(
-                          new Date(value?.cdrs_info?.callstart),
-                          "h:mm a"
-                        )}
-                      </span>
-                      <span className="text-indigo-600 font-semibold">
-                        {value?.cdrs_info?.billsecond
-                          ? getDuration(value?.cdrs_info?.billsecond)
-                          : ""}
-                      </span>
-                    </div>
-                    <div
-                      className="cursor-pointer hover:text-indigo-500 transition-colors"
-                      onClick={() =>
-                        setNoteData(value?.cdrs_info?.custom_callid)
-                      }
-                    >
-                      <Icon name="AddNote" width={18} height={18} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    {value?.notes_info?.length > 0 &&
-                      value?.notes_info.map((val: any, i: number) => (
-                        <div key={i} className="bg-white p-3 rounded border">
-                          <div className="flex items-center justify-between mb-1">
-                            <div className="flex items-center gap-2 max-w-[45%] w-full text-sm font-medium">
-                              <Icon
-                                name="DocumentIcon"
-                                width={18}
-                                height={18}
-                              />
-                              {val?.user?.length
-                                ? val?.user[0]?.username
-                                : infoData?.tenant?.[0]?.tenant_name || ""}
-                            </div>
-                            <div className="flex gap-2 text-xs text-gray-500">
-                              <span>{getDay(val?.createdAt)}</span>
-                              <span>
-                                {format(new Date(val?.createdAt), "dd/MM/yyyy")}
-                              </span>
-                              <span>
-                                {format(new Date(val?.createdAt), "h:mm a")}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="text-sm text-gray-700 break-words pl-6">
-                            {val.comment}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              ))}
+      <div
+        className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        {/* <div className="py-3 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-t-lg flex justify-between items-center sticky top-0 z-10 shadow-md"> */}
+        <div className="py-3 px-4 bg-white rounded-t-lg flex justify-between items-center border-b sticky top-0 z-10 flex-shrink-0">
+          <div className="w-full text-center ">
+            <h2 className="text-blue-900 font-semibold text-sm text-xl tracking-wide ">
+              Lead Information
+            </h2>
           </div>
-        </>
-      )}
+          <Icon
+            name="CloseBlack"
+            height={22}
+            width={22}
+            className="cursor-pointer hover:scale-110 transition-transform duration-200"
+            onClick={() => {
+              setIsLeadInfoID(null);
+              setInfoData("");
+              setCdrsNotesData([]);
+            }}
+          />
+        </div>
+
+        {/* Loading / Content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {isLoading ? (
+            <div className="h-[200px] flex items-center justify-center">
+              <Loader />
+            </div>
+          ) : (
+            <>
+              {/* Lead Info */}
+              {infoData && Object.keys(infoData).length > 0 && (
+                <div className="px-4 py-4 space-y-4">
+                  <table className=" min-w-full bg-white text-sm text-gray-700 ">
+                    <tbody>
+                      {[
+                        ["Name", infoData?.first_name],
+                        ["Email", infoData?.email],
+                        ["Phone No", infoData?.phone_number],
+                        ["Alternate Phone No", infoData?.alternate_phone_number],
+                        [
+                          "DOB",
+                          infoData?.dob
+                            ? formatDate(new Date(infoData?.dob))
+                            : "",
+                        ],
+                        ["Description", infoData?.description],
+                        ["Address", infoData?.address],
+                        ["City", infoData?.city],
+                        ["State", infoData?.state],
+                        ["Province", infoData?.province],
+                        ["Postal Code", infoData?.postal_code],
+                        ["Country", infoData?.country?.[0]?.country || ""],
+                      ].map(([label, value], index) => (
+                        <tr
+                          key={index}
+                          className={`border-b border-gray-200 rounded-lg py-1 px-1 bg-white flex justify-between items-center shadow-[0_2px_2px_-2px_rgba(0,0,0,0.2)] ${
+                            index % 2 === 0 ? "bg-white" : "bg-white"   //form background color
+                          }`}
+                        >
+                          <td className="px-4 py-2 font-medium text-gray-500 w-1/3">   
+                            {label}
+                          </td>
+                          <td className="px-4 py-2 text-black">          
+                            {value || "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Call Notes */}
+              <div className="px-4 pb-4">
+                {cdrsNotesData?.length > 0 &&
+                  cdrsNotesData.map((value: any, index: number) => (
+                    <div
+                      key={index}
+                      className="border rounded-md p-4 mb-3 bg-gray-50"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3 text-xs text-gray-600">
+                          <Icon
+                            name={
+                              value?.cdrs_info?.direction === "missed"
+                                ? "call_missed"
+                                : value?.cdrs_info?.direction === "outbound"
+                                ? "call_outbound"
+                                : "call_inbond"
+                            }
+                            width={18}
+                            height={18}
+                          />
+                          <span>{getInfoDay(value?.cdrs_info?.callstart)}</span>
+                          <span>
+                            {format(
+                              new Date(value?.cdrs_info?.callstart),
+                              "h:mm a"
+                            )}
+                          </span>
+                          <span className="text-indigo-600 font-semibold">
+                            {value?.cdrs_info?.billsecond
+                              ? getDuration(value?.cdrs_info?.billsecond)
+                              : ""}
+                          </span>
+                        </div>
+                        <div
+                          className="cursor-pointer hover:text-indigo-500 transition-colors"
+                          onClick={() =>
+                            setNoteData(value?.cdrs_info?.custom_callid)
+                          }
+                        >
+                          <Icon name="AddNote" width={18} height={18} />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        {value?.notes_info?.length > 0 &&
+                          value?.notes_info.map((val: any, i: number) => (
+                            <div key={i} className="bg-white p-3 rounded border">
+                              <div className="flex items-center justify-between mb-1">
+                                <div className="flex items-center gap-2 max-w-[45%] w-full text-sm font-medium">
+                                  <Icon
+                                    name="DocumentIcon"
+                                    width={18}
+                                    height={18}
+                                  />
+                                  {val?.user?.length
+                                    ? val?.user[0]?.username
+                                    : infoData?.tenant?.[0]?.tenant_name || ""}
+                                </div>
+                                <div className="flex gap-2 text-xs text-gray-500">
+                                  <span>{getDay(val?.createdAt)}</span>
+                                  <span>
+                                    {format(new Date(val?.createdAt), "dd/MM/yyyy")}
+                                  </span>
+                                  <span>
+                                    {format(new Date(val?.createdAt), "h:mm a")}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="text-sm text-gray-700 break-words pl-6">
+                                {val.comment}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

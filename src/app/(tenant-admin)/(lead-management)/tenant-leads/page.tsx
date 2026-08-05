@@ -1389,61 +1389,50 @@ const LeadManagement = () => {
         </div>
 
         <div className="mt-5">
-          <div
-            className={`${infoData
-              ? "grid grid-cols-3 gap-4 tsm:grid-cols-1 tsm:gap-y-4 tsm:gap-x-0"
-              : ""
-              }`}
-          >
-            <div className="col-span-2">
-              <Table
-                isLoading={loading}
-                title="Lead"
-                name="leads"
-                navigate="/tenant-leads/create"
-                columns={columns}
-                data={lead?.data?.length ? lead.data : []}
-                page={filter.page}
-                totalCount={lead?.count || 0}
-                limit={filter.limit}
-                selectedRows={selectedRow}
-                onPageClick={(page: number) => {
-                  setFilter({
-                    ...filter,
-                    page,
-                  });
-                }}
-                onEditClick={onEditClick}
-                onDeleteClick={(data: any) => setDeleteId(data.uuid)}
-                onSelectRow={(e: any, data: any, array: string[]) =>
-                  setSelectedRow(array)
-                }
-                onLimitChange={(limit: number) => {
-                  setFilter({
-                    ...filter,
-                    page: 1,
-                    limit,
-                  });
-                }}
-                onRefresh={() => setFilter({ ...filter })}
-              />
-            </div>
-            <div className="col-span-1">
-              {noteData ? (
-                <Note
-                  noteData={noteData}
-                  setNoteData={setNoteData}
-                  leadUuid={leadUuid}
-                />
-              ) : infoData ? (
-                <LeadInformation
-                  isLeadInfoID={infoData}
-                  setIsLeadInfoID={setInfoData}
-                  setNoteData={setNoteData}
-                />
-              ) : null}
-            </div>
-          </div>
+          <Table
+            isLoading={loading}
+            title="Lead"
+            name="leads"
+            navigate="/tenant-leads/create"
+            columns={columns}
+            data={lead?.data?.length ? lead.data : []}
+            page={filter.page}
+            totalCount={lead?.count || 0}
+            limit={filter.limit}
+            selectedRows={selectedRow}
+            onPageClick={(page: number) => {
+              setFilter({
+                ...filter,
+                page,
+              });
+            }}
+            onEditClick={onEditClick}
+            onDeleteClick={(data: any) => setDeleteId(data.uuid)}
+            onSelectRow={(e: any, data: any, array: string[]) =>
+              setSelectedRow(array)
+            }
+            onLimitChange={(limit: number) => {
+              setFilter({
+                ...filter,
+                page: 1,
+                limit,
+              });
+            }}
+            onRefresh={() => setFilter({ ...filter })}
+          />
+          {noteData ? (
+            <Note
+              noteData={noteData}
+              setNoteData={setNoteData}
+              leadUuid={leadUuid}
+            />
+          ) : infoData ? (
+            <LeadInformation
+              isLeadInfoID={infoData}
+              setIsLeadInfoID={setInfoData}
+              setNoteData={setNoteData}
+            />
+          ) : null}
         </div>
         <DeleteModal
           loading={loading}
