@@ -181,10 +181,10 @@ const LeadInformation = (props: LeadInformationProps) => {
                           />
                           <span>{getInfoDay(value?.cdrs_info?.callstart)}</span>
                           <span>
-                            {format(
-                              new Date(value?.cdrs_info?.callstart),
-                              "h:mm a"
-                            )}
+                            {value?.cdrs_info?.callstart
+                              ? format(new Date(value?.cdrs_info?.converted_date), "h:mm:ss a")
+                              : format(new Date(value?.cdrs_info?.callstart), "h:mm:ss a")
+                            }
                           </span>
                           <span className="text-indigo-600 font-semibold">
                             {value?.cdrs_info?.billsecond
@@ -223,7 +223,10 @@ const LeadInformation = (props: LeadInformationProps) => {
                                     {format(new Date(val?.createdAt), "dd/MM/yyyy")}
                                   </span>
                                   <span>
-                                    {format(new Date(val?.createdAt), "h:mm a")}
+                                    {value?.cdrs_info?.callstart
+                                      ? format(new Date(value?.cdrs_info?.converted_date), "h:mm:ss a")
+                                      : format(new Date(value?.cdrs_info?.callstart), "h:mm:ss a")
+                                    }
                                   </span>
                                 </div>
                               </div>

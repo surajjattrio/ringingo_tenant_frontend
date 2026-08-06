@@ -84,7 +84,9 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
     return `${
       (newTime?.hours > 9 ? newTime.hours : "0" + newTime.hours) +
       ":" +
-      (newTime?.minutes > 9 ? newTime.minutes : "0" + newTime.minutes)
+      (newTime?.minutes > 9 ? newTime.minutes : "0" + newTime.minutes) +
+      ":" +
+      (newTime?.seconds > 9 ? newTime.seconds : "0" + newTime.seconds)
     }`;
   };
 
@@ -177,7 +179,7 @@ const LoginLogoutInformation = (props: LoginLogoutInformationProps) => {
                       Sub Event
                     </div>
                     <div className="p-[5px] text-sm font-bold text-heading">
-                      Duration(HH:MM)
+                      Duration (HH:MM:SS)
                     </div>
                   </div>
                   <div className="grid grid-cols-4 gap-x-1">
