@@ -347,6 +347,7 @@ const WebhookLogs = () => {
                     onLimitChange={(limit: number) =>
                         setFilter({ ...filter, page: 1, limit })
                     }
+                    onRefresh={() => onGetData()}
                 />
             </div>
             <WebhookLogDetailModal
