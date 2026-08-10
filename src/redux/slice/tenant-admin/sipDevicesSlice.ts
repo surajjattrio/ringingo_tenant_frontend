@@ -109,6 +109,7 @@ const prepareData = (payload: any) => {
   const newData = data?.map((val: any) => ({
       ...val,
       user_name: val?.user?.[0]?.username || "",
+      fullname: val?.user?.[0]?.fullname || "",
   }));
   return { data: newData, count };
 };

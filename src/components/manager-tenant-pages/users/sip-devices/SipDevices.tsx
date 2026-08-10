@@ -70,28 +70,30 @@ const SipDevices = (props: ManagerPageTypes) => {
                 const active = row?.extension_status === "0";
                 const title = row?.device_name;
                 return (
-                    <>
-                        <div className="flex gap-2 items-center">
-                            <span
-                                className={`rounded-full h-[10px] w-[10px] ${active ? "bg-primary-success" : "bg-error"
-                                    }`}
-                            ></span>
-                            <span>{title}</span>
-                        </div>
-                    </>
+                    <div className="flex gap-2 items-center">
+                        <span
+                            className={`rounded-full h-[10px] w-[10px] ${active ? "bg-primary-success" : "bg-error"}`}
+                        ></span>
+                        <span>{title}</span>
+                    </div>
                 );
             },
         },
         { name: "username", title: "Username", sortable: true },
         {
             name: "user_name",
-            title: "User",
+            title: "User Id",
+            sortable: true,
+        },
+        {
+            name: "fullname",
+            title: "Agent Name",
             sortable: true,
         },
         {
             name: "status",
             title: "Status",
-        },  
+        },
         // {
         //     name: "otherFeatures",
         //     title: "Other Features",
