@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
 // PROJECT IMPORTS
@@ -17,6 +17,7 @@ import {
   Select,
   Textarea,
 } from "@/components/forms";
+import Radio from "@/components/forms/Radio";
 import { CardForm } from "@/components/ui-components";
 
 // THIRD - PARTY IMPORT
@@ -27,7 +28,7 @@ import * as Yup from "yup";
 
 const webhookTypeOptions = [
   { value: "cdr", label: "CDR" },
-  { value: "voice_broadcast", label: "Voice Broadcast" },
+  // { value: "voice_broadcast", label: "Voice Broadcast" },
 ];
 
 const cdrFieldOptions = [
@@ -36,6 +37,7 @@ const cdrFieldOptions = [
     options: [
       { value: "cdr.uuid", label: "uuid" },
       { value: "cdr.actual_talktime", label: "actual_talktime" },
+      { value: "cdr.acw_time", label: "acw_time" },
       { value: "cdr.authentication_type", label: "authentication_type" },
       { value: "cdr.auto_call_flag", label: "auto_call_flag" },
       { value: "cdr.billsecond", label: "billsecond" },
@@ -112,9 +114,17 @@ const cdrFieldOptions = [
         label: "Total Duration (00:04:12)",
       },
       { value: "billsecond_formatted", label: "billsecond_formatted - Answer Time (00:03:10)" },
+      {
+        value: "actual_talktime_formatted",
+        label: "Actual Talk Time (00:01:40) — direction-aware, unlike cdr.actual_talktime which is blank for outbound calls",
+      },
       { value: "ringing_time_formatted", label: "Ringing Time (00:00:08)" },
       { value: "waiting_time_formatted", label: "Waiting Time (00:00:05)" },
       { value: "hold_time_formatted", label: "Hold Time (00:00:12)" },
+      {
+        value: "acw_time_formatted",
+        label: "ACW Time (00:00:00)",
+      },
       { value: "hangup_by_raw", label: "Hang Up By — Agent / Customer / System / -" },
       {
         value: "dial_method_label",
@@ -150,11 +160,58 @@ const cdrFieldOptions = [
   },
 ];
 
+// `raw || fallback` treats a genuine 0 as falsy and silently replaces it with
+// fallback — wrong for delay_minutes, where 0 ("deliver immediately") is a valid,
+// intentional value distinct from "unset". Only an empty/missing/non-numeric raw
+// value should fall back.
+const parseNumericOrFallback = (raw: any, fallback: number) => {
+  if (raw === undefined || raw === null || String(raw).trim() === "") {
+    return fallback;
+  }
+  const num = Number(raw);
+  return Number.isFinite(num) ? num : fallback;
+};
+
 const methodOptions = [
   { value: "POST", label: "POST" },
   { value: "PUT", label: "PUT" },
   { value: "PATCH", label: "PATCH" },
   { value: "GET", label: "GET" },
+];
+
+const mappingModeOptions = [
+  { value: "default", label: "Default" },
+  { value: "custom", label: "Custom" },
+];
+
+const defaultCdrMappingRows = [
+  { targetKey: "Start Date", sourcePath: "callstart_ist", defaultValue: "" },
+  { targetKey: "End Date", sourcePath: "callend_ist", defaultValue: "" },
+  { targetKey: "Caller's Number", sourcePath: "agent_number", defaultValue: "" },
+  { targetKey: "Receiver's Number", sourcePath: "customer_number", defaultValue: "" },
+  { targetKey: "User ID", sourcePath: "cdr.sip_user", defaultValue: "" },
+  { targetKey: "Full Name", sourcePath: "agent_name", defaultValue: "" },
+  { targetKey: "User Group Name", sourcePath: "user_group_name", defaultValue: "" },
+  { targetKey: "IVR/CQ Name", sourcePath: "ivr_cq_name", defaultValue: "" },
+  { targetKey: "Duration", sourcePath: "total_duration_formatted", defaultValue: "" },
+  { targetKey: "Answer Time", sourcePath: "billsecond_formatted", defaultValue: "" },
+  { targetKey: "Actual Talk Time", sourcePath: "actual_talktime_formatted", defaultValue: "" },
+  { targetKey: "Call Status", sourcePath: "call_status_vyapar", defaultValue: "" },
+  { targetKey: "Hold Time", sourcePath: "hold_time_formatted", defaultValue: "" },
+  { targetKey: "Waiting Time", sourcePath: "waiting_time_formatted", defaultValue: "" },
+  { targetKey: "Ringing Time", sourcePath: "ringing_time_formatted", defaultValue: "" },
+  { targetKey: "ACW Time", sourcePath: "acw_time_formatted", defaultValue: "" },
+  { targetKey: "Campaign", sourcePath: "campaign_name", defaultValue: "" },
+  { targetKey: "Lead Group Name", sourcePath: "lead_group_name", defaultValue: "" },
+  { targetKey: "Dial Method", sourcePath: "dial_method_label", defaultValue: "" },
+  { targetKey: "Disconnected By", sourcePath: "disconnected_by_label", defaultValue: "" },
+  { targetKey: "Disposition", sourcePath: "disposition_root", defaultValue: "" },
+  { targetKey: "Sub Disposition 1", sourcePath: "disposition_sub", defaultValue: "" },
+  { targetKey: "Sub Disposition 2", sourcePath: "disposition_sub2", defaultValue: "" },
+  { targetKey: "Direction", sourcePath: "direction_label", defaultValue: "" },
+  { targetKey: "CSAT Score", sourcePath: "cdr.ivr_feedback_score", defaultValue: "" },
+  { targetKey: "Comment", sourcePath: "comment", defaultValue: "" },
+  { targetKey: "Recording", sourcePath: "recording_url", defaultValue: "" },
 ];
 
 // Local form state keeps is_active as a "0"/"1" string for the Switch control;
@@ -187,13 +244,18 @@ const CreateEditWebhookForm = () => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [mappingMode, setMappingMode] = useState<"default" | "custom">(
+    "default",
+  );
   const [transformRows, setTransformRows] = useState<
     Array<{ sourcePath: string; targetKey: string; defaultValue: string }>
-  >([{ sourcePath: "", targetKey: "", defaultValue: "" }]);
+  >(defaultCdrMappingRows.map((row) => ({ ...row })));
 
-  const buildTransformTemplateFromRows = () => {
+  const buildTemplateFromRowsList = (
+    rows: Array<{ sourcePath: string; targetKey: string; defaultValue: string }>,
+  ) => {
     const record: { [key: string]: any } = {};
-    transformRows.forEach((row) => {
+    rows.forEach((row) => {
       const targetKey = row.targetKey?.trim();
       const sourcePath = row.sourcePath?.trim();
       const defaultValue = row.defaultValue?.trim();
@@ -202,7 +264,21 @@ const CreateEditWebhookForm = () => {
         ? `{{${sourcePath}||${defaultValue}}}`
         : `{{${sourcePath}}}`;
     });
+    return record;
+  };
 
+  const applyWrapping = (record: { [key: string]: any }) => {
+    if (values.wrapInJson === "1") {
+      const wrapper = values.wrapperKey?.trim() || "wrapper";
+      return values.wrapperType === "array"
+        ? { [wrapper]: [record] }
+        : { [wrapper]: record };
+    }
+    return record;
+  };
+
+  const buildTransformTemplateFromRows = () => {
+    const record = buildTemplateFromRowsList(transformRows);
     return Object.keys(record).length > 0 ? record : null;
   };
 
@@ -280,6 +356,23 @@ const CreateEditWebhookForm = () => {
     ),
   });
 
+  // Prefers the (possibly hand-edited) Output preview JSON over the rows — this is
+  // what lets someone add a hardcoded literal key/value that has no corresponding
+  // mapping row (e.g. "source": "my-crm"). Falls back to the row-generated template
+  // when the preview is empty or not valid JSON.
+  const resolveTransformTemplate = (values: any) => {
+    const raw = values.transform_template?.trim();
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") return parsed;
+      } catch {
+        // Falls through to the row-generated template below.
+      }
+    }
+    return buildTransformTemplateFromRows();
+  };
+
   const onSubmit = (values: any) => {
     let headers = {};
     if (values.headers_text) {
@@ -299,14 +392,15 @@ const CreateEditWebhookForm = () => {
       timeout: Number(values.timeout) || 30000,
       max_retries: Number(values.max_retries) || 0,
       retry_delay: Number(values.retry_delay) || 0,
-      delay: (Number(values.delay_minutes) || 2) * 60000,
+      delay: parseNumericOrFallback(values.delay_minutes, 2) * 60000,
       is_active: values.is_active === "0",
       bearer_token: values.bearer_token || null,
       transform_strategy: values.transform_strategy,
       wrapInJson: values.wrapInJson === "1",
       wrapperKey: values.wrapperKey || null,
       wrapperType: values.wrapperType || "object",
-      transform_template: buildTransformTemplateFromRows(),
+      transform_template: resolveTransformTemplate(values),
+      mapping_mode: mappingMode,
       stripEmpty: values.stripEmpty === "1",
     };
 
@@ -333,30 +427,20 @@ const CreateEditWebhookForm = () => {
   });
 
   const outputPreview = useMemo(() => {
-    const record: { [key: string]: any } = {};
-    transformRows.forEach((row) => {
-      const sourcePath = row.sourcePath?.trim();
-      const targetKey = row.targetKey?.trim();
-      const defaultValue = row.defaultValue?.trim();
-      if (!sourcePath || !targetKey) return;
-      record[targetKey] = defaultValue
-        ? `{{${sourcePath}||${defaultValue}}}`
-        : `{{${sourcePath}}}`;
-    });
-
-    if (Object.keys(record).length === 0) {
-      return null;
-    }
-
-    if (values.wrapInJson === "1") {
-      const wrapper = values.wrapperKey?.trim() || "wrapper";
-      return values.wrapperType === "array"
-        ? { [wrapper]: [record] }
-        : { [wrapper]: record };
-    }
-
-    return record;
+    const record = buildTemplateFromRowsList(transformRows);
+    if (Object.keys(record).length === 0) return null;
+    return applyWrapping(record);
   }, [transformRows, values.wrapInJson, values.wrapperKey, values.wrapperType]);
+
+  // Seeds the editable Output preview textarea from the row-generated template, but
+  // only while it's still empty — so this never clobbers a hand-added hardcoded value
+  // or a template already loaded from an existing webhook. Once seeded, further row
+  // changes require the explicit "Regenerate from rows" button, by design.
+  useEffect(() => {
+    if (values.transform_template || !outputPreview) return;
+    setFieldValue("transform_template", JSON.stringify(outputPreview, null, 2));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outputPreview]);
 
   useLayoutEffect(() => {
     if (!id) return;
@@ -381,9 +465,10 @@ const CreateEditWebhookForm = () => {
           timeout: webhook?.timeout || 30000,
           max_retries: webhook?.max_retries ?? 3,
           retry_delay: webhook?.retry_delay ?? 2000,
-          // Number(...) guards against existing documents storing delay as a string
-          // (e.g. "120000") rather than a number.
-          delay_minutes: String((Number(webhook?.delay) || 120000) / 60000),
+          // parseNumericOrFallback (not ||) so a genuinely saved 0 (deliver
+          // immediately) isn't silently replaced by the 2-minute default — it also
+          // guards against existing documents storing delay as a string (e.g. "120000").
+          delay_minutes: String(parseNumericOrFallback(webhook?.delay, 120000) / 60000),
           is_active: webhook?.is_active === false ? "1" : "0",
           bearer_token: webhook?.bearer_token || "",
           transform_strategy: webhook?.transform_strategy || "legacy",
@@ -398,6 +483,7 @@ const CreateEditWebhookForm = () => {
               : webhook?.transform_template || "",
         });
         if (webhook?.transform_template) {
+          setMappingMode(webhook?.mapping_mode === "default" ? "default" : "custom");
           setTransformRows(syncRowsFromTemplate(webhook.transform_template));
         }
       }
@@ -545,6 +631,40 @@ const CreateEditWebhookForm = () => {
                 <p className="text-xs text-gray-500">
                   Select a CDR field and enter the outgoing payload key.
                 </p>
+                <Radio
+                  name="mapping_mode"
+                  label="Mapping Type"
+                  value={mappingMode}
+                  options={mappingModeOptions}
+                  onChange={(e: any) => {
+                    const nextMode = e.target.value as "default" | "custom";
+                    setMappingMode(nextMode);
+                    if (nextMode === "default") {
+                      const rows = defaultCdrMappingRows.map((row) => ({
+                        ...row,
+                      }));
+                      setTransformRows(rows);
+                      // Force-regenerate (not just seed-if-empty) so switching back to
+                      // Default always reflects the real default mapping, even if the
+                      // Output preview textarea still held stale custom/hand-edited JSON.
+                      setFieldValue(
+                        "transform_template",
+                        JSON.stringify(
+                          applyWrapping(buildTemplateFromRowsList(rows)),
+                          null,
+                          2,
+                        ),
+                      );
+                    }
+                  }}
+                />
+                {mappingMode === "default" && (
+                  <p className="text-xs text-gray-500">
+                    Sends the standard CDR report fields (Start Date, End
+                    Date, Caller&apos;s Number, Disposition, Recording, etc.).
+                    Switch to Custom to change the mapping.
+                  </p>
+                )}
               </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-4">
@@ -604,20 +724,22 @@ const CreateEditWebhookForm = () => {
                   </>
                 )}
               </div>
-              <div className="flex items-end justify-end">
-                <button
-                  type="button"
-                  className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-white"
-                  onClick={() =>
-                    setTransformRows((prev) => [
-                      ...prev,
-                      { sourcePath: "", targetKey: "", defaultValue: "" },
-                    ])
-                  }
-                >
-                  Add row
-                </button>
-              </div>
+              {mappingMode === "custom" && (
+                <div className="flex items-end justify-end">
+                  <button
+                    type="button"
+                    className="rounded-md bg-primary px-3 py-2 text-xs font-semibold text-white"
+                    onClick={() =>
+                      setTransformRows((prev) => [
+                        ...prev,
+                        { sourcePath: "", targetKey: "", defaultValue: "" },
+                      ])
+                    }
+                  >
+                    Add row
+                  </button>
+                </div>
+              )}
             </div>
             <div className="grid gap-3">
               {transformRows.map((row, index) => (
@@ -641,6 +763,7 @@ const CreateEditWebhookForm = () => {
                     isInfo
                     className="col-span-2"
                     isGroup
+                    isDisabled={mappingMode === "default"}
                   />
                   <Input
                     name={`transform_target_${index}`}
@@ -657,6 +780,7 @@ const CreateEditWebhookForm = () => {
                     onBlur={handleBlur}
                     isInfo
                     className="col-span-2"
+                    disabled={mappingMode === "default"}
                   />
                   <Input
                     name={`transform_default_${index}`}
@@ -673,45 +797,75 @@ const CreateEditWebhookForm = () => {
                     onBlur={handleBlur}
                     isInfo
                     className="col-span-2"
+                    disabled={mappingMode === "default"}
                   />
-                  <button
-                    type="button"
-                    className="col-span-1 self-end rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white"
-                    onClick={() =>
-                      setTransformRows((prev) =>
-                        prev.filter((_, i) => i !== index),
-                      )
-                    }
-                  >
-                    Remove
-                  </button>
+                  {mappingMode === "custom" && (
+                    <button
+                      type="button"
+                      className="col-span-1 self-end rounded-md bg-red-500 px-3 py-2 text-xs font-semibold text-white"
+                      onClick={() =>
+                        setTransformRows((prev) =>
+                          prev.filter((_, i) => i !== index),
+                        )
+                      }
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
-            {outputPreview ? (
-              <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <div>
-                    <div className="text-sm font-medium text-gray-900">
-                      Output preview
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      Shows how mapped fields will appear in the webhook
-                      payload.
-                    </p>
+            <div className="rounded-xl border border-gray-200 bg-slate-50 p-4">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div>
+                  <div className="text-sm font-medium text-gray-900">
+                    Output preview
                   </div>
+                  <p className="text-xs text-gray-500">
+                    Shows how mapped fields will appear in the webhook
+                    payload.{" "}
+                    {mappingMode === "custom" ? (
+                      <>
+                        Edit directly to add a hardcoded value that
+                        isn&apos;t tied to any CDR field (e.g.{" "}
+                        <code>&quot;source&quot;: &quot;my-crm&quot;</code>) —
+                        this is what actually gets sent, not just the
+                        mapping rows above.
+                      </>
+                    ) : (
+                      <>Switch to Custom to edit this JSON directly.</>
+                    )}
+                  </p>
                 </div>
-                <div className="overflow-x-auto rounded-lg bg-slate-950 p-4 text-slate-100">
-                  <pre className="whitespace-pre-wrap text-xs">
-                    {JSON.stringify(outputPreview, null, 2)}
-                  </pre>
-                </div>
+                {mappingMode === "custom" && (
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-md bg-slate-700 px-3 py-2 text-xs font-semibold text-white"
+                    onClick={() =>
+                      setFieldValue(
+                        "transform_template",
+                        JSON.stringify(outputPreview ?? {}, null, 2),
+                      )
+                    }
+                  >
+                    Regenerate from rows
+                  </button>
+                )}
               </div>
-            ) : (
-              <div className="rounded-xl border border-dashed border-gray-300 bg-white p-4 text-sm text-gray-500">
-                Add mapping rows to preview the generated payload.
-              </div>
-            )}
+              <Textarea
+                name="transform_template"
+                rows={14}
+                isShowLabel={false}
+                className="font-mono"
+                placeholder="Add mapping rows above, or write the payload JSON directly here."
+                value={values.transform_template}
+                touched={touched}
+                errors={errors}
+                disabled={mappingMode === "default"}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+            </div>
           </div>
         )}
         <InputNumber
