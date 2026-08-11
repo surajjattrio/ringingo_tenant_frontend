@@ -8,6 +8,10 @@ import {
   tenantWebhookSingleGet,
   tenantWebhookUpdate,
 } from "@/redux/slice/tenant-admin/tenantWebhookSlice";
+import {
+  campaignOptionsGet,
+  useCampaignOptions,
+} from "@/redux/slice/tenant-admin/campaignReportSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
 import {
@@ -235,6 +239,7 @@ const initialValues: any = {
   wrapperType: "object",
   transform_template: "",
   stripEmpty: "0",
+  campaign_uuids: [],
 };
 
 const CreateEditWebhookForm = () => {
@@ -242,6 +247,7 @@ const CreateEditWebhookForm = () => {
 
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const campaignOptions = useCampaignOptions();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [mappingMode, setMappingMode] = useState<"default" | "custom">(
@@ -402,6 +408,7 @@ const CreateEditWebhookForm = () => {
       transform_template: resolveTransformTemplate(values),
       mapping_mode: mappingMode,
       stripEmpty: values.stripEmpty === "1",
+      campaign_uuids: values.campaign_uuids || [],
     };
 
     if (id) {
@@ -442,6 +449,11 @@ const CreateEditWebhookForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [outputPreview]);
 
+  useEffect(() => {
+    dispatch(campaignOptionsGet());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useLayoutEffect(() => {
     if (!id) return;
     onGetSingleWebhookData();
@@ -476,6 +488,7 @@ const CreateEditWebhookForm = () => {
           wrapperKey: webhook?.wrapperKey || "",
           wrapperType: webhook?.wrapperType || "object",
           stripEmpty: webhook?.stripEmpty ? "1" : "0",
+          campaign_uuids: webhook?.campaign_uuids || [],
           transform_template:
             webhook?.transform_template &&
             typeof webhook.transform_template === "object"
@@ -605,11 +618,31 @@ const CreateEditWebhookForm = () => {
           onBlur={handleBlur}
           isInfo
         />
+        <div className="col-span-3 flex flex-col gap-1">
+          <Select
+            name="campaign_uuids"
+            label="Campaigns"
+            placeholder="Select Campaigns"
+            isMulti
+            isGroup
+            options={campaignOptions}
+            value={values.campaign_uuids}
+            touched={touched}
+            errors={errors}
+            onChange={(vals: any) => setFieldValue("campaign_uuids", vals)}
+            onBlur={handleBlur}
+            isInfo
+          />
+          <p className="text-xs text-gray-500">
+            Restrict this webhook to only post data for the selected
+            campaigns. Leave empty to post for all campaigns.
+          </p>
+        </div>
         <Select
           name="transform_strategy"
           label="Transform Strategy"
           options={[
-            { value: "legacy", label: "Legacy" },
+            // { value: "legacy", label: "Legacy" },
             { value: "ui", label: "UI Template" },
           ]}
           value={values.transform_strategy}
