@@ -87,6 +87,14 @@ const cdrFieldOptions = [
     label: "Derived / joined",
     options: [
       { value: "agent_name", label: "Agent Name" },
+      {
+        value: "agent_display_name",
+        label: "Agent Display Name — \"username - full name\" when both exist",
+      },
+      {
+        value: "extension_username",
+        label: "Extension Username — the SIP extension's own username",
+      },
       { value: "campaign_name", label: "Campaign Name" },
       { value: "comment", label: "Comment" },
       {
