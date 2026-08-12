@@ -90,6 +90,10 @@ const cdrFieldOptions = [
       { value: "campaign_name", label: "Campaign Name" },
       { value: "comment", label: "Comment" },
       {
+        value: "follow_up_date",
+        label: "Follow Up Date — latest scheduled reminder for the lead",
+      },
+      {
         value: "hangup_by",
         label: "Hang Up By (Agent / Customer / System)",
       },
