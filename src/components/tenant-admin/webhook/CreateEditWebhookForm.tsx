@@ -159,6 +159,10 @@ const cdrFieldOptions = [
         value: "customer_number",
         label: "Customer Number (direction-based)",
       },
+      {
+        value: "mobile_number_normalized",
+        label: "Mobile Number — normalized 10-digit (destination_number, no +91/91)",
+      },
       { value: "agent_number", label: "Agent Number (direction-based)" },
       { value: "event", label: "Event (1 = inbound / 2 = outbound)" },
       {
