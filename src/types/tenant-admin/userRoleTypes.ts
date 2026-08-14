@@ -20,4 +20,5 @@ export interface InitialValueType {
     force_login:string;
     auto_logout:string;
     idle_timeout:string;
+    callqueue_selection:string;
 }

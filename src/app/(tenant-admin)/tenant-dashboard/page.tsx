@@ -18,6 +18,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { userOptionsGet, useUserOptions } from "@/redux/slice/tenant-admin/userSlice";
 import { outboundOptionsGet, useOutboundOptions } from "@/redux/slice/tenant-admin/outboundSlice";
 import { inboundOptionsGet, useInboundOptions } from "@/redux/slice/tenant-admin/inboundSlice";
+import { blendedOptionsGet, useBlendedOptions } from "@/redux/slice/tenant-admin/blendedSlice";
 import { DashboardProvider } from "@/contexts/DashboardContext";
 import { StatCard } from "@/components/tenant-admin/dashboard/StatCard";
 import { Select } from "@/components/forms";
@@ -74,6 +75,7 @@ const Dashboard = () => {
   const userOptions = useUserOptions();
   const outboundOptions = useOutboundOptions();
   const inboundOptions = useInboundOptions();
+  const blendedOptions = useBlendedOptions();
   const selector: any = useTenantDashboardSelector();
   const callOverview = useTenantDashboardCallOverview();
   const callsData = useTenantCallData();
@@ -97,13 +99,18 @@ const campaignOptions = useMemo(() => {
       label: "Inbound",
       options: inboundOptions || [],
     },
+    {
+      label: "Blended",
+      options: blendedOptions || [],
+    },
   ];
-}, [outboundOptions, inboundOptions]);
+}, [outboundOptions, inboundOptions, blendedOptions]);
 
 useEffect(() => {
   dispatch(userOptionsGet());
   dispatch(outboundOptionsGet());
   dispatch(inboundOptionsGet());
+  dispatch(blendedOptionsGet());
 }, [dispatch]);
 
 useEffect(() => {

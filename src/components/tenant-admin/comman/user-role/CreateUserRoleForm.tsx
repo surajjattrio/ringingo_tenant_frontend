@@ -56,7 +56,8 @@ const CreateUserRoleForm = (props: ManagerNameTypes) => {
         unallocated_leads: "1",
         instagram: "1",
         facebook: "1",
-        force_login:"1"
+        force_login:"1",
+        callqueue_selection: "1"
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -250,6 +251,15 @@ const CreateUserRoleForm = (props: ManagerNameTypes) => {
                     label="Unallocated Leads"
                     value={values.unallocated_leads}
                     onClick={(value: string) => setFieldValue("unallocated_leads", value)}
+                />
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Call Queue Selection"
+                    value={values.callqueue_selection}
+                    onClick={(value: string) => setFieldValue("callqueue_selection", value)}
                 />
                 {
                     userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.whatsapp ?

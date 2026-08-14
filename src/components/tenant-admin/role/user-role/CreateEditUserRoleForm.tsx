@@ -62,7 +62,8 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
         unallocated_leads: "1",
         force_login: "1",
         auto_logout: "1",
-        idle_timeout: "30"
+        idle_timeout: "30",
+        callqueue_selection: "1"
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -122,6 +123,7 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
             force_login:userRoleData?.force_login||"1",
             auto_logout: userRoleData?.auto_logout || "1",
             idle_timeout: userRoleData?.idle_timeout || "30",
+            callqueue_selection: userRoleData?.callqueue_selection || "1",
 
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -363,6 +365,15 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                         onBlur={handleBlur}
                     />
                 )}
+                  <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Call Queue Selection"
+                    value={values.callqueue_selection}
+                    onClick={(value: string) => setFieldValue("callqueue_selection", value)}
+                />
  
                 {                
                  userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.whatsapp ?
@@ -374,7 +385,7 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                             label="WhatsApp"
                             value={values?.whatsapp}
                     onClick={(value: string) => setFieldValue("whatsapp", value)}
-     /> : <></>
+                /> : <></>
                 }
                  {
                     userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.instagram  ?
