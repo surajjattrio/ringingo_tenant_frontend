@@ -21,4 +21,5 @@ export interface InitialValueType {
     auto_logout:string;
     idle_timeout:string;
     callqueue_selection:string;
+    bot_lead_info:string;
 }

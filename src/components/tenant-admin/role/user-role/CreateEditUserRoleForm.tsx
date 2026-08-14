@@ -63,7 +63,8 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
         force_login: "1",
         auto_logout: "1",
         idle_timeout: "30",
-        callqueue_selection: "1"
+        callqueue_selection: "1",
+        bot_lead_info: "1"
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -124,6 +125,7 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
             auto_logout: userRoleData?.auto_logout || "1",
             idle_timeout: userRoleData?.idle_timeout || "30",
             callqueue_selection: userRoleData?.callqueue_selection || "1",
+            bot_lead_info: userRoleData?.bot_lead_info || "1",
 
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -373,6 +375,15 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                     label="Call Queue Selection"
                     value={values.callqueue_selection}
                     onClick={(value: string) => setFieldValue("callqueue_selection", value)}
+                />
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Bot Lead Info"
+                    value={values.bot_lead_info}
+                    onClick={(value: string) => setFieldValue("bot_lead_info", value)}
                 />
  
                 {                
