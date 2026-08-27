@@ -24,12 +24,14 @@ const CreateEditMessageConfigFormContent = () => {
     const getSingleConfig = useSingleMessageConfigData();
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [templateInput, setTemplateInput] = useState<string>("");
 
     const initialValues = {
         name: "",
         baseUrl: "",
         method: "POST",
         headers: [] as { key: string; value: string }[],
+        templates: [] as string[],
         body: "",
     };
 
@@ -83,6 +85,7 @@ const CreateEditMessageConfigFormContent = () => {
                 headers: getSingleConfig.headers && getSingleConfig.headers.length > 0 
                     ? getSingleConfig.headers 
                     : [],
+                templates: Array.isArray(getSingleConfig.templates) ? getSingleConfig.templates : [],
                 body: getSingleConfig.body || "",
             });
         }
@@ -102,6 +105,32 @@ const CreateEditMessageConfigFormContent = () => {
         const newHeaders = [...formik.values.headers];
         newHeaders[index][field] = val;
         formik.setFieldValue("headers", newHeaders);
+    };
+
+    const addTemplate = () => {
+        const trimmed = templateInput.trim();
+        if (trimmed) {
+            const currentTemplates = formik.values.templates || [];
+            if (!currentTemplates.includes(trimmed)) {
+                formik.setFieldValue("templates", [...currentTemplates, trimmed]);
+            }
+            setTemplateInput("");
+        }
+    };
+
+    const handleTemplateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" || e.key === ",") {
+            e.preventDefault();
+            addTemplate();
+        }
+    };
+
+    const removeTemplate = (indexToRemove: number) => {
+        const currentTemplates = formik.values.templates || [];
+        formik.setFieldValue(
+            "templates",
+            currentTemplates.filter((_, idx) => idx !== indexToRemove)
+        );
     };
 
     return (
@@ -205,6 +234,51 @@ const CreateEditMessageConfigFormContent = () => {
                         </div>
                     ))}
                 </div>
+                <div className="flex flex-col gap-2 md:col-span-2 mt-2 border-t pt-4">
+                    <div className="flex justify-between items-center">
+                        <label className="text-xs font-semibold text-dark-400">Template Names</label>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                        <input
+                            type="text"
+                            placeholder="Enter template name (e.g. pfc884, welcome_msg) and press Enter"
+                            value={templateInput}
+                            onChange={(e) => setTemplateInput(e.target.value)}
+                            onKeyDown={handleTemplateKeyDown}
+                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary text-gray-800"
+                        />
+                        <Button
+                            type="button"
+                            text="Add"
+                            size="sm"
+                            color="primary"
+                            onClick={addTemplate}
+                            disabled={!templateInput.trim()}
+                        />
+                    </div>
+                    {formik.values.templates && formik.values.templates.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-1">
+                            {formik.values.templates.map((tpl: string, index: number) => (
+                                <span
+                                    key={index}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-medium"
+                                >
+                                    {tpl}
+                                    <button
+                                        type="button"
+                                        onClick={() => removeTemplate(index)}
+                                        className="hover:text-red-500 text-gray-500 font-bold focus:outline-none ml-1"
+                                    >
+                                        ×
+                                    </button>
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    <p className="text-[10px] text-gray-400 pl-1">
+                        Add one or more template names. In the Request Body JSON, use <span className="font-semibold text-gray-500">$template_name</span> to dynamically insert the template selected by the agent.
+                    </p>
+                </div>
                 {formik.values.method !== "GET" && formik.values.method !== "DELETE" && (
                     <div className="flex flex-col gap-1 md:col-span-2 mt-2">
                         <Textarea
@@ -212,7 +286,7 @@ const CreateEditMessageConfigFormContent = () => {
                             name="body"
                             rows={6}
                             placeholder={
-                                '{\n  "phoneNumber": "$phone_number",\n  "templateName": "incometaxfilingonboardingupdate",\n  "bodyValues": ["$first_name"]\n}'
+                                '{\n  "phoneNumber": "$phone_number",\n  "templateName": "$template_name",\n  "bodyValues": ["$first_name"]\n}'
                             }
                             value={formik.values.body}
                             onChange={formik.handleChange}
@@ -221,7 +295,7 @@ const CreateEditMessageConfigFormContent = () => {
                             errors={formik.errors}
                         />
                         <p className="text-[10px] text-gray-400 pl-1">
-                          Provide a valid JSON payload. You can use lead variables like <span className="font-semibold text-gray-500">$phone_number</span> or <span className="font-semibold text-gray-500">$first_name</span>.
+                          Provide a valid JSON payload. You can use variables like <span className="font-semibold text-gray-500">$phone_number</span>, <span className="font-semibold text-gray-500">$template_name</span>, or <span className="font-semibold text-gray-500">$first_name</span>.
                         </p>
                     </div>
                 )}
