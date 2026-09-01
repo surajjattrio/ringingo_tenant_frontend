@@ -1,6 +1,16 @@
 node_modules
 .next
 .env
+.DS_Store
+.idea
+.vscode
+dist
+build
+logs
+*.log
+coverage
+*.tsbuildinfo
 package-lock.json
 yarn.lock
 .agents
+ringingo_tenant_api_documentation.md
