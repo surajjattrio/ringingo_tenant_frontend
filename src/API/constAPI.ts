@@ -18,6 +18,9 @@ export const DASHBOARD = "/dashboard";
 export const DASHBOARD_CALL_OVERVIEW = "/dashboard/call-overview";
 export const DASHBOARD_FILTER = "/dashboard/filter";
 
+// MONITORING
+export const MONITORING_OVERVIEW = "/admin/monitoring/overview";
+
 // TENANT
 export const TENANT = "/tenant";
 export const TENANT_SEARCH = "/tenant/advanced-search";

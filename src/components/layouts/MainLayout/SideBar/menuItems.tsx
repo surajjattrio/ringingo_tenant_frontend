@@ -83,6 +83,13 @@ export const masterAdmin: NavItemsTypes[] = [
         url: "/activity-log",
     },
     {
+        id: "monitoring",
+        title: "Monitoring",
+        icon: "MonitorDarkGray",
+        iconActive: "MonitorDarkGray",
+        url: "/monitoring",
+    },
+    {
         id: "reports",
         icon: "Report",
         iconActive: "NotesGreen",
