@@ -95,6 +95,7 @@ import mailScheduleSlice from "./slice/tenant-admin/mailScheduleSlice";
 import emailSlice from "./slice/tenant-admin/emailSlice";
 import apiConfigurationSlice from "./slice/tenant-admin/apiConfigurationSlice";
 import messageConfigurationSlice from "./slice/tenant-admin/messageConfigurationSlice";
+import monitoringSlice from "./slice/master-admin/monitoringSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -115,6 +116,7 @@ const rootReducer = combineReducers({
   adminDid: adminDidSlice,
   adminIpMapping: adminIpMappingSlice,
   tenantReport: tenantReportSlice,
+  monitoring: monitoringSlice,
 
   // TENANT ADMIN
   user: userSlice,
@@ -191,7 +193,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["inboundCallDebug"],
+  blacklist: ["inboundCallDebug", "monitoring"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
