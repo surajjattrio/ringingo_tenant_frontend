@@ -266,12 +266,14 @@ const AudioPlayer = ({ className, src, name }: AudioPlayerProps) => {
       <audio
         ref={ref}
         src={audioUrl}
-        onTimeUpdate={(e: any) =>
-          setTimeStatus(e.target.currentTime || 0)
-        }
-        onLoadedMetadata={(e: any) =>
-          setDuration(e.target.duration || 0)
-        }
+        onTimeUpdate={(e: any) => {
+          const cur = e.target.currentTime;
+          setTimeStatus(Number.isFinite(cur) ? cur : 0);
+        }}
+        onLoadedMetadata={(e: any) => {
+          const d = e.target.duration;
+          setDuration(Number.isFinite(d) ? d : 0);
+        }}
       />
 
 
@@ -292,7 +294,7 @@ const AudioPlayer = ({ className, src, name }: AudioPlayerProps) => {
         <input
           type="range"
           min={0}
-          max={Math.floor(duration)}
+          max={Number.isFinite(duration) ? Math.floor(duration) : 0}
           value={timeStatus}
           onChange={(e: any) => {
             if (ref.current) {

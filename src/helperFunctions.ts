@@ -162,10 +162,27 @@ export const formatDate = (date: any, time: boolean = false) => {
 
 // Get Time in a Format from Seconds
 export const formatTime = (seconds: number, viewHours: boolean = false) => {
-  if (!seconds || typeof seconds !== "number")
+  const numSeconds = typeof seconds === "number" ? seconds : Number(seconds);
+  if (
+    !numSeconds ||
+    !isFinite(numSeconds) ||
+    isNaN(numSeconds) ||
+    numSeconds <= 0
+  ) {
     return viewHours ? "00:00:00" : "00:00";
-  const formated = new Date(seconds * 1000)?.toISOString();
-  return viewHours ? formated?.slice(11, 19) : formated?.slice(14, 19);
+  }
+
+  const totalSeconds = Math.floor(numSeconds);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  const pad = (num: number) => num.toString().padStart(2, "0");
+
+  if (viewHours) {
+    return `${pad(hours)}:${pad(minutes)}:${pad(secs)}`;
+  }
+  return `${pad(minutes)}:${pad(secs)}`;
 };
 
 // Get Start Date and End Date of Past Month
