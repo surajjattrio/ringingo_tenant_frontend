@@ -452,7 +452,16 @@ export const settingData: any[] = [
         is_edit : "is_edit_breakcode",
         is_delete : "is_delete_breakcode",
     },
-  
+    {
+        name: "ctc",
+        title: "CTC",
+        switchName: "is_ctc",
+        is_create : "is_create_ctc",
+        is_list : "is_list_ctc",
+        is_edit : "is_edit_ctc",
+        is_delete : "is_delete_ctc",
+    },
+
 ];
 
 /* ============================== API INTEGRATION DATA ============================== */

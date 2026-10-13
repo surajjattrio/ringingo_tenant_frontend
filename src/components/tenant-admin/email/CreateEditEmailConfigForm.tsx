@@ -51,6 +51,8 @@ const CreateEditEmailConfigForm = () => {
         from_email: "",
         template_ids: [],
         to: "",
+        cc: "",
+        bcc: "",
     };
 
     const validationSchema = Yup.object({
@@ -61,6 +63,8 @@ const CreateEditEmailConfigForm = () => {
         password: Yup.string().required("Password is required"),
         template_ids: Yup.array().min(1, "Select at least one template").required("Templates are required"),
         to: Yup.string().optional(),
+        cc: Yup.string().optional(),
+        bcc: Yup.string().optional(),
     });
 
     const formik = useFormik({
@@ -74,7 +78,10 @@ const CreateEditEmailConfigForm = () => {
                     ...values,
                     from: values.username,
                     template_ids: values.template_ids.map((t: any) => t.value || t),
-                    to: values.to ? values.to.split(',').map((email: string) => email.trim()).filter(Boolean) : []
+                    //to: values.to ? values.to.split(',').map((email: string) => email.trim()).filter(Boolean) : []
+                    to: values.to ? values.to.split(',').map((email: string) => email.trim()).filter(Boolean) : [],
+                    cc: values.cc ? values.cc.split(',').map((email: string) => email.trim()).filter(Boolean) : [],
+                    bcc: values.bcc ? values.bcc.split(',').map((email: string) => email.trim()).filter(Boolean) : [],   
                 };
                 delete (payload as any).from_email;
 
@@ -118,7 +125,7 @@ const CreateEditEmailConfigForm = () => {
                 username: formik.values.username,
                 password: formik.values.password,
             };
-            const response = await dispatch(emailConfigTest(payload)).unwrap();
+            const response:any = await dispatch(emailConfigTest(payload)).unwrap();
             Success(response?.message || "SMTP Connection Successful");
         } catch (err: any) {
             Danger(err?.message || "SMTP Connection Failed");
@@ -151,7 +158,10 @@ const CreateEditEmailConfigForm = () => {
                 password: getSingleConfig.password || "",
                 from_email: getSingleConfig.from_email || "",
                 template_ids: selectedTemplates,
-                to: getSingleConfig.to ? getSingleConfig.to.join(', ') : "",
+                //to: getSingleConfig.to ? getSingleConfig.to.join(', ') : "",
+                to: getSingleConfig.to ? (Array.isArray(getSingleConfig.to) ? getSingleConfig.to.join(', ') : getSingleConfig.to) : "",
+                cc: getSingleConfig.cc ? (Array.isArray(getSingleConfig.cc) ? getSingleConfig.cc.join(', ') : getSingleConfig.cc) : "",
+                bcc: getSingleConfig.bcc ? (Array.isArray(getSingleConfig.bcc) ? getSingleConfig.bcc.join(', ') : getSingleConfig.bcc) : "",
             });
         }
     }, [id, getSingleConfig, templateOptions.length]);
@@ -250,10 +260,10 @@ const CreateEditEmailConfigForm = () => {
                 </div>
                 <div className="md:col-span-2">
                     <Input
-                        label="Recipient Emails"
+                        label="Recipient Emails (To)"
                         name="to"
                         autoComplete="none"
-                        placeholder="e.g. rajeev@example.com, aditya@example.com"
+                        placeholder="e.g. mohu@example.com, teja@example.com"
                         value={formik.values.to}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -262,6 +272,38 @@ const CreateEditEmailConfigForm = () => {
                     />
                     <p className="text-xs text-gray-500 mt-1 ml-1">
                         Please enter multiple email addresses separated by commas (e.g. rajeev@example.com, aditya@example.com).
+                    </p>
+                </div>
+               <div className="md:col-span-2">
+                    <Input
+                        label="CC Emails"
+                        name="cc"
+                        autoComplete="none"
+                        placeholder="e.g. manager@example.com, supervisor@example.com"
+                        value={formik.values.cc}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        touched={formik.touched}
+                        errors={formik.errors}
+                    />
+                    <p className="text-xs text-gray-500 mt-1 ml-1">
+                        Please enter multiple CC email addresses separated by commas.
+                    </p>
+                </div>
+                <div className="md:col-span-2">
+                    <Input
+                        label="BCC Emails"
+                        name="bcc"
+                        autoComplete="none"
+                        placeholder="e.g. audit@example.com, admin@example.com"
+                        value={formik.values.bcc}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        touched={formik.touched}
+                        errors={formik.errors}
+                    />
+                    <p className="text-xs text-gray-500 mt-1 ml-1">
+                        Please enter multiple BCC email addresses separated by commas.
                     </p>
                 </div>
             </div>

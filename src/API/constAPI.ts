@@ -166,6 +166,7 @@ export const TIME_CONDITION_SEARCH = "/timecondition/advanced-search";
 
 // TENANT TRUNK
 export const TENANT_TRUNK = "/trunk/tenant";
+export const TENANT_TRUNK_SIP_PROFILES = "/trunk/tenant/sip-profiles";
 export const TENANT_TRUNK_SEARCH = "/trunk/advanced-search";
 
 // FEATURE - CODE
@@ -224,6 +225,7 @@ export const OUTBOUND_CAMPAIGN_DIALABLE_TABLE_ADD =
     "/outbound-campaign/add-dialable";
 export const OUTBOUND_CAMPAIGN_ADD_HANGUP = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_LEAD_RESET = "/outbound-campaign/lead-reset";
+export const OUTBOUND_CAMPAIGN_LEAD_RESET_STATUS = "/outbound-campaign/lead-reset-status";
 export const OUTBOUND_CAMPAIGN_LEAD_CHURNING_DATA = "/outbound-campaign/lead-churning-data";
 export const OUTBOUND_CAMPAIGN_HNAGUP_ADD = "/outbound-campaign/disposition";
 export const OUTBOUND_CAMPAIGN_HANGUP_DELETE =
@@ -324,6 +326,13 @@ export const REALTIME_REPORT_UPDATE = "/outbound-campaign/outbound-campaign-dial
 export const CLICK_TO_CALL = "/click-to-call";
 export const CLICK_TO_CALL_SEARCH = "/click-to-call/advanced-search";
 export const CLICK_TO_CALL_FORWARD = "/click-to-call/forward";
+
+// CTC (CLICK TO CALL DIALER - bridges an agent's SIP device to a customer)
+export const CTC_DIAL = "/ctc/dial";
+export const CTC_HISTORY = "/ctc/history";
+
+// Static, tenant-scoped API key (works as an alternative to a Bearer token via x-api-key header)
+export const API_KEY = "/api-key";
 
 // BLOCK INBOUND CAMPAIGN
 export const BLOCK_INBOUND_CAMPAIGN = "/block-inbound-campaign";
@@ -433,3 +442,22 @@ export const ACTIVITY_LOG = "/activity-log";
 
 // REALTIME DASHBOARD - LEAD GROUP
 export const REALTIME_DASHBOARD_LEAD_GROUP_STATS = "/realtime-dashboard/lead-group-stats";
+
+// PIPELINE (KANBAN)
+export const PIPELINE_BOARD              = "/pipeline/board";
+export const PIPELINE_STAGE              = "/pipeline/stage";
+export const PIPELINE_LEAD               = "/pipeline/lead";
+export const PIPELINE_IMPORT             = "/pipeline/import";
+export const PIPELINE_ASSIGNMENT_CONFIG  = "/pipeline/assignment-config";
+export const PIPELINE_DISTRIBUTE_EXISTING = "/pipeline/distribute-existing";
+export const PIPELINE_LEAD_BULK_DELETE   = "/pipeline/lead/bulk-delete";
+export const PIPELINE_LEAD_BULK_UPDATE   = "/pipeline/lead/bulk-update";
+
+
+// SERVER DATA SYNC
+export const SERVER_SYNC_SERVERS = "/server-sync/servers";
+export const SERVER_SYNC_PREVIEW = "/server-sync/preview";
+export const SERVER_SYNC_EXECUTE = "/server-sync/execute";
+export const SERVER_SYNC_HISTORY = "/server-sync/history";
+export const SERVER_SYNC_MODULE_DATA = "/server-sync/module-data";
+export const SERVER_SYNC_VALIDATE_PIPELINE = "/server-sync/validate-pipeline";

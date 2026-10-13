@@ -17,6 +17,7 @@ import {
     addDialableTableOutbound,
     deleteDialableOutbound,
     resetLeadOutbound,
+    getLeadResetJobStatus,
     addHangupOutbound,
     deleteHangupOutbound,
         singlePreset,
@@ -134,6 +135,15 @@ export const outboundLeadReset = createAsyncThunk(
     "outbound-lead/reset",
     async (payload: any) => {
         return await resetLeadOutbound(payload);
+    }
+);
+
+// Polls the status of an async lead-reset job (job_uuid returned by
+// outboundLeadReset when the backend has ENABLE_LEAD_RECHURN_MICROSERVICE=true).
+export const outboundLeadResetStatusGet = createAsyncThunk(
+    "outbound-lead-reset-status/get",
+    async (params: { job_uuid: string; tenant_uuid: string }) => {
+        return await getLeadResetJobStatus(params.job_uuid, params.tenant_uuid);
     }
 );
 

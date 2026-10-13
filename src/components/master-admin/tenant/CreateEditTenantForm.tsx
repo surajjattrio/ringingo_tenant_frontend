@@ -68,6 +68,7 @@ const CreateEditTenantForm = () => {
         country_uuid: "",
         email: "",
         sip_profile_uuid: "",
+        sip_profile_uuids: [],
         outgoing_rule_uuid: "",
         account_code: "",
         concurrent_calls: "0",
@@ -210,6 +211,12 @@ const CreateEditTenantForm = () => {
                     status: tenantData?.status || "0",
                     email: tenantData?.email || "",
                     sip_profile_uuid: tenantData?.sip_profile_uuid || "",
+                    sip_profile_uuids:
+                        tenantData?.sip_profile_uuids?.length > 0
+                            ? tenantData?.sip_profile_uuids
+                            : tenantData?.sip_profile_uuid
+                                ? [tenantData?.sip_profile_uuid]
+                                : [],
                     outgoing_rule_uuid: tenantData?.outgoing_rule_uuid || "",
                     account_code: tenantData?.account_code || "",
                     concurrent_calls: tenantData?.concurrent_calls || "",
@@ -416,10 +423,37 @@ const CreateEditTenantForm = () => {
                     isInfo
                 />
                 <Select
-                    name="sip_profile_uuid"
-                    label="SIP Profile"
-                    placeholder="Select SIP Profile"
+                    name="sip_profile_uuids"
+                    isMulti
+                    label="SIP Profiles"
+                    placeholder="Select SIP Profiles"
                     options={sipProfileOptions}
+                    value={values.sip_profile_uuids}
+                    touched={touched}
+                    errors={errors}
+                    onChange={(e: any) => {
+                        const selected: string[] = e || [];
+                        setValues({
+                            ...values,
+                            sip_profile_uuids: selected,
+                            // Default profile must be one of selected profiles
+                            sip_profile_uuid: selected.includes(values.sip_profile_uuid)
+                                ? values.sip_profile_uuid
+                                : selected[0] || "",
+                        });
+                    }}
+                    onBlur={handleBlur}
+                    isInfo
+                />
+                <Select
+                    name="sip_profile_uuid"
+                    label="Default SIP Profile"
+                    placeholder="Select Default SIP Profile"
+                    options={
+                        values.sip_profile_uuids?.length > 0
+                            ? sipProfileOptions?.filter((val: any) => values.sip_profile_uuids.includes(val?.value))
+                            : sipProfileOptions
+                    }
                     value={values.sip_profile_uuid}
                     touched={touched}
                     errors={errors}

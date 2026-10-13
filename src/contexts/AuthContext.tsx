@@ -211,6 +211,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           user?.role === "manager"
         ) {
           let userDetail = { ...user, manager_detail };
+          call(updateSideBarData(prepareData(userDetail)));
           dispatch({
             type: LOGIN,
             payload: {
@@ -218,6 +219,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             },
           });
         } else if (user?.access_token) {
+          call(updateSideBarData(prepareData(user)));
           dispatch({
             type: LOGIN,
             payload: {
@@ -225,6 +227,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             },
           });
         } else if (masterUser?.access_token) {
+          call(updateSideBarData(prepareData(masterUser)));
           dispatch({
             type: LOGIN,
             payload: {

@@ -84,18 +84,30 @@ const LogoSection = ({
       >
         {isOpen ? (
           <Link href={`${process.env.BASE_URL}`}>
-            <img
+            {/* <img
               src={`${process.env.BASE_URL}/tenant/download/${personalizeData?.expandedfile}`}
               alt="Expanded Logo"
               className="w-[150px] h-10 object-contain transition-all duration-300"
+            /> */}
+            <Icon
+              name="NewLogo"
+              height={40}
+              width={180}
+              alt="Logo"
             />
           </Link>
         ) : (
           <Link href={`${process.env.BASE_URL}`}>
-            <img
+            {/* <img
               src={`${process.env.BASE_URL}/tenant/download/${personalizeData?.collapsedfile}`}
               alt="Collapsed Logo"
               className="w-10 h-10 object-contain transition-all duration-300"
+            /> */}
+            <Icon
+              name="CollapsedNewLogo"
+              height={20}
+              width={40}
+              alt="Logo"
             />
           </Link>
         )}
@@ -129,8 +141,8 @@ const LogoSection = ({
 
         <div
           className={`transition-transform duration-200 ${isdrawerOpen
-            ? "rotate-180 fixed left-[225px]  top-[43px] bg-white cursor-pointer  rounded-[36px] p-[3px]  hover:bg-white hover:shadow-sm"
-            : "rotate-0"
+            ? "rotate-0 fixed left-[225px]  top-[43px] bg-white cursor-pointer  rounded-[36px] p-[3px]  hover:bg-white hover:shadow-sm"
+            : "rotate-180"
             }`}
         >
           <svg

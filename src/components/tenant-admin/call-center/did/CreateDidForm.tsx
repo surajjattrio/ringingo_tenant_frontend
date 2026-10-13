@@ -38,6 +38,7 @@ const CreateDidForm = (props: ManagerNameTypes) => {
     codec: "PCMA",
     user_uuid: "",
     did_as_cid: "1",
+    name: "",
   };
 
   const validationSchema = Yup.object<InitialValueType>({
@@ -103,6 +104,18 @@ const CreateDidForm = (props: ManagerNameTypes) => {
       }}
     >
       <div className="pt-5 pb-10 gap-y-[30px] grid grid-cols-3 tsm:grid-cols-1 gap-x-4 px-4">
+        <Input
+          name="name"
+          label="DID Name"
+          placeholder="Enter DID Name"
+          icon="DIDNumber"
+          value={values.name}
+          touched={touched}
+          errors={errors}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          isInfo
+        />
         <Input
           type="number"
           name="number"

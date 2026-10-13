@@ -9,6 +9,7 @@ import {
     customFieldsDelete,
     customFieldsGet,
     customFieldsSearch,
+    customFieldsUpdate,
     // webFormStatusUpdate,
     useCustomFieldsData,
 } from "@/redux/slice/tenant-admin/customFieldsSlice";
@@ -21,8 +22,8 @@ import {
 } from "@/redux/slice/tenant-admin/leadGroupSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
-import { InputSelect, Switch, Toggle, Textarea, Select } from "@/components/forms";
-import { Head, Table } from "@/components/ui-components";
+import { InputSelect, Switch, Toggle, Textarea, Select, MultiSelect, Button } from "@/components/forms";
+import { Head, Icon, Table } from "@/components/ui-components";
 import { DeleteModal } from "@/components/modals";
 
 // THIRD-PARTY IMPORT
@@ -69,6 +70,9 @@ const TenantCustomFields = () => {
     const [selectedRow, setSelectedRow] = useState<string[]>([]);
     const [deleteId, setDeleteId] = useState<any>("");
     const [data, setData] = useState<any>(initialValues);
+    const [isBatchUpdate, setIsBatchUpdate] = useState<boolean>(false);
+    const [batchLeadGroup, setBatchLeadGroup] = useState<any[]>([]);
+    const [batchLoading, setBatchLoading] = useState<boolean>(false);
 
     const [status, setStatus] = useState<string>("0");
 
@@ -291,6 +295,57 @@ const TenantCustomFields = () => {
         setDeleteId(selectedRows.join(","));
     };
 
+    // Batch Update - Update lead group for all selected custom fields
+    const onBatchUpdateCustomFields = async () => {
+        if (!selectedRow.length) {
+            Danger("Please select at least one custom field");
+            return;
+        }
+        if (!batchLeadGroup.length) {
+            Danger("Please select at least one lead group");
+            return;
+        }
+        setBatchLoading(true);
+        try {
+            // Find the full custom field objects for the selected UUIDs
+            const selectedFields = (customFieldsData?.data || []).filter(
+                (d: any) => selectedRow.includes(d.uuid)
+            );
+            const newLeadGroupUuid = batchLeadGroup.map((lg: any) => lg.value ?? lg).join(",");
+            const promises = selectedFields.map((d: any) => {
+                return dispatch(
+                    customFieldsUpdate({
+                        id: d.uuid,
+                        lead_group_uuid: newLeadGroupUuid,
+                        field_label: d.field_label,
+                        field_name: d.field_name,
+                        field_type: d.field_type,
+                        field_rank: d.field_rank,
+                        field_placeholder: d.field_placeholder || "",
+                        field_options: d.field_options || "",
+                        required: d.required || "0",
+                    })
+                ).unwrap();
+            });
+            const results: any[] = await Promise.all(promises);
+            const allOk = results.every((r) => r?.statusCode === 200);
+            if (allOk) {
+                Success(`Lead Group updated for ${selectedFields.length} custom field(s)`);
+            } else {
+                Danger("Some updates failed. Please try again.");
+            }
+            setBatchLeadGroup([]);
+            setIsBatchUpdate(false);
+            setSelectedRow([]);
+            setFilter({ ...filter });
+        } catch (err: any) {
+            Danger("Batch update failed");
+            console.error("Batch Update Custom Fields Err ==>", err?.message);
+        } finally {
+            setBatchLoading(false);
+        }
+    };
+
     return (
         <div className="bg-white p-5 rounded-[25px]">
             <Head
@@ -300,6 +355,8 @@ const TenantCustomFields = () => {
                 createText="Create Custom Field"
                 onCreateClick={onCreateCustomFields}
                 onDeleteClick={onMassDeleteCustomFields}
+                onBatchUpdateClick={() => setIsBatchUpdate(!isBatchUpdate)}
+                batchUpdateDisabled={!selectedRow.length}
                 onChange={(e: any) =>
                     setFilter({
                         ...filter,
@@ -318,7 +375,11 @@ const TenantCustomFields = () => {
                         isAdvance: true,
                     })
                 }
-                onHide={onEmptySearch}
+                onHide={() => {
+                    onEmptySearch();
+                    setIsBatchUpdate(false);
+                    setBatchLeadGroup([]);
+                }}
             >
                 <Select
                     name="lead_group_uuid"
@@ -369,6 +430,71 @@ const TenantCustomFields = () => {
                 />
 
             </Head>
+            {/* ── Batch Update Panel ── */}
+            <div
+                className={`relative z-[1] flex flex-col mt-5 bg-white rounded-md drop-shadow-lg border border-slate-200 ${
+                    isBatchUpdate ? "" : "hidden"
+                }`}
+            >
+                <div className="flex items-center justify-between border-b border-dark-700 pl-10 pr-4 py-4">
+                    <span className="text-sm font-bold">Batch Update — Lead Group</span>
+                    <Icon
+                        className="cursor-pointer"
+                        tooltip="Close"
+                        name="Close"
+                        width={20}
+                        height={20}
+                        alt="Close"
+                        onClick={() => {
+                            setIsBatchUpdate(false);
+                            setBatchLeadGroup([]);
+                        }}
+                    />
+                </div>
+                <div className="px-5 pt-4 pb-8 gap-y-[30px] grid grid-cols-3 gap-x-4">
+                    <MultiSelect
+                        name="batch_lead_group_uuid"
+                        isMulti
+                        icon="GroupLead"
+                        label="Lead Group"
+                        placeholder="Select lead groups to assign"
+                        options={leadGroupOptions}
+                        value={batchLeadGroup}
+                        onChange={(e: any) => setBatchLeadGroup(e || [])}
+                        isSelectAll={true}
+                        isInfo
+                    />
+                    <div className="col-span-2 flex items-start pt-6">
+                        <p className="text-sm text-gray-500">
+                            {selectedRow.length
+                                ? `${selectedRow.length} custom field(s) selected. Lead Group will be replaced for all of them.`
+                                : "Select rows in the table first, then choose a lead group above."}
+                        </p>
+                    </div>
+                </div>
+                <div className="flex py-4 justify-end items-center border-t shadow-box rounded-sm">
+                    <div className="flex gap-3 px-10">
+                        <Button
+                            className="px-3 py-2"
+                            text="Cancel"
+                            style="dark-outline"
+                            onClick={() => {
+                                setIsBatchUpdate(false);
+                                setBatchLeadGroup([]);
+                            }}
+                        />
+                        <Button
+                            className={`px-3 py-2${
+                                !batchLeadGroup.length || !selectedRow.length ? " opacity-60" : ""
+                            }`}
+                            text={batchLoading ? "Updating..." : "Batch Update"}
+                            style="primary"
+                            disabled={!batchLeadGroup.length || !selectedRow.length || batchLoading}
+                            onClick={onBatchUpdateCustomFields}
+                        />
+                    </div>
+                </div>
+            </div>
             <div className="mt-5">
                 <Table
                     name={name}

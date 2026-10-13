@@ -9,6 +9,7 @@ export interface InitialValueType {
     country_uuid: string;
     email: string;
     sip_profile_uuid: string;
+    sip_profile_uuids?: string[];
     outgoing_rule_uuid: string;
     account_code: string;
     concurrent_calls:string;

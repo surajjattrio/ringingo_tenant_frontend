@@ -18,7 +18,7 @@ import { Danger } from "@/redux/services/toasterServices";
 import { useAppDispatch } from "@/redux/hooks";
 import { InputSelect, Select } from "@/components/forms";
 import { DatePicker } from "@/components/pickers";
-import { Head, Table } from "@/components/ui-components";
+import { Head, Table, Icon } from "@/components/ui-components";
 import { convertUtcToIst, formatDate, formatTime } from "@/helperFunctions";
 import { AudioPlayer } from "@/components/players";
 import { SEARCH_ERROR_MESSAGE } from "@/config/constant";
@@ -145,7 +145,10 @@ const headers = [
     { label: "Direction", key: "direction" },
     { label: "CSAT Score", key: "is_csat" },
     { label: "Comment", key: "comment" },
+    { label: "Knowledge Base", key: "knowledge_base" },
     // { label: "Recording", key: "recording_path" },
+    { label: "Feedback Rating", key: "feedback_rating" },
+    { label: "Feedback Comment", key: "feedback_comment" },
 ];
 
 
@@ -180,6 +183,13 @@ const CdrsReport = (props: ManagerPageTypes) => {
     const [csvLoading, setCsvLoading] = useState<boolean>(false);
     const [isCsvDownload, setIsCsvDownload] = useState<boolean>(false);
     const [data, setData] = useState<any>(initialValues);
+    const [showFeedbackModal, setShowFeedbackModal] = useState<boolean>(false);
+    const [feedbackFormData, setFeedbackFormData] = useState<any>(null);
+
+    const openFeedbackModal = (row: any) => {
+        setFeedbackFormData(row?.feedback?.formData || null);
+        setShowFeedbackModal(true);
+    };
 
     const getDialMethodLabel = (method: string | number) => {
         switch (method) {
@@ -386,6 +396,10 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     return getFirstName(row.blended_campaign);
                 }
 
+                if (row?.campaign_uuid === "CTC") {
+                    return "CTC";
+                }
+
                 return ""; // Fallback if none exist
             }
 
@@ -499,6 +513,31 @@ const CdrsReport = (props: ManagerPageTypes) => {
                 // return row?.notes?.[0]?.comment || "-";
             }
         },
+         {
+            name: "knowledge_base",
+            title: "Knowledge Base",
+            sortable: true,
+            action: (row: any) => {
+                const kb = row?.knowledge_base || (row?.custom_callid != "" ? row?.notes?.[0]?.knowledge_base : "") || "";
+                if (!kb) return "-";
+                const isUrl = /^https?:\/\//i.test(kb);
+                return isUrl ? (
+                    <a
+                        href={kb}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline max-w-[200px] truncate block"
+                        title={kb}
+                    >
+                        {kb}
+                    </a>
+                ) : (
+                    <span title={kb} className="max-w-[200px] truncate block">
+                        {kb}
+                    </span>
+                );
+            }
+        },
         {
             name: "recording_path",
             title: "Recording",
@@ -522,6 +561,24 @@ const CdrsReport = (props: ManagerPageTypes) => {
                             index={row?.index}
                         />
                     </>
+                );
+            },
+        },
+        {
+            name: "call_feedback",
+            title: "Feedback",
+            sortable: false,
+            action: (row: any) => {
+                if (!row?.feedback) return "-";
+                return (
+                    <Icon
+                        tooltip="View feedback"
+                        name="Csat"
+                        width={20}
+                        height={20}
+                        alt="Feedback"
+                        onClick={() => openFeedbackModal(row)}
+                    />
                 );
             },
         },
@@ -743,6 +800,8 @@ const CdrsReport = (props: ManagerPageTypes) => {
             //hangup_cause_2,
             is_csat: row?.ivr_feedback_score || "-",
             comment: row?.notes?.[0]?.comment || "",
+            feedback_rating: row?.feedback?.formData?.rating ?? "",
+            feedback_comment: row?.feedback?.formData?.comment || "",
         };
     });
 
@@ -1286,6 +1345,29 @@ const CdrsReport = (props: ManagerPageTypes) => {
                     onRefresh={() => setFilter({ ...filter })}
                 />
             </div>
+
+            {showFeedbackModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg shadow-lg p-6 w-96 max-h-[80vh] overflow-y-auto relative">
+                        <button
+                            className="absolute top-2 right-3 text-gray-600 hover:text-black text-xl"
+                            onClick={() => setShowFeedbackModal(false)}
+                        >
+                            &times;
+                        </button>
+                        <h2 className="text-lg font-semibold mb-4">Call Feedback</h2>
+
+                        {feedbackFormData ? (
+                            <ul className="space-y-2 text-sm">
+                                <li><span className="font-medium">Rating: </span>{feedbackFormData.rating ?? "-"}</li>
+                                <li><span className="font-medium">Comment: </span>{feedbackFormData.comment || "-"}</li>
+                            </ul>
+                        ) : (
+                            <p className="text-gray-500 text-sm">No feedback record found.</p>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

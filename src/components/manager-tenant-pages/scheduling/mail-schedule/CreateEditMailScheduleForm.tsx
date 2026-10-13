@@ -55,7 +55,7 @@ const CreateEditMailScheduleForm = (props: ManagerNameTypes) => {
 
     const validationSchema = Yup.object({
         name: Yup.string().required("Please Enter Name"),
-        report_type: Yup.array().min(1, "Please Select Report Name").required("Please Select Report Name"),
+        report_type: Yup.array().optional(),
         startDate: Yup.date().nullable().required("Please Select Start Date"),
         endDate: Yup.date().nullable().required("Please Select End Date"),
         timing: Yup.string().required("Please Select Timing"),
@@ -150,7 +150,7 @@ const CreateEditMailScheduleForm = (props: ManagerNameTypes) => {
                 />
                 <Select
                     name="report_type"
-                    label={<> Report Name <span className="text-red-500">*</span> </>}
+                    label={<> Report Name <span className="text-xs text-gray-400 font-normal">(Optional)</span> </>}
                     placeholder="Select Report Name"
                     options={reportNameOptions}
                     value={values.report_type}
@@ -181,7 +181,8 @@ const CreateEditMailScheduleForm = (props: ManagerNameTypes) => {
                     name="timing"
                     isShowLabel={false}
                     placeholder="Timing *"
-                    value={values.timing ? moment(values.timing, "HH:mm") : undefined}
+                    //value={values.timing ? moment(values.timing, "HH:mm") : undefined}
+                    value={values.timing ? moment(values.timing, ["HH:mm", "hh:mm A", "h:mm A", "H:mm"]) : undefined}
                     onChange={(hour: string, minute: string) => {
                         setFieldValue("timing", `${hour}:${minute}`);
                     }}

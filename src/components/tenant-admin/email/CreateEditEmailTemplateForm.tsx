@@ -31,6 +31,18 @@ const tags = [
     { tag: "[COMMENT]", description: "Comment" },
     { tag: "[POSTALCODE]", description: "Postal Code" },
     { tag: "[TABLE]", description: "Exhaustion Summary Table" },
+    { tag: "[CURRENT_DATE]", description: "Current Date (YYYY-MM-DD)" },
+    { tag: "[DATE]", description: "Today's Date (YYYY-MM-DD)" },
+    { tag: "[REPORT_NAME]", description: "Scheduled Report Name" },
+    { tag: "[START_DATE]", description: "Report Start Date" },
+    { tag: "[END_DATE]", description: "Report End Date" },
+    { tag: "[TOTAL_CALLS]", description: "Total Calls (Count)" },
+    { tag: "[CONNECTED_CALLS]", description: "Connected Calls (Count)" },
+    { tag: "[NOT_CONNECTED_CALLS]", description: "Not Connected Calls (Outbound Unanswered)" },
+    { tag: "[MISSED_CALLS]", description: "Missed Calls (Inbound Unanswered)" },
+    { tag: "[ABANDONED_CALLS]", description: "Abandoned Calls (Inbound Dropped)" },
+    { tag: "[AGENT_WISE_TABLE]", description: "Agent Wise Summary Table" },
+    { tag: "[QUEUE_WISE_TABLE]", description: "Queue Wise Summary Table" },
 ];
 
 const CreateEditEmailTemplateForm = () => {
@@ -140,7 +152,7 @@ const CreateEditEmailTemplateForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tags.slice(0, 7).map((item, index) => (
+                                {tags.slice(0, Math.ceil(tags.length / 2)).map((item, index) => (
                                     <tr key={index} className="border-b last:border-0 hover:bg-slate-50">
                                         <td className="px-4 py-2 font-mono text-primary">{item.tag}</td>
                                         <td className="px-4 py-2 text-slate-600">{item.description}</td>
@@ -158,7 +170,7 @@ const CreateEditEmailTemplateForm = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {tags.slice(7).map((item, index) => (
+                                {tags.slice(Math.ceil(tags.length / 2)).map((item, index) => (
                                     <tr key={index} className="border-b last:border-0 hover:bg-slate-50">
                                         <td className="px-4 py-2 font-mono text-primary">{item.tag}</td>
                                         <td className="px-4 py-2 text-slate-600">{item.description}</td>

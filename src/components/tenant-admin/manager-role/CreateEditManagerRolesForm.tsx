@@ -968,23 +968,23 @@ const CreateEditManagerRolesForm = () => {
                     : "0",
             is_click_to_Call:
                 checkValue?.["click-to-call"] !== undefined ? true : false,
-            is_create_click_to_Call: checkValue?.["ip-mapping"]
-                ? checkValue?.["ip-mapping"]["create"] === "0"
+            is_create_click_to_Call: checkValue?.["click-to-call"]
+                ? checkValue?.["click-to-call"]["create"] === "0"
                     ? true
                     : false
                 : false,
-            is_list_click_to_Call: checkValue?.["ip-mapping"]
-                ? checkValue?.["ip-mapping"]["list"] === "0"
+            is_list_click_to_Call: checkValue?.["click-to-call"]
+                ? checkValue?.["click-to-call"]["list"] === "0"
                     ? true
                     : false
                 : false,
-            is_edit_click_to_Call: checkValue?.["ip-mapping"]
-                ? checkValue?.["ip-mapping"]["edit"] === "0"
+            is_edit_click_to_Call: checkValue?.["click-to-call"]
+                ? checkValue?.["click-to-call"]["edit"] === "0"
                     ? true
                     : false
                 : false,
-            is_delete_click_to_Call: checkValue?.["ip-mapping"]
-                ? checkValue?.["ip-mapping"]["delete"] === "0"
+            is_delete_click_to_Call: checkValue?.["click-to-call"]
+                ? checkValue?.["click-to-call"]["delete"] === "0"
                     ? true
                     : false
                 : false,

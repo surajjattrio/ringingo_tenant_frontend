@@ -19,6 +19,9 @@ const icons = {
 
   // Login Logo
   LoginLogo:"/assets/images/LoginLogo1.svg",
+  NewLogo:"/assets/images/ringingo-new-logo.png",
+  CollapsedNewLogo:"/assets/images/Ringingo-Logo-new.png",
+  sidebarCallcenter: "/assets/icons/sidebar_callcenter.svg",
 
   // BLACK
   TenantLogo: "/assets/images/logo.png",
@@ -474,6 +477,7 @@ const Photo = (
           width={width || 10}
           height={height || 10}
           onClick={onClick}
+          unoptimized
         />
       ) : (
         <div

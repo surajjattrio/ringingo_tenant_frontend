@@ -5,6 +5,7 @@ export interface InitialValueType {
     codec: string;
     user_uuid: string;
     did_as_cid: string;
+    name: string;
 }
 
 export interface ForwardingInitialValueType {

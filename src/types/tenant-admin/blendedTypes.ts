@@ -50,4 +50,7 @@ export interface InitialValueType {
     api_config_uuid: string;
     email_type: string;
     message_config_uuid?: string;
+    is_limechat?: string;
+    manual_multi_caller_id?: string;
+    manual_caller_ids?: string[];
 }

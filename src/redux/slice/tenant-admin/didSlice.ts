@@ -24,6 +24,7 @@ interface InitialState {
     allDidData: any;
     singleDidData: any;
     didOptions: OptionTypes[];
+    cidDidOptions: OptionTypes[];
 }
 
 const initialState: InitialState = {
@@ -32,6 +33,7 @@ const initialState: InitialState = {
     allDidData: {},
     singleDidData: {},
     didOptions: [],
+    cidDidOptions: [],
 };
 
 export const didGet = createAsyncThunk("did/get", async (params: any) => {
@@ -178,6 +180,13 @@ const didSlice = createSlice({
                     value: val?.number,
                     label: val?.number,
                 }));
+                // Active DIDs enabled as caller id, used for Multi Caller IDs for Manual Calls
+                state.cidDidOptions = (data || [])
+                    ?.filter((val: any) => val?.did_as_cid === "0" && val?.status === "0")
+                    ?.map((val: any) => ({
+                        value: val?.number,
+                        label: val?.name ? `${val?.name} (${val?.number})` : val?.number,
+                    }));
             }
         );
     },
@@ -213,5 +222,11 @@ export const useSingleDid = () => {
 export const selectDidOptions = (state: RootState) => state.did.didOptions;
 export const useDidOptions = () => {
     const did = useAppSelector(selectDidOptions);
+    return useMemo(() => did, [did]);
+};
+
+export const selectCidDidOptions = (state: RootState) => state.did.cidDidOptions;
+export const useCidDidOptions = () => {
+    const did = useAppSelector(selectCidDidOptions);
     return useMemo(() => did, [did]);
 };

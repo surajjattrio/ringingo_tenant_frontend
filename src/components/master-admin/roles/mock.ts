@@ -304,6 +304,11 @@ export const settingData: AdvanceRoleTypes[] = [
         title: "Break Code",
         switchName: "is_breakcode",
     },
+    {
+        name: "ctc",
+        title: "CTC",
+        switchName: "is_ctc",
+    },
 
 ];
 
@@ -331,6 +336,11 @@ export const apiData: AdvanceRoleTypes[] = [
         title: "Webhooks",
         switchName: "is_webhooks",
     },
+    {
+        name: "click_to_Call",
+        title: "Click to Call",
+        switchName: "is_click_to_Call",
+    },
 ];
 
 /* ============================== PLUGINS DATA ============================== */
@@ -345,6 +355,11 @@ export const pluginsData: AdvanceRoleTypes[] = [
         name: "google_sheet",
         title: "Google Sheet",
         switchName: "is_google_sheet",
+    },
+    {
+        name: "pipeline",
+        title: "Pipeline",
+        switchName: "is_pipeline",
     },
 ];
 /* ============================== EMAIL DATA ============================== */

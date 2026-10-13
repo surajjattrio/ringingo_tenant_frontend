@@ -118,6 +118,8 @@ export interface InitialValueType {
     is_telecomcircle: boolean;
     breakcode: string;
     is_breakcode: boolean;
+    ctc: string;
+    is_ctc: boolean;
     webform: string;
     is_webform: boolean;
 
@@ -142,6 +144,9 @@ export interface InitialValueType {
 
     activity_log: string;
     is_activity_log: boolean;
+
+    pipeline: string;
+    is_pipeline: boolean;
 
     mail_schedule: string;
     is_mail_schedule: boolean;

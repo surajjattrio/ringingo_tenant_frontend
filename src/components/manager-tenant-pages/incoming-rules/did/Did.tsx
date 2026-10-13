@@ -35,6 +35,7 @@ import { ManagerPageTypes } from "@/types/formTypes";
 // DATA
 const headers: any = [
   { label: "DID Number", key: "number" },
+  { label: "DID Name", key: "name" },
   { label: "Timeout", key: "timeout_value" },
   { label: "Status", key: "status_name" },
 ];
@@ -70,6 +71,11 @@ const DID = (props: ManagerPageTypes) => {
     {
       name: "number",
       title: "DID Number",
+      sortable: true,
+    },
+    {
+      name: "name",
+      title: "DID Name",
       sortable: true,
     },
     {

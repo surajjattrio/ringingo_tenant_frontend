@@ -22,6 +22,9 @@ export interface InitialValueType {
     user_uuid: string
     gender: string;
     description: string;
+    priority?: string;
+    campaign_uuid?: string;
+    campaign_name?: string;
     custom_fields?: DynamicFormFields;
 };
 

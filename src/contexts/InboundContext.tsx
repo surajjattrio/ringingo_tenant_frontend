@@ -70,6 +70,7 @@ export const InboundProvider = ({
       api_config_uuid: "",
       email_type: "none",
       message_config_uuid: "",
+      is_limechat: "1",
     };
 
     const validationSchema = Yup.object<InitialValueType>({

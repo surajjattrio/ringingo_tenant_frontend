@@ -64,7 +64,9 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
         auto_logout: "1",
         idle_timeout: "30",
         callqueue_selection: "1",
-        bot_lead_info: "1"
+        bot_lead_info: "1",
+        is_lead_edit: "0",
+        knowledge_base: "1",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -126,7 +128,8 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
             idle_timeout: userRoleData?.idle_timeout || "30",
             callqueue_selection: userRoleData?.callqueue_selection || "1",
             bot_lead_info: userRoleData?.bot_lead_info || "1",
-
+            is_lead_edit: userRoleData?.is_lead_edit,
+            knowledge_base: userRoleData?.knowledge_base || "1"
         });
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userRoleData, id]);
@@ -385,7 +388,28 @@ const CreateEditUserRoleForm = (props: ManagerNameTypes) => {
                     value={values.bot_lead_info}
                     onClick={(value: string) => setFieldValue("bot_lead_info", value)}
                 />
- 
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Is Lead Edit"
+                    value={values.is_lead_edit}
+                    onClick={(value: string) => {
+                        setFieldValue("is_lead_edit", value);
+                    }}
+                />
+                 <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Knowledge Base"
+                    value={values.knowledge_base}
+                    onClick={(value: string) => {
+                        setFieldValue("knowledge_base", value);
+                    }}
+                />
                 {                
                  userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.whatsapp ?
                         <Switch

@@ -148,6 +148,9 @@ const CreateEditRolesForm = () => {
         activity_log: "0",
         is_activity_log: false,
 
+        pipeline: "0",
+        is_pipeline: false,
+
         cdrs: "0",
         is_cdrs: false,
         lc: "0",
@@ -185,6 +188,8 @@ const CreateEditRolesForm = () => {
         is_telecomcircle: false,
         breakcode: "0",
         is_breakcode: false,
+        ctc: "0",
+        is_ctc: false,
         webform: "0",
         is_webform: false,
 
@@ -253,7 +258,6 @@ const CreateEditRolesForm = () => {
         const addIncomingArray = [
             "did",
             "ip_mapping",
-            "click_to_Call",
             "rg",
             "ivr",
             "tc",
@@ -346,7 +350,7 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addSettingArray = ["prompts", "e_smtp", "telecomcircle", "breakcode", "webform"];
+        const addSettingArray = ["prompts", "e_smtp", "telecomcircle", "breakcode", "ctc", "webform"];
 
         if (openSettings) {
             payload["advanced_roles"]["settings"] = {};
@@ -357,18 +361,18 @@ const CreateEditRolesForm = () => {
             });
         }
 
-        const addApiArray = ["webhooks"];
+        const addApiArray = ["webhooks", "click_to_Call"];
 
-        if (openApi) {
+        if (openApi || addApiArray.some((val: any) => values[`is_${val}`])) {
             payload["advanced_roles"]["api"] = {};
             addApiArray.forEach((val: any) => {
                 if (values[`is_${val}`]) {
-                    payload["advanced_roles"]["api"][val] = values[val];
+                    payload["advanced_roles"]["api"][val] = values[val] ? values[val] : "0";
                 }
             });
         }
 
-        const addPluginsArray = ["google_drive", "google_sheet"];
+        const addPluginsArray = ["google_drive", "google_sheet", "pipeline"];
 
         if (openPlugins) {
             payload["advanced_roles"]["plugins"] = {};
@@ -447,8 +451,6 @@ const CreateEditRolesForm = () => {
             is_did: !!getSingleRole?.module_permission?.incoming_rules?.did,
             ip_mapping: getSingleRole?.module_permission?.incoming_rules?.ip_mapping || "0",
             is_ip_mapping: !!getSingleRole?.module_permission?.incoming_rules?.ip_mapping,
-            click_to_Call: getSingleRole?.module_permission?.incoming_rules?.click_to_Call || "0",
-            is_click_to_Call: !!getSingleRole?.module_permission?.incoming_rules?.click_to_Call,
             rg: getSingleRole?.module_permission?.incoming_rules?.rg || "0",
             is_rg: !!getSingleRole?.module_permission?.incoming_rules?.rg,
             ivr: getSingleRole?.module_permission?.incoming_rules?.ivr || "0",
@@ -545,6 +547,8 @@ const CreateEditRolesForm = () => {
             is_telecomcircle: !!getSingleRole?.module_permission?.settings?.telecomcircle,
             breakcode: getSingleRole?.module_permission?.settings?.breakcode || "0",
             is_breakcode: !!getSingleRole?.module_permission?.settings?.breakcode,
+            ctc: getSingleRole?.module_permission?.settings?.ctc || "0",
+            is_ctc: !!getSingleRole?.module_permission?.settings?.ctc,
             webform: getSingleRole?.module_permission?.settings?.webform || "0",
             is_webform: !!getSingleRole?.module_permission?.settings?.webform,
 
@@ -556,6 +560,13 @@ const CreateEditRolesForm = () => {
             is_api_key: !!getSingleRole?.module_permission?.api?.api_key,
             webhooks: getSingleRole?.module_permission?.api?.webhooks || "0",
             is_webhooks: !!getSingleRole?.module_permission?.api?.webhooks,
+            click_to_Call:
+                getSingleRole?.module_permission?.api?.click_to_Call ||
+                getSingleRole?.module_permission?.incoming_rules?.click_to_Call ||
+                "0",
+            is_click_to_Call:
+                !!getSingleRole?.module_permission?.api?.click_to_Call ||
+                !!getSingleRole?.module_permission?.incoming_rules?.click_to_Call,
             zoho_id: getSingleRole?.module_permission?.api?.zoho_id || "0",
             is_zoho_id: !!getSingleRole?.module_permission?.api?.zoho_id,
 
@@ -563,6 +574,9 @@ const CreateEditRolesForm = () => {
             is_google_drive: !!getSingleRole?.module_permission?.plugins?.google_drive,
             google_sheet: getSingleRole?.module_permission?.plugins?.google_sheet || "0",
             is_google_sheet: !!getSingleRole?.module_permission?.plugins?.google_sheet,
+
+            pipeline: getSingleRole?.module_permission?.plugins?.pipeline || "0",
+            is_pipeline: !!getSingleRole?.module_permission?.plugins?.pipeline,
 
             cdrs_report: getSingleRole?.module_permission?.report_scheduling?.cdrs_report || "0",
             is_cdrs_report: !!getSingleRole?.module_permission?.report_scheduling?.cdrs_report,
@@ -587,7 +601,10 @@ const CreateEditRolesForm = () => {
         setOpenMessaging(!!getSingleRole?.module_permission?.messaging)
         setOpenReports(!!getSingleRole?.module_permission?.reports);
         setOpenSettings(!!getSingleRole?.module_permission?.settings)
-        setOpenApi(!!getSingleRole?.module_permission?.api)
+        setOpenApi(
+            !!getSingleRole?.module_permission?.api ||
+            !!getSingleRole?.module_permission?.incoming_rules?.click_to_Call
+        )
         setOpenPlugins(!!getSingleRole?.module_permission?.plugins)
         setOpenSchedulingReport(!!getSingleRole?.module_permission?.report_scheduling)
         setOpenEmail(!!getSingleRole?.module_permission?.email)

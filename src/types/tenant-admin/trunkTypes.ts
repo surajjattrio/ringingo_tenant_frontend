@@ -1,5 +1,6 @@
 export interface InitialValueType {
     name: string;
+    sip_profile_uuid?: string;
     register: string;
     username: string;
     password: string;

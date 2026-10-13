@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { mailScheduleSearch, mailScheduleDelete, mailScheduleDeleteMultiple, mailScheduleUpdateStatus, selectMailSchedules, selectIsLoading } from "@/redux/slice/tenant-admin/mailScheduleSlice";
 import { Success } from "@/redux/services/toasterServices";
 import { formatDate } from "@/helperFunctions";
-
+import moment from "moment";
 const MailSchedule = (props: ManagerPageTypes) => {
     const { managerName = null, name = null } = props;
     const router = useRouter();
@@ -34,6 +34,79 @@ const MailSchedule = (props: ManagerPageTypes) => {
     useEffect(() => {
         dispatch(mailScheduleSearch(filter));
     }, [filter]);
+
+    const getMailDeliveryStatus = (row: any) => {
+        const todayStr = moment().format("YYYY-MM-DD");
+        const currentHHmm = moment().format("HH:mm");
+
+        // 1. If schedule is inactive/disabled (status '1')
+        if (row?.status === "1") {
+            return {
+                label: "Not Sent",
+                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+                dotClass: "bg-rose-500",
+            };
+        }
+
+        // 2. Date range evaluation
+        const today = moment().startOf("day");
+        const start = row?.startDate ? moment(row.startDate).startOf("day") : null;
+        const end = row?.endDate ? moment(row.endDate).endOf("day") : null;
+
+        if (end && today.isAfter(end)) {
+            return {
+                label: "Not Sent",
+                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+                dotClass: "bg-rose-500",
+            };
+        }
+
+        if (start && today.isBefore(start)) {
+            return {
+                label: "Pending",
+                badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
+                dotClass: "bg-amber-500",
+            };
+        }
+
+        // 3. Timing evaluation for today: parse raw timing into 24h
+        const rawTiming = (row?.timing || "").trim();
+        let timing24 = rawTiming;
+        if (/am|pm/i.test(rawTiming)) {
+            timing24 = moment(rawTiming, ["hh:mm A", "h:mm A", "hh:mma", "h:mma"]).format("HH:mm");
+        } else if (rawTiming.length === 4 && rawTiming.indexOf(":") === 1) {
+            timing24 = `0${rawTiming}`;
+        }
+
+        // 4. If scheduled time for today has NOT arrived yet, it is ALWAYS Pending!
+        if (timing24 && currentHHmm < timing24) {
+            return {
+                label: "Pending",
+                badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
+                dotClass: "bg-amber-500",
+            };
+        }
+
+        // 5. If scheduled time has arrived or passed: check if sent for today's scheduled timing
+        const sentToday =
+            row?.last_sent_date === todayStr &&
+            (!row?.last_sent_time || !timing24 || row?.last_sent_time >= timing24);
+
+        if (sentToday) {
+            return {
+                label: "Sent",
+                badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200",
+                dotClass: "bg-emerald-500",
+            };
+        }
+
+        // 6. Otherwise, scheduled time for today has passed without being sent
+        return {
+            label: "Not Sent",
+            badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+            dotClass: "bg-rose-500",
+        };
+    };
 
     const columns: ColumnsType[] = [
         {
@@ -64,6 +137,22 @@ const MailSchedule = (props: ManagerPageTypes) => {
             name: "timing",
             title: "Timing",
             sortable: true,
+        },
+        {
+            name: "mail_status",
+            title: "Mail Status",
+            action: (row: any) => {
+                const statusInfo = getMailDeliveryStatus(row);
+                return (
+                    <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${statusInfo.badgeClass}`}
+                        title={row.last_sent_time ? `Last sent at ${row.last_sent_time}` : undefined}
+                    >
+                        <span className={`w-1.5 h-1.5 rounded-full ${statusInfo.dotClass}`} />
+                        {statusInfo.label}
+                    </span>
+                );
+            },
         },
         {
             name: "status",

@@ -22,6 +22,10 @@ import {
   leadGroupOptionsGet,
   useLeadGroupOptions,
 } from "@/redux/slice/tenant-admin/leadGroupSlice";
+import {
+  campaignOptionsGet,
+  useCampaignOptions,
+} from "@/redux/slice/tenant-admin/campaignReportSlice";
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
 import { Button, Input, InputSelect, Select } from "@/components/forms";
@@ -51,6 +55,7 @@ import { ColumnsType } from "@/types/tableTypes";
 import { advanceSearchOptions } from "@/config/options";
 import DispositionTree from "@/components/tenant-admin/outbound-campaign/DispositionTree";
 import { tenantDispositionOptionsGet, useTenantDispositionOptions } from "@/redux/slice/tenant-admin/tenantDispositionSlice";
+import { useOutboundOptions } from "@/redux/slice/tenant-admin/outboundSlice";
 
 const level: any = 1;
 // NAME STATE
@@ -72,6 +77,7 @@ const initialValues: LeadFilterTypes = {
 const initialBatchValues = {
   user_uuid: "",
   lead_group_uuid: "",
+  campaign_uuid: "",
   lead_status: "",
 };
 
@@ -112,6 +118,10 @@ const LeadManagement = () => {
   // console.log("leadd", lead);
   const userOptions = useUserOptions();
   const leadGroupOptions = useLeadGroupOptions();
+  const rawCampaignOptions = useCampaignOptions();
+  const campaignOptions = Array.isArray(rawCampaignOptions)
+    ? rawCampaignOptions.flatMap((g: any) => g?.options || (g?.value ? [g] : []))
+    : [];
   // const leadStatusOptions = useDispositionOptions();
   // console.log("leadStatusOptions", leadStatusOptions);
   const dispositionOptions = useTenantDispositionOptions();
@@ -412,6 +422,7 @@ const LeadManagement = () => {
     onGetUserOptions();
     onGetLeadGroupOptions();
     onGetLeadStatusOptions();
+    onGetCampaignOptions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -430,6 +441,15 @@ const LeadManagement = () => {
       await dispatch(leadGroupOptionsGet());
     } catch (err) {
       console.error("Get Lead Group Options Err =-=>", err);
+    }
+  };
+
+  // Fetching Campaign Options
+  const onGetCampaignOptions = async () => {
+    try {
+      await dispatch(campaignOptionsGet());
+    } catch (err) {
+      console.error("Get Campaign Options Err =-=>", err);
     }
   };
 
@@ -810,6 +830,8 @@ const LeadManagement = () => {
         (payload["lead_status_filter"] = data["lead_status"]["val"]);
       data["lead_group_uuid"]["val"] &&
         (payload["lead_group_uuid_filter"] = data["lead_group_uuid"]["val"]);
+      data["campaign_uuid"]?.val &&
+        (payload["campaign_uuid_filter"] = data["campaign_uuid"]["val"]);
 
       data["first_name"]["val"] &&
         (payload["first_name_flag"] = data["first_name"]["key"]);
@@ -1213,6 +1235,18 @@ const LeadManagement = () => {
               options={leadGroupOptions}
               onChange={(e: any) =>
                 handleBatchChange("lead_group_uuid", e.target.value)
+              }
+              isInfo
+            />
+            <Select
+              name="campaign_uuid"
+              label="Campaign"
+              placeholder="Select Campaign"
+              removable
+              value={batchDetails.campaign_uuid}
+              options={campaignOptions}
+              onChange={(e: any) =>
+                handleBatchChange("campaign_uuid", e.target.value)
               }
               isInfo
             />

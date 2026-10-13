@@ -70,6 +70,54 @@ const EmailConfigsList = (props: ManagerPageTypes) => {
             sortable: true,
         },
         {
+            name: "recipients",
+            title: "Recipient Emails",
+            action: (row: any) => {
+                const toList = Array.isArray(row.to) ? row.to : (row.to ? [row.to] : []);
+                const ccList = Array.isArray(row.cc) ? row.cc : (row.cc ? [row.cc] : []);
+                const bccList = Array.isArray(row.bcc) ? row.bcc : (row.bcc ? [row.bcc] : []);
+
+                if (!toList.length && !ccList.length && !bccList.length) {
+                    return <span className="text-gray-400 text-xs italic">-</span>;
+                }
+
+                return (
+                    <div className="flex flex-col gap-1 max-w-[280px]">
+                        {toList.length > 0 && (
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
+                                    To
+                                </span>
+                                <span className="text-xs text-gray-700 truncate" title={toList.join(", ")}>
+                                    {toList.join(", ")}
+                                </span>
+                            </div>
+                        )}
+                        {ccList.length > 0 && (
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 shrink-0">
+                                    CC
+                                </span>
+                                <span className="text-xs text-gray-700 truncate" title={ccList.join(", ")}>
+                                    {ccList.join(", ")}
+                                </span>
+                            </div>
+                        )}
+                        {bccList.length > 0 && (
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-gray-100 text-gray-700 border border-gray-200 shrink-0">
+                                    BCC
+                                </span>
+                                <span className="text-xs text-gray-700 truncate" title={bccList.join(", ")}>
+                                    {bccList.join(", ")}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
             name: "status",
             title: "Status",
             sortable: true,

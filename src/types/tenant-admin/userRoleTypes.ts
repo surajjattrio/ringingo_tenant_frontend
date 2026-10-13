@@ -22,4 +22,6 @@ export interface InitialValueType {
     idle_timeout:string;
     callqueue_selection:string;
     bot_lead_info:string;
+    is_lead_edit?:string;
+    knowledge_base?:string;
 }

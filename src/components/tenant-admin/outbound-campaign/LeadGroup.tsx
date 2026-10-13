@@ -1,11 +1,13 @@
 "use client";
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 // PROJECT IMPORT
 import {
   campaignLeadGroupDelete,
   outboundLeadReset,
+  outboundLeadResetStatusGet,
   outboundSingleFeatureGet,
 } from "@/redux/slice/tenant-admin/outboundSlice";
 import { useAppDispatch } from "@/redux/hooks";
@@ -28,6 +30,10 @@ const LeadGroup = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const cookie = Cookies.get("user");
+  const userData = JSON.parse(cookie || "{}");
+  const { tenant_uuid } = userData;
+
   const pathname = usePathname();
   let isPathname = pathname?.split("-")?.[0] === "/manager";
   const [loading, setLoading] = useState<boolean>(true);
@@ -37,6 +43,18 @@ const LeadGroup = () => {
     limit: 10,
   });
   const [deleteId, setDeleteId] = useState<any>("");
+  // lead_group_uuids with an in-flight async reset job — drives the per-row
+  // spinner/disabled state on the rechurn (Refresh) icon while it's queued.
+  const [processingLeadGroups, setProcessingLeadGroups] = useState<Set<string>>(new Set());
+  const activePollTimeouts = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+  // Stop any in-flight lead-reset-job polling when this page unmounts.
+  useEffect(() => {
+    return () => {
+      activePollTimeouts.current.forEach((t) => clearTimeout(t));
+      activePollTimeouts.current.clear();
+    };
+  }, []);
 
   const onDeleteLeadGroup = async (val: any) => {
     setLoading(true);
@@ -82,10 +100,20 @@ const LeadGroup = () => {
     {
       name: "actions",
       title: "Actions",
-      action: (row: any) => (
+      action: (row: any) => {
+        // Read from the row itself, not processingLeadGroups directly — the
+        // shared Table component snapshots `columns` (and this `action`
+        // closure with it) once on its own first mount and never re-syncs
+        // it, so any state this closure captured directly would be frozen
+        // at that point. `row` stays fresh because Table DOES re-sync
+        // `tableData` from the `data` prop on every render, so the flag is
+        // threaded through there instead (see the `data` prop below).
+        const isRechurning = !!row?.isRechurning;
+        return (
         <div className="flex gap-4 items-center select-none">
           <div
-            className={`${row?.status === "1" ? "opacity-60 pointer-events-none" : ""
+            title={isRechurning ? "Processing…" : undefined}
+            className={`${row?.status === "1" || isRechurning ? "opacity-60 pointer-events-none" : ""
               }`}
           >
             <Icon
@@ -93,7 +121,8 @@ const LeadGroup = () => {
               name="Refresh"
               width={15}
               height={15}
-              onClick={() => onReset(row)}
+              className={isRechurning ? "animate-spin" : ""}
+              onClick={isRechurning ? undefined : () => onReset(row)}
             />
           </div>
           <div
@@ -128,7 +157,8 @@ const LeadGroup = () => {
             onClick={() => setDeleteId(row?.uuid)}
           />
         </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -166,6 +196,62 @@ const LeadGroup = () => {
     }
   };
 
+  const stopProcessing = (leadGroupUuid: string) => {
+    setProcessingLeadGroups((prev) => {
+      if (!prev.has(leadGroupUuid)) return prev;
+      const next = new Set(prev);
+      next.delete(leadGroupUuid);
+      return next;
+    });
+  };
+
+  // Polls GET /outbound-campaign/lead-reset-status until the async reset job
+  // (job_uuid returned by outboundLeadReset when the backend has
+  // ENABLE_LEAD_RECHURN_MICROSERVICE=true) reaches a terminal state. Not
+  // reached for the synchronous fallback, which never returns a job_uuid.
+  const pollLeadResetJob = (jobUuid: string, leadGroupUuid: string) => {
+    const POLL_INTERVAL_MS = 3000;
+    const MAX_ATTEMPTS = 100; // ~5 minutes at 3s per attempt
+
+    let attempts = 0;
+
+    const poll = async () => {
+      attempts += 1;
+      try {
+        const res: any = await dispatch(
+          outboundLeadResetStatusGet({ job_uuid: jobUuid, tenant_uuid })
+        ).unwrap();
+        const job = res?.data ?? res;
+
+        if (job?.status === "completed") {
+          Success("Lead reset completed");
+          stopProcessing(leadGroupUuid);
+          onGetLeadGroup();
+          return;
+        }
+        if (job?.status === "failed") {
+          Danger(job?.error_message || "Lead reset failed");
+          stopProcessing(leadGroupUuid);
+          return;
+        }
+        // status is "pending"/"inprogress" — keep polling below.
+      } catch {
+        // Transient network/poll failure — keep retrying until MAX_ATTEMPTS.
+      }
+
+      if (attempts >= MAX_ATTEMPTS) {
+        Danger("Lead reset is taking longer than expected — refresh later to check its status");
+        stopProcessing(leadGroupUuid);
+        return;
+      }
+
+      const timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
+      activePollTimeouts.current.add(timeoutId);
+    };
+
+    poll();
+  };
+
   const onReset = async (val: any) => {
     setLoading(true);
     try {
@@ -174,6 +260,18 @@ const LeadGroup = () => {
         lead_group_uuid: val?.uuid,
       };
       const res: any = await dispatch(outboundLeadReset(payload)).unwrap();
+
+      if (res?.job_uuid) {
+        // Async path: the job is queued, not done yet — don't report success
+        // as if it already finished, and don't block the whole table on it;
+        // just keep this row's rechurn button spinning/disabled instead.
+        setLoading(false);
+        setProcessingLeadGroups((prev) => new Set(prev).add(val?.uuid));
+        Success("Lead reset queued — processing started");
+        pollLeadResetJob(res.job_uuid, val?.uuid);
+        return;
+      }
+
       if (res?.statusCode === 200) {
         Success(res.data);
         onGetLeadGroup();
@@ -254,7 +352,14 @@ const LeadGroup = () => {
           bodyClassName="!bg-dark-950"
           isLoading={loading}
           columns={columns}
-          data={leadData?.data?.length ? leadData.data : []}
+          data={
+            leadData?.data?.length
+              ? leadData.data.map((row: any) => ({
+                  ...row,
+                  isRechurning: processingLeadGroups.has(row?.uuid),
+                }))
+              : []
+          }
           page={filter.page}
           totalCount={leadData?.count || 0}
           limit={filter.limit}

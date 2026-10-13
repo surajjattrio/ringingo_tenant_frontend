@@ -17,9 +17,10 @@ import {
 import { useAppDispatch } from "@/redux/hooks";
 import { Danger, Success } from "@/redux/services/toasterServices";
 import { useAuth } from "@/contexts/hooks/useAuth";
-import { Input, Switch } from "@/components/forms";
+import { Input, Select, Switch } from "@/components/forms";
 import { CardForm } from "@/components/ui-components";
 import TenantAddRules from "./TenantAddRules";
+import TenantCliRouteRules, { initialCliRouteValues } from "./TenantCliRouteRules";
 
 // TYPES IMPORT
 import { InitialValueType } from "@/types/tenant-admin/tenantOutgoingTypes";
@@ -50,6 +51,16 @@ const getMissingFailoverDidRow = (rules: any[]) => {
     return idx ?? -1;
 };
 
+const noCliModeOptions = [
+    { value: "first", label: "First CLI of first route" },
+    { value: "round_robin", label: "Round Robin on CLIs of first route" },
+];
+
+const routeTypeOptions = [
+    { value: "prefix", label: "Prefix Based (Length / Prefix / Strip / Prepend)" },
+    { value: "cli", label: "CLI Based (route by Caller ID)" },
+];
+
 const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
     const { managerName = "" } = props;
     const { id } = useParams();
@@ -60,12 +71,15 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
     const outgoing = useTenantOutgoing();
 
     const [rulesData, setRulesData] = useState([initialRulesValues]);
+    const [cliRulesData, setCliRulesData] = useState<any[]>([{ ...initialCliRouteValues }]);
     const [loading, setLoading] = useState<boolean>(false);
 
     const initialValues: InitialValueType = {
         name: "",
         description: "",
         status: "0",
+        route_type: "prefix",
+        no_cli_mode: "first",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -74,14 +88,23 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
 
     // Create or Update Outgoing Rules
     const onSubmit = (values: any) => {
-        const missingRow = getMissingFailoverDidRow(rulesData);
+        const isCliRoute = values.route_type === "cli";
+        const activeRules = isCliRoute ? cliRulesData : rulesData;
+        if (isCliRoute) {
+            const noCliRow = cliRulesData?.findIndex((r: any) => !r?.match_cli?.length || !r?.trunk_uuid);
+            if (noCliRow !== -1) {
+                Danger(`Route ${noCliRow + 1}: select CLIs and Trunk before saving.`);
+                return;
+            }
+        }
+        const missingRow = getMissingFailoverDidRow(activeRules);
         if (missingRow !== -1) {
             Danger(`Row ${missingRow + 1}: select the Caller ID for the selected Failover Trunk before saving.`);
             return;
         }
         const payload = { ...values };
         payload["tenant_uuid"] = user?.tenant_detail?.uuid;
-        payload["rules"] = rulesData;
+        payload["rules"] = activeRules;
         if (id) {
             onUpdateOutgoing(payload);
         } else {
@@ -112,8 +135,16 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
             name: outgoingData?.name,
             description: outgoingData?.description,
             status: outgoingData?.status || "0",
+            route_type: outgoingData?.route_type || "prefix",
+            no_cli_mode: outgoingData?.no_cli_mode || "first",
         });
-        setRulesData(outgoingData?.rules || [initialRulesValues]);
+        if (outgoingData?.route_type === "cli") {
+            setCliRulesData(outgoingData?.rules?.length ? outgoingData.rules : [{ ...initialCliRouteValues }]);
+            setRulesData([initialRulesValues]);
+        } else {
+            setRulesData(outgoingData?.rules || [initialRulesValues]);
+            setCliRulesData([{ ...initialCliRouteValues }]);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [outgoingData, id]);
 
@@ -152,6 +183,7 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
                 resetForm();
                 dispatch(updateSingleTenantOutgoingData({}));
                 setRulesData([initialRulesValues]);
+                setCliRulesData([{ ...initialCliRouteValues }]);
             } else {
                 Danger(res?.data);
             }
@@ -177,6 +209,7 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
                 router.back();
                 id && dispatch(updateSingleTenantOutgoingData({}));
                 id && setRulesData([initialRulesValues]);
+                id && setCliRulesData([{ ...initialCliRouteValues }]);
             }}
         >
             <div className="pt-5 pb-5 gap-y-[30px] grid grid-cols-3 tsm:grid-cols-1 gap-x-4 px-4">
@@ -215,8 +248,34 @@ const CreateEditTenantOutgoingForm = (props: ManagerNameTypes) => {
                     value={values.status}
                     onClick={(value: string) => setFieldValue("status", value)}
                 />
+                <Select
+                    name="route_type"
+                    label="Route Type"
+                    icon="Trunk"
+                    placeholder="Select Route Type"
+                    options={routeTypeOptions}
+                    value={values.route_type}
+                    onChange={(e: any) => setFieldValue("route_type", e.target.value)}
+                    isInfo
+                />
+                {values.route_type === "cli" && (
+                    <Select
+                        name="no_cli_mode"
+                        label="No CLI Selected"
+                        icon="CallerID"
+                        placeholder="When agent / campaign has no CLI"
+                        options={noCliModeOptions}
+                        value={values.no_cli_mode}
+                        onChange={(e: any) => setFieldValue("no_cli_mode", e.target.value)}
+                        isInfo
+                    />
+                )}
             </div>
-            <TenantAddRules rulesData={rulesData} setRulesData={setRulesData} />
+            {values.route_type === "cli" ? (
+                <TenantCliRouteRules rulesData={cliRulesData} setRulesData={setCliRulesData} />
+            ) : (
+                <TenantAddRules rulesData={rulesData} setRulesData={setRulesData} />
+            )}
         </CardForm>
     );
 };

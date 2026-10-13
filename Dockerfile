@@ -12,7 +12,7 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # Copy dependencies
-COPY package.json package-lock.json ./
+COPY  package.json ./
 
 # Install dependencies
 RUN npm install --force
@@ -30,7 +30,14 @@ FROM node:18-alpine AS runner
 
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat
+#RUN apk add --no-cache libc6-compat
+
+RUN apk add --no-cache libc6-compat tzdata
+
+ENV TZ=Asia/Kolkata
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

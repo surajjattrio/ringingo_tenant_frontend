@@ -82,6 +82,9 @@ const initialValues: InitialValueType = {
     api_config_uuid: "",
     email_type: "none",
     message_config_uuid: "",
+    is_limechat: "1",
+    manual_multi_caller_id: "1",
+    manual_caller_ids: [],
 };
 
 const OutboundContext = createContext<OutboundContextTypes | null>(null);

@@ -144,6 +144,12 @@ export const masterAdmin: NavItemsTypes[] = [
                 icon: "SystemDisposition",
                 url: "/system-disposition",
             },
+            {
+                id: "server-sync",
+                title: "Server Data Sync",
+                icon: "RefreshCircle",
+                url: "/server-sync",
+            },
             // {
             //     id: "security",
             //     title: "Security",
@@ -176,6 +182,7 @@ export const masterAdminUrls = [
     // "/backup-recovery",
     // "/license",
     "/system-disposition",
+    "/server-sync",
     //"/security",
     //"/archive",
     "/activity-log",
@@ -200,6 +207,7 @@ export const masterAdminTitles = [
     // { url: "/backup-recovery", title: "Backup and Recovery" },
     // { url: "/license", title: "License" },
     { url: "/system-disposition", title: "System Dispositions" },
+    { url: "/server-sync", title: "Server Data Sync" },
     // { url: "/security", title: "Security" },
     // { url: "/archive", title: "Archive" },
     { url: "/activity-log", title: "Activity Log" },
@@ -350,13 +358,6 @@ export const tenantAdmin: NavItemsTypes[] = [
                 name: "ip_mapping",
                 title: "IP Mapping",
                 url: "/tenant-ip-mapping",
-            },
-            {
-                id: "tenant-click-to-call",
-                icon: "ClicktoCall",
-                name: "click_to_Call",
-                title: "Click to Call",
-                url: "/tenant-click-to-call",
             },
             {
                 id: "tenant-ring-group",
@@ -594,6 +595,14 @@ export const tenantAdmin: NavItemsTypes[] = [
         url: "/tenant-activity-log",
     },
     {
+        id: "tenant-pipelines",
+        name: "pipeline",
+        title: "Pipeline",
+        icon: "Report",
+        iconActive: "NotesGreen",
+        url: "/tenant-pipelines",
+    },
+    {
         id: "tenant-reports",
         name: "reports",
         icon: "Report",
@@ -700,6 +709,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 icon: "breakcode1",
                 url: "/tenant-breakcode",
             },
+            {
+                id: "tenant-ctc",
+                name: "ctc",
+                title: "CTC",
+                icon: "PhoneCall",
+                url: "/tenant-ctc",
+            },
 
         ],
     },
@@ -736,6 +752,13 @@ export const tenantAdmin: NavItemsTypes[] = [
                 title: "Webhook Logs",
                 icon: "WebhookFill",
                 url: "/tenant-webhooks/logs",
+            },
+            {
+                id: "tenant-click-to-call",
+                icon: "ClicktoCall",
+                name: "click_to_Call",
+                title: "Click to Call",
+                url: "/tenant-click-to-call",
             },
         ],
     },
@@ -814,6 +837,7 @@ export const tenantAdminUrls = [
     "/tenant-dropped-calls",
     "/tenant-call-queue",
     "/tenant-activity-log",
+    "/tenant-pipelines",
 
 
 
@@ -824,6 +848,7 @@ export const tenantAdminUrls = [
     // "/tenant-lead-status",
     // "/tenant-telecomcircle",
     "/tenant-breakcode",
+    "/tenant-ctc",
 
     // plugins
     "/tenant-google-drive",
@@ -873,11 +898,6 @@ export const tenantAdminTitles = [
     // Incoming Rules
     { url: "/tenant-did", title: "DID", name: "did" },
     { url: "/tenant-ip-mapping", title: "IP Mapping", name: "ip_mapping" },
-    {
-        url: "/tenant-click-to-call",
-        title: "Click to call",
-        name: "click_to_Call",
-    },
     { url: "/tenant-ring-group", title: "Ring Group", name: "rg" },
     { url: "/tenant-ivr", title: "IVR", name: "ivr" },
     { url: "/tenant-time-condition", title: "Time Condition", name: "tc" },
@@ -944,6 +964,7 @@ export const tenantAdminTitles = [
     // { url: "/tenant-lead-status", title: "Lead Status" },
     // { url: "/tenant-telecomcircle", title: "Telecom Circle", name: "telecomcircle" },
     { url: "/tenant-breakcode", title: "Break Codes", name: "breakcode" },
+    { url: "/tenant-ctc", title: "CTC", name: "ctc" },
 
     // Report Scheduling
     { url: "/scheduling/tenant-cdrs", title: "CDR Report", name: "cdrs_report" },
@@ -951,6 +972,7 @@ export const tenantAdminTitles = [
 
     // API Integrations
     { url: "/tenant-webhooks", title: "Webhooks", name: "webhooks" },
+    { url: "/tenant-click-to-call", title: "Click to Call", name: "click_to_Call", },
     // { url: "/tenant-crm", title: "CRM", name: "crm" },
     // { url: "/tenant-api-key", title: "API Key", name: "api_key" },
 

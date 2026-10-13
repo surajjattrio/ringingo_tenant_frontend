@@ -2,6 +2,7 @@ export interface OptionTypes {
   value: string | number;
   label?: string;
   url?: string;
+  status?: string;
 }
 
 export interface ObjectOptionTypes {

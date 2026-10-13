@@ -64,6 +64,7 @@ import realtimeReportSlice from "./slice/tenant-admin/realtimeReportSlice";
 import adminDidSlice from "./slice/master-admin/adminDidSlice";
 import adminIpMappingSlice from "./slice/master-admin/adminIpMappingSlice";
 import clickToCallSlice from "./slice/tenant-admin/clickToCallSlice";
+import ctcSlice from "./slice/tenant-admin/ctcSlice";
 import blockInboundCampaignSlice from "./slice/tenant-admin/blockInboundCampaignSlice";
 import voiceBroadcastSlice from "./slice/tenant-admin/voiceBroadcastSlice";
 import leadReportSlice from "./slice/tenant-admin/leadReportSlice";
@@ -96,6 +97,8 @@ import emailSlice from "./slice/tenant-admin/emailSlice";
 import apiConfigurationSlice from "./slice/tenant-admin/apiConfigurationSlice";
 import messageConfigurationSlice from "./slice/tenant-admin/messageConfigurationSlice";
 import monitoringSlice from "./slice/master-admin/monitoringSlice";
+import pipelineSlice from "./slice/tenant-admin/pipelineSlice";
+import serverSyncSlice from "./slice/master-admin/serverSyncSlice";
 
 // REDUCERS
 const rootReducer = combineReducers({
@@ -117,6 +120,7 @@ const rootReducer = combineReducers({
   adminIpMapping: adminIpMappingSlice,
   tenantReport: tenantReportSlice,
   monitoring: monitoringSlice,
+  serverSync: serverSyncSlice,
 
   // TENANT ADMIN
   user: userSlice,
@@ -158,6 +162,7 @@ const rootReducer = combineReducers({
   followUp: followUpSlice,
   realtimeReport: realtimeReportSlice,
   clickToCall: clickToCallSlice,
+  ctc: ctcSlice,
   blockInboundCampaign: blockInboundCampaignSlice,
   voiceBroadcast: voiceBroadcastSlice,
   leadReport: leadReportSlice,
@@ -186,6 +191,7 @@ const rootReducer = combineReducers({
   apiConfiguration: apiConfigurationSlice,
   messageConfiguration: messageConfigurationSlice,
   mailSchedule: mailScheduleSlice,
+  pipeline: pipelineSlice,
 
 
 });
@@ -193,7 +199,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage,
-  blacklist: ["inboundCallDebug", "monitoring"],
+  blacklist: ["inboundCallDebug", "monitoring", "serverSync"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

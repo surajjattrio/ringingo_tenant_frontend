@@ -58,7 +58,9 @@ const CreateUserRoleForm = (props: ManagerNameTypes) => {
         facebook: "1",
         force_login:"1",
         callqueue_selection: "1",
-        bot_lead_info: "1"
+        bot_lead_info: "1",
+        is_lead_edit: "0",
+        knowledge_base: "1",
     };
 
     const validationSchema = Yup.object<InitialValueType>({
@@ -270,6 +272,28 @@ const CreateUserRoleForm = (props: ManagerNameTypes) => {
                     label="Bot Lead Info"
                     value={values.bot_lead_info}
                     onClick={(value: string) => setFieldValue("bot_lead_info", value)}
+                />
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Is Lead Edit"
+                    value={values.is_lead_edit}
+                    onClick={(value: string) => {
+                        setFieldValue("is_lead_edit", value);
+                    }}
+                />
+                <Switch
+                    className="pt-[2px]"
+                    switchButtonClass="py-1.5"
+                    trueName="Yes"
+                    falseName="No"
+                    label="Knowledge Base"
+                    value={values.knowledge_base}
+                    onClick={(value: string) => {
+                        setFieldValue("knowledge_base", value);
+                    }}
                 />
                 {
                     userTenantData?.tenant_detail?.roles?.[0]?.module_permission?.messaging?.whatsapp ?

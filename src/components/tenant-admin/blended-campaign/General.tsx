@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useState, useRef } from "react";
 
 // PROJECT IMPORT
 import { useBlended } from "@/contexts/hooks/useBlended";
-import { Input, InputNumber, Select, Switch, Textarea } from "@/components/forms";
+import { CheckBox, Input, InputNumber, Select, Switch, Textarea } from "@/components/forms";
 import { Icon, Loader } from "@/components/ui-components";
 import {
   outgoingOptionsGet,
@@ -75,6 +75,7 @@ import {
 import {
   didOptionsGet,
   useDidOptions,
+  useCidDidOptions,
 } from "@/redux/slice/tenant-admin/didSlice";
 import {
   tenantDispositionOptionsGet,
@@ -103,6 +104,7 @@ const General = () => {
   const allowedCallQueueOptions = useAllowedCallQueueOptions();
   const allowedIvrOptions = useAllowedIvrOptions();
   const didOptions = useDidOptions();
+  const cidDidOptions = useCidDidOptions();
   const dispositionOptions = useTenantDispositionOptions();
   const callQueueOptions = useCallQueueOptions();
   const ringGroupCallCenterOptions = useCallCenterRingOptions();
@@ -408,6 +410,9 @@ const General = () => {
           api_config_uuid: res?.data?.api_config_uuid || "",
           email_type: res?.data?.email_type || "none",
           message_config_uuid: res?.data?.message_config_uuid || "",
+          manual_multi_caller_id: res?.data?.manual_multi_caller_id || "1",
+          manual_caller_ids: res?.data?.manual_caller_ids || [],
+          is_limechat: res?.data?.is_limechat ?? res?.data?.isLimeChat ?? "1",
         });
         setIsLoading(false);
       }
@@ -769,6 +774,38 @@ const General = () => {
                   isInfo
                 />
               )}
+              <div className="flex flex-col gap-3">
+                <CheckBox
+                  className="!justify-start"
+                  label="Multi Caller IDs for Manual Calls"
+                  checked={values.manual_multi_caller_id === "0"}
+                  onChange={(checked: boolean) => {
+                    setValues({
+                      ...values,
+                      manual_multi_caller_id: checked ? "0" : "1",
+                      manual_caller_ids: checked ? values.manual_caller_ids || [] : [],
+                    });
+                  }}
+                />
+                {values.manual_multi_caller_id === "0" && (
+                  <Select
+                    name="manual_caller_ids"
+                    isMulti
+                    label="Manual Call Caller IDs"
+                    icon="CallerID"
+                    placeholder="Select Caller IDs"
+                    options={cidDidOptions}
+                    value={values.manual_caller_ids}
+                    touched={touched}
+                    errors={errors}
+                    onChange={(e: any) => {
+                      setFieldValue("manual_caller_ids", e);
+                    }}
+                    onBlur={handleBlur}
+                    isInfo
+                  />
+                )}
+              </div>
               <Select
                 name="call_queue_uuid"
                 isMulti
@@ -1275,6 +1312,17 @@ const General = () => {
                 onClick={(value: string) =>
                   setFieldValue("auto_answer", value)
                 }
+              />
+              <Switch
+                className="pt-[2px]"
+                switchButtonClass="py-1.5"
+                trueName="Yes"
+                falseName="No"
+                label="LimeChat"
+                value={values.is_limechat ?? "1"}
+                onClick={(value: string) => {
+                  setFieldValue("is_limechat", value);
+                }}
               />
               <Switch
                 className="pt-[2px]"

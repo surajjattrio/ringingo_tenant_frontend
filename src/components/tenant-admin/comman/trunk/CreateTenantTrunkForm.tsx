@@ -30,6 +30,7 @@ import * as Yup from "yup";
 
 // TYPES
 import { InitialValueType } from "@/types/tenant-admin/trunkTypes";
+import TrunkSipProfileSelect from "@/components/tenant-admin/trunk/TrunkSipProfileSelect";
 import { ManagerNameTypes } from "@/types/formTypes";
 
 /* ============================== CREATE & EDIT TRUNK FORM ============================== */
@@ -45,6 +46,7 @@ const CreateTenantTrunkForm = (props: ManagerNameTypes) => {
 
     const initialValues: InitialValueType = {
         name: "",
+        sip_profile_uuid: "",
         register: "0",
         username: "",
         password: "",
@@ -161,6 +163,12 @@ const CreateTenantTrunkForm = (props: ManagerNameTypes) => {
                     onBlur={handleBlur}
                     noSpace
                     isInfo
+                />
+                <TrunkSipProfileSelect
+                    value={values.sip_profile_uuid}
+                    touched={touched}
+                    errors={errors}
+                    onChange={(value: string) => setFieldValue("sip_profile_uuid", value)}
                 />
                 <Switch
                     trueName="Yes"

@@ -290,12 +290,10 @@
 // export default memo(SideBar);
 
 
-
-
 "use client";
 import { memo } from "react";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -448,14 +446,14 @@ if (subItems && subItems.length > 0) {
       className={`flex items-center gap-2 text-sm px-2 py-1 rounded-md ${
         isSubSelected
           ? "text-blue-600 font-semibold bg-blue-50"
-          : "text-gray-600 hover:text-blue-700"
+          : "text-gray-600 hover:text-blue-600"
       }`}
     >
       {item.icon && (
         <Icon
           name={item.icon} // assuming subitem has an `icon` key
-          width={18}
-          height={18}
+          width={16}
+          height={16}
           className={`${
             isSubSelected ? "text-blue-600" : "text-zinc-300"
           }`}
@@ -480,6 +478,12 @@ const SideBar = ({ isDrawerOpen, toggleDrawer }: SideBarProps) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [data, setData] = useState<any>(sideBarData?.sideBarData || []);
   const isOpen = isDrawerOpen || hover;
+
+  useEffect(() => {
+    if (sideBarData?.sideBarData && Array.isArray(sideBarData.sideBarData)) {
+      setData(sideBarData.sideBarData);
+    }
+  }, [sideBarData]);
 
   return (
     <div

@@ -5,6 +5,7 @@ import {
     OUTBOUND_CAMPAIGN_DIALABLE_TABLE,
     OUTBOUND_CAMPAIGN_DIALABLE,
     OUTBOUND_CAMPAIGN_LEAD_RESET,
+    OUTBOUND_CAMPAIGN_LEAD_RESET_STATUS,
     OUTBOUND_CAMPAIGN_HNAGUP_ADD,
     OUTBOUND_CAMPAIGN_HANGUP_DELETE,
     OUTBOUND_CAMPAIGN_DIALABLE_TABLE_ADD,
@@ -69,6 +70,13 @@ export const addHangupOutbound = (payload: any) => {
 
 export const resetLeadOutbound = (payload: any) => {
     return apiInstance.post(OUTBOUND_CAMPAIGN_LEAD_RESET, payload);
+};
+
+// Polls the status of an async lead-reset job (job_uuid returned by resetLeadOutbound
+// when ENABLE_LEAD_RECHURN_MICROSERVICE=true on the backend). Not applicable to the
+// synchronous fallback / blended-campaign reset, which return their result directly.
+export const getLeadResetJobStatus = (job_uuid: string, tenant_uuid: string) => {
+    return apiInstance.get(OUTBOUND_CAMPAIGN_LEAD_RESET_STATUS, { params: { job_uuid, tenant_uuid } });
 };
 
 export const updateOutbound = (id: string, payload: any) => {

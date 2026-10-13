@@ -1,7 +1,7 @@
 // PROJECT IMPORTS
 import { apiInstance } from "../../axiosApi";
 
-import { TENANT_TRUNK, TRUNK, TRUNK_SEARCH } from "@/API/constAPI";
+import { TENANT_TRUNK, TENANT_TRUNK_SIP_PROFILES, TRUNK, TRUNK_SEARCH } from "@/API/constAPI";
 
 /* ============================== TENANT_TRUNK SERVICES ============================== */
 
@@ -35,4 +35,9 @@ export const updateTenantTrunkStatus = (id: string, payload: any) => {
 
 export const deleteTenantTrunk = (id: string) => {
     return apiInstance.delete(TRUNK + `/${id}`);
+};
+
+// SIP profiles assigned to logged in tenant, first one is default
+export const tenantTrunkSipProfiles = () => {
+    return apiInstance.get(TENANT_TRUNK_SIP_PROFILES);
 };

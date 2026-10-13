@@ -11,6 +11,7 @@ import {
     type ExpandedState,
 } from "@tanstack/react-table";
 import { apiInstance } from "@/redux/axiosApi";
+import { getLeadResetJobStatus } from "@/redux/services/tenant-admin/outboundServices";
 import { Danger, Success } from "@/redux/services/toasterServices";
 import { Loader, Pagination } from "@/components/ui-components";
 import { type Campaign, type LeadGroup, type ManagerPageTypes, type CampaignType, type StatusFilter, COL_SPAN } from "./types";
@@ -31,6 +32,15 @@ const LeadChurning = ({ managerName }: ManagerPageTypes) => {
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [rechurningKey, setRechurningKey] = useState<string | null>(null);
     const initialLoadDone = useRef(false);
+    const activePollTimeouts = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+
+    // Stop any in-flight lead-reset-job polling when this page/tab unmounts.
+    useEffect(() => {
+        return () => {
+            activePollTimeouts.current.forEach((t) => clearTimeout(t));
+            activePollTimeouts.current.clear();
+        };
+    }, []);
 
     // Search, filter, pagination
     const [searchInput, setSearchInput] = useState("");
@@ -88,6 +98,54 @@ const LeadChurning = ({ managerName }: ManagerPageTypes) => {
     const collapseAll = () => setExpanded({});
     const expandAll = () => setExpanded(true);
 
+    // Polls GET /outbound-campaign/lead-reset-status until the async reset job
+    // (job_uuid returned by the reset POST when the backend has
+    // ENABLE_LEAD_RECHURN_MICROSERVICE=true) reaches a terminal state. Not
+    // reached at all for the synchronous fallback or blended campaigns, which
+    // never return a job_uuid in the first place.
+    const pollLeadResetJob = (jobUuid: string, key: string) => {
+        const POLL_INTERVAL_MS = 3000;
+        const MAX_ATTEMPTS = 100; // ~5 minutes at 3s per attempt
+
+        let attempts = 0;
+
+        const poll = async () => {
+            attempts += 1;
+            try {
+                const res: any = await getLeadResetJobStatus(jobUuid, tenant_uuid);
+                const job = res?.data ?? res;
+
+                if (job?.status === "completed") {
+                    Success("Lead reset completed");
+                    fetchData();
+                    setRechurningKey((k) => (k === key ? null : k));
+                    return;
+                }
+                if (job?.status === "failed") {
+                    Danger(job?.error_message || "Lead reset failed");
+                    fetchData();
+                    setRechurningKey((k) => (k === key ? null : k));
+                    return;
+                }
+                // status is "pending"/"inprogress" (or the lookup itself
+                // 404'd transiently right after queuing) — keep polling below.
+            } catch {
+                // Transient network/poll failure — keep retrying until MAX_ATTEMPTS.
+            }
+
+            if (attempts >= MAX_ATTEMPTS) {
+                Danger("Lead reset is taking longer than expected — refresh later to check its status");
+                setRechurningKey((k) => (k === key ? null : k));
+                return;
+            }
+
+            const timeoutId = setTimeout(poll, POLL_INTERVAL_MS);
+            activePollTimeouts.current.add(timeoutId);
+        };
+
+        poll();
+    };
+
     const handleRechurn = async (
         campaignUuid: string,
         leadGroupUuid: string,
@@ -114,20 +172,33 @@ const LeadChurning = ({ managerName }: ManagerPageTypes) => {
             })
         );
 
+        // Stays true only when the backend queued an async job — in that case
+        // the spinner (rechurningKey) is cleared later by pollLeadResetJob
+        // once the job actually finishes, not immediately in `finally` below.
+        let queuedAsync = false;
+
         try {
-            await apiInstance.post(CAMPAIGN_ENDPOINTS[campaignType].reset, {
+            const res: any = await apiInstance.post(CAMPAIGN_ENDPOINTS[campaignType].reset, {
                 campaign_uuid: campaignUuid,
                 lead_group_uuid: leadGroupUuid,
                 tenant_uuid,
                 disposition_uuids: dispositionUuids,
             });
-            Success("Leads moved to queue successfully");
-            fetchData();
+
+            const jobUuid = res?.job_uuid;
+            if (jobUuid) {
+                queuedAsync = true;
+                Success("Lead reset queued — processing started");
+                pollLeadResetJob(jobUuid, key);
+            } else {
+                Success("Leads moved to queue successfully");
+                fetchData();
+            }
         } catch (err: any) {
             Danger(err?.response?.data?.message || "Failed to re-churn leads");
             fetchData();
         } finally {
-            setRechurningKey(null);
+            if (!queuedAsync) setRechurningKey(null);
         }
     };
 

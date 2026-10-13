@@ -270,6 +270,7 @@ const General = () => {
           api_config_uuid: res?.data?.api_config_uuid || "",
           email_type: res?.data?.email_type || "none",
           message_config_uuid: res?.data?.message_config_uuid || "",
+          is_limechat: res?.data?.is_limechat ?? res?.data?.isLimeChat ?? "1",
         });
         setIsLoading(false);
       }
@@ -686,6 +687,17 @@ const General = () => {
                 onClick={(value: string) =>
                   setFieldValue("auto_answer", value)
                 }
+              />
+              <Switch
+                className="pt-[2px]"
+                switchButtonClass="py-1.5"
+                trueName="Yes"
+                falseName="No"
+                label="LimeChat"
+                value={values.is_limechat ?? "1"}
+                onClick={(value: string) => {
+                  setFieldValue("is_limechat", value);
+                }}
               />
               <Switch
                 className="pt-[2px]"

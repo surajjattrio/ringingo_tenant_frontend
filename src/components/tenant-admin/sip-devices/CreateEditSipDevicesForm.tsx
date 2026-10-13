@@ -62,7 +62,6 @@ const CreateEditSipDevicesForm = (props: ManagerNameTypes) => {
 
     const onSubmit = (values: any) => {
         const payload = { ...values };
-
         payload["tenant_uuid"] = user?.tenant_detail?.uuid;
         if (id) {
             onUpdateSip(payload);

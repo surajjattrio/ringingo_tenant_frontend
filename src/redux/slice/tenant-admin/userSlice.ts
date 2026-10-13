@@ -178,6 +178,7 @@ const userSlice = createSlice({
                     return {
                         value: val?.uuid,
                         label: fullName ? `${fullName} - (${username})` : username,
+                        status: val?.status,
                     };
                 });
             }

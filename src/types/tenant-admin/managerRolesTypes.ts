@@ -313,6 +313,13 @@ export interface InitialValueType {
     is_edit_breakcode: boolean;
     is_delete_breakcode: boolean;
 
+    ctc: string;
+    is_ctc: boolean;
+    is_list_ctc: boolean;
+    is_create_ctc: boolean;
+    is_edit_ctc: boolean;
+    is_delete_ctc: boolean;
+
         webform: string;
     is_webform: boolean;
     is_create_webform: boolean;

@@ -28,7 +28,6 @@ const LoginForm = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     const domain = getDomain();
-
     // let domain:any = "testagenttenant.ringingo.com"
     // let domain:any = "1financecc.ringingo.com"
     // let domain:any = "dev.ringingo.com"
@@ -292,9 +291,9 @@ const LoginForm = () => {
                 {/* Logo */}
                 <div className="mb-6 flex justify-center">
                     <Icon
-                        name="MenuLogoExpandedImage"
-                        height={50}
-                        width={220}
+                        name="NewLogo"
+                        height={40}
+                        width={180}
                         alt="Logo"
                     />
                 </div>
